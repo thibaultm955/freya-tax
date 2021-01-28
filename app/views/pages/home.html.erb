@@ -1,2 +1,7 @@
 <h1>Pages#home</h1>
 <p>Find me in app/views/pages/home.html.erb</p>
+<%if current_user.nil?%>
+
+<%elsif current_user.assignment.nil?%>
+<%=link_to "Create Company", new_company_path%>
+<%end%>

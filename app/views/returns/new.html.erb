@@ -1,0 +1,27 @@
+<h1> Create a new Declaration </h1>
+
+     <%= simple_form_for([@company, @return]) do |f| %>
+        <%= f.input :entity, 
+        label: "Entity_Name",
+        collection: @entities_name,
+        required: true,
+        autofocus: true %>
+        <%= f.input :begin_date,
+        as: :string,
+        required: true,
+        autofocus: true,
+        input_html: {class: "datepicker"}%>
+        <%= f.input :end_date,
+        as: :string,
+        required: true,
+        autofocus: true,
+        input_html: {class: "datepicker"}%>
+        <%= f.input :type_of_project,
+        collection: ["VAT", "LSPL", "ESPL"],
+        required: true,
+        autofocus: true%>
+        
+
+
+        <%= f.submit "Save", class: "btn btn-primary" %>
+    <% end %>

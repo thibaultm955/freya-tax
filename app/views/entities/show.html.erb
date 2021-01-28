@@ -1,0 +1,20 @@
+<h1> <%=@entity.name%> </h1>
+
+<ul>
+    <li>Jurisdiction: <%=@entity.country.name%> </li>
+    <li>Address: <%=@entity.address%></li>
+    <li>Postal Code: <%=@entity.postal_code%></li>
+    <li>City: <%=@entity.city%></li>
+    <li>VAT Number: <%=@entity.vat_number%></li>
+</ul>
+
+<h2> Entities Returns </h2>
+
+<ul>
+    <%@declarations.each do |declaration|%>
+        <li><a href="./<%=declaration.entity.id%>/declarations/<%=declaration.id%>"> <%=declaration.start_date%> - <%=declaration.end_date%> - <%=declaration.type_of_project%></a></li>
+    <%end%>
+</ul>
+
+<a class="btn btn-primary" href="./<%=@entity.id%>/edit"> Edit </a>
+

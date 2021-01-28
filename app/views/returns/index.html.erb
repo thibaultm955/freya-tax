@@ -1,0 +1,40 @@
+<h1> Your declarations </h1>
+<%i=1%>
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Entity Name</th>
+      <th scope="col">Jurisdiction</th>
+      <th scope="col">Project Type</th>
+      <th scope="col">Start Date</th>
+      <th scope="col">End Date</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+  <%@returns.each do |company_return| %>
+    <tr>
+      <th scope="row"><%=i%></th>
+      <td><%=company_return.entity.name%></td>
+      <td><%=company_return.entity.jurisdiction%></td>
+      <td><%=company_return.type_of_project%></td>
+      <td><%=company_return.start_date%></td>
+      <td><%=company_return.end_date%></td>
+      <td>
+        <a class="btn btn-light" href="./declarations/<%=company_return.id%>"> Open </a>
+        <a class="btn btn-primary" href="./declarations/<%=company_return.id%>/edit"> Edit </a>  
+        <%= button_to "Delete the Declaration", { action: "destroy", id: company_return.id }, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger"  %>
+      </td> 
+    </tr>
+    <%i += 1%>
+    <%end%>
+  </tbody>
+</table>
+<p><a href="<%=new_company_return_path%>">Create a new Return </a></p>
+
+
+
+
+
