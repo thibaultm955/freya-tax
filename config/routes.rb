@@ -19,6 +19,8 @@ Rails.application.routes.draw do
 
   resources :entities do
     get "select_entities", to: "entities#render_select_entities"
-    
+    resources :countries do
+      get "select_project", to: "countries#render_select_project"
+    end
   end
 end

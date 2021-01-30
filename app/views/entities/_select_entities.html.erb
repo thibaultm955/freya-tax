@@ -1,12 +1,10 @@
 <% if countries.count >= 2%>
 <%= select_tag "countries[country_id]", options_from_collection_for_select(countries, "id", 'name' ),
                             
-                            data: { action: "counter#entity" }, class: "form-control" %>
+                            data: { action: "counter#country" }, class: "form-control" %>
 <%else%>
 <%= select_tag "countries[country_id]", options_from_collection_for_select(countries, "id", 'name' ),
-                            
-                            data: { action: "counter#entity" }, class: "form-control" %>
-<%= select_tag "countries[project_id]", options_from_collection_for_select(type_project, "id", 'name' ),
-                            
-                            data: { action: "counter#project" }, class: "form-control" %>
+                            include_blank: true,
+                            data: { action: "counter#country" }, class: "form-control" %>
+
 <%end%>
