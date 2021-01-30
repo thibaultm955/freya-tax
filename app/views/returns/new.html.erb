@@ -1,5 +1,5 @@
 <h1> Create a new Declaration </h1>
-
+<div data-controller="counter">
      <%= simple_form_for([@company, @return]) do |f| %>
         <%= f.input :entity, 
         label: "Entity_Name",
@@ -25,3 +25,4 @@
 
         <%= f.submit "Save", class: "btn btn-primary" %>
     <% end %>
+</div>
