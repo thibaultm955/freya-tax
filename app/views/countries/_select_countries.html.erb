@@ -1,0 +1,3 @@
+
+<%= select_tag "countries[project_id]", options_from_collection_for_select(type_project, "id", 'name' ),
+                            data: { action: "counter#project" }, class: "form-control" %>

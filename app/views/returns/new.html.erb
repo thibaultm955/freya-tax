@@ -1,26 +1,28 @@
 <h1> Create a new Declaration </h1>
 <div data-controller="counter">
      <%= simple_form_for([@company, @return]) do |f| %>
-        <%= f.input :entity, 
-        label: "Entity_Name",
-        collection: @entities_name,
-        required: true,
-        autofocus: true %>
+        <%= label :entity, "Entity"%>
+        <%= select_tag :entity,
+                            options_from_collection_for_select(@entities, "id", "name"),
+                            include_blank: true,
+                            data: { action: "counter#entity" },
+                            class: "form-control select2" %>
+        
         <%= f.input :begin_date,
         as: :string,
         required: true,
         autofocus: true,
         input_html: {class: "datepicker"}%>
         <%= f.input :end_date,
-        as: :string,
-        required: true,
-        autofocus: true,
-        input_html: {class: "datepicker"}%>
-        <%= f.input :type_of_project,
-        collection: ["VAT", "LSPL", "ESPL"],
-        required: true,
-        autofocus: true%>
-        
+                            as: :string,
+                            required: true,
+                            autofocus: true,
+                            
+                            input_html: { class: "datepicker"} %>
+       
+        <%= label :country, "Country"%>
+              <div data-counter-target="country" >
+              </div>
 
 
         <%= f.submit "Save", class: "btn btn-primary" %>

@@ -43,6 +43,31 @@ class EntitiesController < ApplicationController
         @declarations = @entity.returns
     end
 
+    def render_select_entities
+        @entity = Entity.find(params[:entity_id])
+        @entities = Entity.where(name: @entity.name)
+        entity_country = []
+        @entities.each {|entity| entity_country << entity.country.id}
+        @countries = Country.where(id: entity_country)
+
+        if @countries.count >= 2
+            html_string = render_to_string(partial: "select_entities.html.erb", locals: {countries: @countries})
+            render json: {html_string: html_string}
+        else 
+            @type_project = PeriodictyToProjectType.where(country_id: @entity.country)
+            @projects_type = []
+            @type_project.each{|project| @projects_type << project.project_type.id}
+            @projects_type = @projects_type.uniq
+            @all_project_type = ProjectType.where(id: @projects_type)
+            html_string = render_to_string(partial: "select_entities.html.erb", locals: {countries: @countries, type_project: @all_project_type})
+            render json: {html_string: html_string}
+        end
+        
+
+    end
+
+    
+
     private
 
     def entity_params

@@ -34,7 +34,7 @@ periodicities.each do |periodicity|
     end
 end
 
-country_projecttype_periodicity = {"Belgium" => {"VAT" => ["Monthly", "Quarterly", "Yearly"]}}
+country_projecttype_periodicity = {"Belgium" => {"VAT" => ["Monthly", "Quarterly", "Yearly"], "LSPL" => ["Monthly", "Quarterly", "Yearly"]}}
 
 country_projecttype_periodicity.each do |country_name, values|
     country = Country.where(name: country_name)[0]

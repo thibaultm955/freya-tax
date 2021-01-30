@@ -10,4 +10,15 @@ Rails.application.routes.draw do
     resources :returns
     resources :assigned_tax_codes
   end
+
+  resources :returns do
+    get "select_shares_sector", to: "returns#render_select_shares_sector"
+    resources :entities
+    get "select_shares_sector", to: "entities#render_select_shares_sector"
+  end
+
+  resources :entities do
+    get "select_entities", to: "entities#render_select_entities"
+    
+  end
 end
