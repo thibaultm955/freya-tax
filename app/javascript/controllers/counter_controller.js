@@ -1,7 +1,7 @@
 import { Controller } from "stimulus";
 
 export default class extends Controller {
-  static targets = [ 'count', 'country', "project" ];
+  static targets = [ 'count', 'country', "project", "periodicity" ];
   
 
   connect() {
@@ -31,6 +31,19 @@ export default class extends Controller {
         .then((data) => {
           console.log(data);
           this.projectTarget.innerHTML = data.html_string;
+      });
+  }
+  project(event) {
+    console.log("project connected !");
+    var entity_id = document.getElementById("entity").value;
+    var country_id = document.getElementById("countries_country_id").value;
+    var project_id = document.getElementById("countries_project_id").value;
+    console.log(`/project_types/${project_id}/select_periodicity`);
+    fetch(`/project_types/${project_id}/select_periodicity`, { headers: { accept: 'application/json' } })
+        .then(response => response.json())
+        .then((data) => {
+          console.log(data);
+          this.periodicityTarget.innerHTML = data.html_string;
       });
   }
   /* country(event) {

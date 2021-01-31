@@ -21,6 +21,12 @@ Rails.application.routes.draw do
     get "select_entities", to: "entities#render_select_entities"
     resources :countries do
       get "select_project", to: "countries#render_select_project"
+      
     end
   end
+
+  resources :project_types do
+    get "select_periodicity", to: "project_types#render_select_periodicity"
+  end
+
 end
