@@ -1,0 +1,29 @@
+<h1> Create a new Entity </h1>
+
+<%=simple_form_for [@company, @entity] do |f|%>
+    <%= f.input :name,
+                required: true,
+                autofocus: true,
+                placeholder: "Entity A"%>
+    <%= f.input :address,
+                required: true,
+                autofocus: true,
+                placeholder: "Rue de la loi, 21"%>
+    <%= f.input :postal_code,
+                required: true,
+                autofocus: true,
+                placeholder: "1000"%>
+    <%= f.input :city,
+                required: true,
+                autofocus: true,
+                placeholder: "Bruxelles"%>
+    <%= f.input :vat_number,
+                required: true,
+                autofocus: true,
+                placeholder: "BE 001.002.24.26"%>
+    <%= f.input :country,
+                collection: @countries,
+                required: true,
+                autofocus: true %>
+    <%= f.submit "Save", class: "btn btn-primary" %>
+<% end %>

@@ -1,0 +1,2 @@
+class CountryTaxCode < ApplicationRecord
+end

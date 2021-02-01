@@ -1,0 +1,2 @@
+class Periodicity < ApplicationRecord
+end
