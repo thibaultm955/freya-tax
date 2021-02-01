@@ -54,7 +54,7 @@ class EntitiesController < ApplicationController
             html_string = render_to_string(partial: "select_entities.html.erb", locals: {countries: @countries})
             render json: {html_string: html_string}
         else 
-            @type_project = PeriodictyToProjectType.where(country_id: @entity.country)
+            @type_project = PeriodicityToProjectType.where(country_id: @entity.country)
             @projects_type = []
             @type_project.each{|project| @projects_type << project.project_type.id}
             @projects_type = @projects_type.uniq

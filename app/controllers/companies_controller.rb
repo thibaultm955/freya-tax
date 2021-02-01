@@ -26,17 +26,18 @@ class CompaniesController < ApplicationController
         @entities = @company.entities.order('name ASC')
     end
 
-=begin 
-    
-    # Attention, Destroy used to remove entities from company show screen
-    def destroy
-        @company = Company.find(current_user.company_id)
-        @entity = Entity.find(params[:id])
-        @entity.delete
-        redirect_to company_path(@company.id)
-    end 
-=end
+    def render_select_periodicity
+       
+        @project_type = ProjectType.find(params[:countries_project_id])
+        
+        @periodicity_to_project_type = PeriodicityToProjectType.where(project_type_id: @project_type.id)
+        @periodicities = []
+        @periodicity_to_project_type.each{|project| @periodicities << project.periodicity.id}
+        @all_periodicities = Periodicity.where(id: @periodicity_to_project_type)
+        html_string = render_to_string(partial: "select_periodicities.html.erb", locals: { periodicities: @all_periodicities})
+        render json: {html_string: html_string}
 
+    end
     private
 
     def params_company

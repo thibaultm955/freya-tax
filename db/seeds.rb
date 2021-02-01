@@ -42,8 +42,8 @@ country_projecttype_periodicity.each do |country_name, values|
         type = ProjectType.where(name: project_type)[0]
         periodicities.each do |periodicity|
             period = Periodicity.where(name: periodicity)[0]
-            if PeriodictyToProjectType.where(country_id: country.id, project_type_id: type.id, periodicity_id: period.id) == []
-                periodicty_to_project_type = PeriodictyToProjectType.new()
+            if PeriodicityToProjectType.where(country_id: country.id, project_type_id: type.id, periodicity_id: period.id) == []
+                periodicty_to_project_type = PeriodicityToProjectType.new()
                 periodicty_to_project_type.project_type = type
                 periodicty_to_project_type.periodicity = period
                 periodicty_to_project_type.country = country
@@ -52,3 +52,6 @@ country_projecttype_periodicity.each do |country_name, values|
         end
     end
 end
+
+due_date = DueDate.new(begin_date: '2021-02-01', end_date: '2021-02-28', periodicity_to_project_type_id: '1', due_date: '2021-03-20')
+due_date.save!

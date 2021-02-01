@@ -1,7 +1,7 @@
 class ProjectTypesController < ApplicationController
     def render_select_periodicity
        
-        @project_type = ProjectType.find(params[:project_id])
+        @project_type = ProjectType.find(params[:project_type_id])
         
         @periodicity_to_project_type = PeriodicityToProjectType.where(project_type_id: @project_type.id)
         @periodicities = []

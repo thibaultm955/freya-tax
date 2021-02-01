@@ -8,8 +8,10 @@
       <th scope="col">Entity Name</th>
       <th scope="col">Jurisdiction</th>
       <th scope="col">Project Type</th>
+      <th scope="col">Periodicity</th>
       <th scope="col">Start Date</th>
       <th scope="col">End Date</th>
+      <th scope="col">Due Date</th>
       <th scope="col">Action</th>
     </tr>
   </thead>
@@ -18,10 +20,12 @@
     <tr>
       <th scope="row"><%=i%></th>
       <td><%=company_return.entity.name%></td>
-      <td><%=company_return.entity.jurisdiction%></td>
-      <td><%=company_return.type_of_project%></td>
-      <td><%=company_return.start_date%></td>
+      <td><%=company_return.entity.country.name%></td>
+      <td><%=company_return.periodicity_to_project_type.project_type.name%></td>
+      <td><%=company_return.periodicity_to_project_type.periodicity.name%></td>
+      <td><%=company_return.begin_date%></td>
       <td><%=company_return.end_date%></td>
+      <td><%=company_return.due_date.due_date%></td>
       <td>
         <a class="btn btn-light" href="./declarations/<%=company_return.id%>"> Open </a>
         <a class="btn btn-primary" href="./declarations/<%=company_return.id%>/edit"> Edit </a>  

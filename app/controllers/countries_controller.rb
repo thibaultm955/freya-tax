@@ -1,7 +1,7 @@
 class CountriesController < ApplicationController
     def render_select_project
        
-        @type_project = PeriodictyToProjectType.where(country_id: params[:country_id])
+        @type_project = PeriodicityToProjectType.where(country_id: params[:country_id])
         @projects_type = []
         @type_project.each{|project| @projects_type << project.project_type.id}
         @projects_type = @projects_type.uniq

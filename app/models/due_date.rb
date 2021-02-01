@@ -1,4 +1,3 @@
 class DueDate < ApplicationRecord
-  belongs_to :project
-  belongs_to :country
+  belongs_to :periodicity_to_project_type
 end

@@ -20,24 +20,28 @@ class ReturnsController < ApplicationController
     def create
         @entity = Entity.find(params[:entity])
         last_day_month = Time.days_in_month(params[:return][:end_date][0..1].to_i, params[:return][:end_date][3..4].to_i)
-        from_date = Date.parse(params[:return][:begin_date][3..4] + "." +params[:return][:begin_date][0..1] + "." + "01")
-        to_date = Date.parse(params[:return][:end_date][3..4] + "." +params[:return][:end_date][0..1] + "." + last_day_month.to_s)
-        @declaration = Return.new(begin_date: first_date, end_date: to_date, type_of_project: params_declaration[:type_of_project])
-        @declaration.entity = @entity
+        from_date = Date.parse(params[:return][:begin_date][3..4] + "." + params[:return][:begin_date][0..1] + "." + "01")
+        to_date = Date.parse(params[:return][:end_date][3..4] + "." + params[:return][:end_date][0..1] + "." + last_day_month.to_s)
+        
+        @periodicity_to_project_type = PeriodicityToProjectType.where(project_type_id: params[:project][:project_id], periodicity_id: params[:periodicity][:periodicity_id])[0]
+
+        @return = Return.new(begin_date: from_date, end_date: to_date ,  periodicity_to_project_type_id: @periodicity_to_project_type.id, country_id: params[:countries][:country_id], entity_id: params[:entity], due_date_id: 3)
+=begin 
         @due_date = DueDate.where(start_date: (params_declaration[:start_date][0..6] + "-01"), end_date: (params_declaration[:end_date][0..6] + "-"+last_day_month.to_s), type_of_project: params_declaration[:type_of_project])[0]
-        @declaration.due_date = @due_date
-        hnjhjkl
-        if @declaration.save
-            redirect_to company_declarations_path(current_user.company_id)
+        @declaration.due_date = @due_date 
+=end
+
+        if @return.save!
+            redirect_to company_path(@entity.company)
         else
             render :new
         end
     end
 
     def destroy
-        @declaration = Declaration.find(params[:id])
-        @declaration.destroy
-        redirect_to company_declarations_path(current_user.company_id)
+        @return = Return.find(params[:id])
+        @return.destroy
+        redirect_to companies_path
     end
 
     def edit
