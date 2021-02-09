@@ -1,0 +1,2 @@
+class TaxCodeOperationType < ApplicationRecord
+end

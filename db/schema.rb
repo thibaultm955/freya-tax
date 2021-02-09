@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_31_175352) do
+ActiveRecord::Schema.define(version: 2021_02_09_200345) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,11 +41,20 @@ ActiveRecord::Schema.define(version: 2021_01_31_175352) do
 
   create_table "country_tax_codes", force: :cascade do |t|
     t.string "name"
-    t.float "rate"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "country_id", null: false
+    t.bigint "tax_code_operation_locations_id", null: false
+    t.bigint "tax_code_operation_side_id", null: false
+    t.bigint "tax_code_operation_type_id", null: false
+    t.bigint "tax_code_operation_rates_id", null: false
+    t.bigint "countries_id", null: false
+    t.index ["countries_id"], name: "index_country_tax_codes_on_countries_id"
     t.index ["country_id"], name: "index_country_tax_codes_on_country_id"
+    t.index ["tax_code_operation_locations_id"], name: "index_country_tax_codes_on_tax_code_operation_locations_id"
+    t.index ["tax_code_operation_rates_id"], name: "index_country_tax_codes_on_tax_code_operation_rates_id"
+    t.index ["tax_code_operation_side_id"], name: "index_country_tax_codes_on_tax_code_operation_side_id"
+    t.index ["tax_code_operation_type_id"], name: "index_country_tax_codes_on_tax_code_operation_type_id"
   end
 
   create_table "due_dates", force: :cascade do |t|
@@ -74,11 +83,13 @@ ActiveRecord::Schema.define(version: 2021_01_31_175352) do
 
   create_table "entity_tax_codes", force: :cascade do |t|
     t.string "name"
-    t.string "tax_code"
     t.bigint "country_tax_code_id", null: false
     t.bigint "entity_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "is_reverse_charge"
+    t.boolean "is_benefit_in_kind"
+    t.boolean "is_exempt_supply_article_44"
     t.index ["country_tax_code_id"], name: "index_entity_tax_codes_on_country_tax_code_id"
     t.index ["entity_id"], name: "index_entity_tax_codes_on_entity_id"
   end
@@ -130,6 +141,30 @@ ActiveRecord::Schema.define(version: 2021_01_31_175352) do
     t.index ["periodicity_to_project_type_id"], name: "index_returns_on_periodicity_to_project_type_id"
   end
 
+  create_table "tax_code_operation_locations", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "tax_code_operation_rates", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "tax_code_operation_sides", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "tax_code_operation_types", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "transactions", force: :cascade do |t|
     t.string "invoice_number"
     t.date "invoice_date"
@@ -157,6 +192,11 @@ ActiveRecord::Schema.define(version: 2021_01_31_175352) do
   add_foreign_key "assignments", "users"
   add_foreign_key "companies", "countries"
   add_foreign_key "country_tax_codes", "countries"
+  add_foreign_key "country_tax_codes", "countries", column: "countries_id"
+  add_foreign_key "country_tax_codes", "tax_code_operation_locations", column: "tax_code_operation_locations_id"
+  add_foreign_key "country_tax_codes", "tax_code_operation_rates", column: "tax_code_operation_rates_id"
+  add_foreign_key "country_tax_codes", "tax_code_operation_sides"
+  add_foreign_key "country_tax_codes", "tax_code_operation_types"
   add_foreign_key "due_dates", "periodicity_to_project_types"
   add_foreign_key "entities", "companies"
   add_foreign_key "entities", "countries"
