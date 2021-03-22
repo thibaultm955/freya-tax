@@ -5,10 +5,17 @@ Rails.application.routes.draw do
 
   resources :users
 
+  resources :countries do
+    get "select_country", to: "entities#render_select_country"
+  end
+
+
   resources :companies do
     resources :entities
     resources :returns
-    resources :assigned_tax_codes
+    resources :entity_tax_codes do
+      get "select_country", to: "entities#render_select_country"
+    end
   end
 
   resources :returns do

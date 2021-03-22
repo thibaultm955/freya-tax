@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_09_200345) do
+ActiveRecord::Schema.define(version: 2021_03_13_100622) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,15 +44,13 @@ ActiveRecord::Schema.define(version: 2021_02_09_200345) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "country_id", null: false
-    t.bigint "tax_code_operation_locations_id", null: false
+    t.bigint "tax_code_operation_location_id", null: false
     t.bigint "tax_code_operation_side_id", null: false
     t.bigint "tax_code_operation_type_id", null: false
-    t.bigint "tax_code_operation_rates_id", null: false
-    t.bigint "countries_id", null: false
-    t.index ["countries_id"], name: "index_country_tax_codes_on_countries_id"
+    t.bigint "tax_code_operation_rate_id", null: false
     t.index ["country_id"], name: "index_country_tax_codes_on_country_id"
-    t.index ["tax_code_operation_locations_id"], name: "index_country_tax_codes_on_tax_code_operation_locations_id"
-    t.index ["tax_code_operation_rates_id"], name: "index_country_tax_codes_on_tax_code_operation_rates_id"
+    t.index ["tax_code_operation_location_id"], name: "index_country_tax_codes_on_tax_code_operation_location_id"
+    t.index ["tax_code_operation_rate_id"], name: "index_country_tax_codes_on_tax_code_operation_rate_id"
     t.index ["tax_code_operation_side_id"], name: "index_country_tax_codes_on_tax_code_operation_side_id"
     t.index ["tax_code_operation_type_id"], name: "index_country_tax_codes_on_tax_code_operation_type_id"
   end
@@ -115,15 +113,6 @@ ActiveRecord::Schema.define(version: 2021_02_09_200345) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-  end
-
-  create_table "projects", force: :cascade do |t|
-    t.string "name"
-    t.string "periodicity"
-    t.bigint "country_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["country_id"], name: "index_projects_on_country_id"
   end
 
   create_table "returns", force: :cascade do |t|
@@ -192,9 +181,8 @@ ActiveRecord::Schema.define(version: 2021_02_09_200345) do
   add_foreign_key "assignments", "users"
   add_foreign_key "companies", "countries"
   add_foreign_key "country_tax_codes", "countries"
-  add_foreign_key "country_tax_codes", "countries", column: "countries_id"
-  add_foreign_key "country_tax_codes", "tax_code_operation_locations", column: "tax_code_operation_locations_id"
-  add_foreign_key "country_tax_codes", "tax_code_operation_rates", column: "tax_code_operation_rates_id"
+  add_foreign_key "country_tax_codes", "tax_code_operation_locations"
+  add_foreign_key "country_tax_codes", "tax_code_operation_rates"
   add_foreign_key "country_tax_codes", "tax_code_operation_sides"
   add_foreign_key "country_tax_codes", "tax_code_operation_types"
   add_foreign_key "due_dates", "periodicity_to_project_types"
@@ -205,7 +193,6 @@ ActiveRecord::Schema.define(version: 2021_02_09_200345) do
   add_foreign_key "periodicity_to_project_types", "countries"
   add_foreign_key "periodicity_to_project_types", "periodicities"
   add_foreign_key "periodicity_to_project_types", "project_types"
-  add_foreign_key "projects", "countries"
   add_foreign_key "returns", "countries"
   add_foreign_key "returns", "due_dates"
   add_foreign_key "returns", "entities"

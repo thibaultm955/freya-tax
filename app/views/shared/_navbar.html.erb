@@ -15,7 +15,7 @@
         <%if !current_user.company.nil? %>
           <%= link_to "My Company", company_path(current_user.company), class: "dropdown-item" %>
           <%= link_to "My Declarations", company_returns_path(current_user.company), class: "dropdown-item"%>
-          <%= link_to "My Tax Codes", company_assigned_tax_codes_path(current_user.company), class: "dropdown-item"%>
+          <%= link_to "My Tax Codes", company_entity_tax_codes_path(current_user.company), class: "dropdown-item"%>
           <%= link_to "My Dashboard", "#", class: "dropdown-item"%>
           
                 

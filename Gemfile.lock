@@ -238,6 +238,7 @@ DEPENDENCIES
   capybara (>= 2.15)
   devise
   dotenv-rails
+  execjs
   font-awesome-sass
   jbuilder (~> 2.7)
   listen (~> 3.2)
@@ -261,4 +262,4 @@ RUBY VERSION
    ruby 2.6.6p146
 
 BUNDLED WITH
-   2.1.4
+   2.2.14

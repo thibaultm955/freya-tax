@@ -25,7 +25,9 @@ class ReturnsController < ApplicationController
         
         @periodicity_to_project_type = PeriodicityToProjectType.where(project_type_id: params[:project][:project_id], periodicity_id: params[:periodicity][:periodicity_id])[0]
 
-        @return = Return.new(begin_date: from_date, end_date: to_date ,  periodicity_to_project_type_id: @periodicity_to_project_type.id, country_id: params[:countries][:country_id], entity_id: params[:entity], due_date_id: 3)
+        @return = Return.new(begin_date: from_date, end_date: to_date ,  periodicity_to_project_type_id: @periodicity_to_project_type.id, country_id: params[:countries][:country_id], entity_id: params[:entity], due_date_id: @periodicity_to_project_type.due_date.id)
+
+        
 =begin 
         @due_date = DueDate.where(start_date: (params_declaration[:start_date][0..6] + "-01"), end_date: (params_declaration[:end_date][0..6] + "-"+last_day_month.to_s), type_of_project: params_declaration[:type_of_project])[0]
         @declaration.due_date = @due_date 

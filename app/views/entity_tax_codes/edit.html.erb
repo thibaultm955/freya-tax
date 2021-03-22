@@ -1,0 +1,33 @@
+<h1> Create a new Tax Code </h1>
+<div data-controller="taxCode">
+     <%= simple_form_for([@company, @entity_tax_code]) do |f| %>
+        <%= f.input :name %>
+
+
+        <%= label :side_operation, "Side Operation" %>
+        <%= select_tag :side_operation,
+        options_from_collection_for_select(@tax_code_operation_sides, "id", "name"),
+        include_blank: true,
+        class: "from-control select2" %>
+
+        <%= label :location_operation, "Location Operation" %>
+        <%= select_tag :location_operation,
+        options_from_collection_for_select(@tax_code_operation_locations, "id", "name"),
+        include_blank: true,
+        class: "from-control select2" %>
+        
+        <%= label :type_operation, "Type Operation" %>
+        <%= select_tag :type_operation,
+        options_from_collection_for_select(@tax_code_operation_types, "id", "name"),
+        include_blank: true,
+        class: "from-control select2" %>
+
+        <%= label :rate_operation, "Rate Operation" %>
+        <%= select_tag :rate_operation,
+        options_from_collection_for_select(@tax_code_operation_rates, "id", "name"),
+        include_blank: true,
+        class: "from-control select2" %>
+
+        <%= f.submit "Save", class: "btn btn-primary" %>
+    <% end %>
+</div>

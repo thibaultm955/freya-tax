@@ -54,4 +54,38 @@ country_projecttype_periodicity.each do |country_name, values|
 end
 
 due_date = DueDate.new(begin_date: '2021-02-01', end_date: '2021-02-28', periodicity_to_project_type_id: '1', due_date: '2021-03-20')
-due_date.save!
+due_date.save
+
+sides_operation = ["AP", "AR"]
+
+sides_operation.each do |sides_operation|
+    operation_side = TaxCodeOperationSide.new(name: sides_operation)
+    operation_side.save
+end
+
+locations_operation = ["Domestic", "Intra-EU", "Outside-EU", "Intra VAT Group"]
+
+locations_operation.each do |location_operation|
+    operation_location = TaxCodeOperationLocation.new(name: location_operation)
+    operation_location.save
+end
+
+types_operation = ["Capital Goods","Trade Goods & Raw Materials", "Services & Various Goods", "Goods Sold Online"]
+
+types_operation.each do |type_operation|
+    operation_type = TaxCodeOperationType.new(name: type_operation)
+    operation_type.save
+end
+
+
+rates_operation = ["Standard", "Intermediate", "Reduced", "Zero", "Exempt"]
+
+rates_operation.each do |rate_operation|
+    operation_rate = TaxCodeOperationRate.new(name: rate_operation)
+    operation_rate.save
+end
+
+country_tax_code = CountryTaxCode.new(country_id: 2, tax_code_operation_location_id: 2, tax_code_operation_side_id: 1, tax_code_operation_type_id: 4, tax_code_operation_rate_id: 1)
+country_tax_code.save
+code = CountryTaxCode.new(country_id: 2, tax_code_operation_location_id: 1, tax_code_operation_side_id: 1, tax_code_operation_type_id: 4, tax_code_operation_rate_id: 1)
+code.save

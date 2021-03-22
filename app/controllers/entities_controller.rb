@@ -66,6 +66,12 @@ class EntitiesController < ApplicationController
 
     end
 
+    def render_select_country
+        @country = Country.find(params[:country_id])
+        @entities = Entity.where(country_id: @country.id)
+        html_string = render_to_string(partial: "select_country.html.erb", locals: {countries: @entities})
+        render json: {html_string: html_string}
+    end
     
 
     private
