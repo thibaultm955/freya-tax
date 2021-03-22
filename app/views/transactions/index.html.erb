@@ -1,15 +1,6 @@
-<h1>Declaration for <%=@entity.name%> </h1>
-<ul>
-    <li><%=@return.begin_date%> - <%=@return.end_date%> - <%=@return.periodicity_to_project_type.project_type.name%></a></li>
-</ul>
+<h1>Your Transactions</h1>
 
-<a class="btn btn-primary" href="../returns/<%=@return.id%>/edit"> Edit </a>  
-<a class="btn btn-primary" href="<%=company_entity_return_transactions_path(current_user.company.id, @return.entity.id, @return.id)%>"> See all transactions </a>  
-<a class="btn btn-primary" href="<%=new_company_entity_return_transaction_path(current_user.company.id, @return.entity.id, @return.id)%>"> Add a transaction </a>  
-
-
-<p>First 10 Transactions</p>
-
+<a class="btn btn-primary" href="<%=company_entity_return_path(@company, @entity, @return)%>"> Back to Return informations </a>  
 
 
     

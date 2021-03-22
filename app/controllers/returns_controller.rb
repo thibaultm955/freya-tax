@@ -61,9 +61,9 @@ class ReturnsController < ApplicationController
     end
 
     def show
-        @declaration = Declaration.find(params[:id])
-        @entity = @declaration.entity
-        @transactions = @declaration.transactions
+        @return = Return.find(params[:id])
+        @entity = @return.entity
+        @transactions = @return.transactions
         
     end
 
