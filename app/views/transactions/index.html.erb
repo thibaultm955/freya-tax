@@ -30,9 +30,10 @@
             <td><%=transaction.net_amount%></td>
             <td><%=transaction.vat_amount%></td>
             <td>
-                 <a class="btn btn-primary" href="./<%=@return.id%>/transactions/<%=transaction.id%>/edit"> Edit </a>
-                 <a class="btn btn-danger" href="./<%=@return.id%>/transactions/<%=transaction.id%>.delete"> Delete </a>
-                
+                 <a class="btn btn-primary" href="./transactions/<%=transaction.id%>/edit"> Edit </a>
+                 <a class="btn btn-danger" href="./transactions/<%=transaction.id%>.delete"> Delete </a>
+                 <%= button_to "Delete the Transaction", { action: "destroy", id: transaction.id }, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger"  %>
+
                     
                    </td> 
         </tr>
