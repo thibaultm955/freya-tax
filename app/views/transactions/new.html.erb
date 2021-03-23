@@ -1,0 +1,23 @@
+<h1> New transaction for <%=@return.entity.name%> </h1>
+
+<%= simple_form_for([@company, @entity, @return, @transaction]) do |f| %>    
+    <%=f.input :invoice_number%>
+    <%=f.input :business_partner_name%>
+    <%=f.input :business_partner_vat_number%>
+    <%= f.input :invoice_date, 
+    as: :string ,
+    required: true,
+    autofocus: true,
+    input_html: {class: "datepicker_full"}%>
+    <%= label "Tax_Code", :tax_code_id%>
+    <%= select_tag :tax_code_id,
+        options_from_collection_for_select(@tax_codes, "id", "name"),
+        include_blank: true,
+        required: true,
+        class: "form-control select2"%>
+    <%= f.input :vat_amount, required: true%>
+    <%= f.input :net_amount, required: true%>
+    <%= f.input :total_amount, required: true%>
+    <%= f.submit "Save", class: "btn btn-primary" %>
+
+<%end%>

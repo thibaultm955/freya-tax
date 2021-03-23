@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_13_100622) do
+ActiveRecord::Schema.define(version: 2021_03_22_211116) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -157,12 +157,17 @@ ActiveRecord::Schema.define(version: 2021_03_13_100622) do
   create_table "transactions", force: :cascade do |t|
     t.string "invoice_number"
     t.date "invoice_date"
-    t.string "tax_code"
     t.float "vat_amount"
     t.float "net_amount"
     t.float "total_amount"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "return_id", null: false
+    t.bigint "entity_tax_code_id", null: false
+    t.string "business_partner_name"
+    t.string "business_partner_vat_number"
+    t.index ["entity_tax_code_id"], name: "index_transactions_on_entity_tax_code_id"
+    t.index ["return_id"], name: "index_transactions_on_return_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -197,4 +202,6 @@ ActiveRecord::Schema.define(version: 2021_03_13_100622) do
   add_foreign_key "returns", "due_dates"
   add_foreign_key "returns", "entities"
   add_foreign_key "returns", "periodicity_to_project_types"
+  add_foreign_key "transactions", "entity_tax_codes"
+  add_foreign_key "transactions", "returns"
 end

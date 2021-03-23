@@ -11,7 +11,11 @@ Rails.application.routes.draw do
 
 
   resources :companies do
-    resources :entities
+    resources :entities do
+      resources :returns do
+        resources :transactions
+      end
+    end
     resources :returns
     resources :entity_tax_codes do
       get "select_country", to: "entities#render_select_country"
