@@ -284,18 +284,79 @@ box_name = {"Box 00 - Opérations soumises à un régime particulier" =>
                 ["Belgium", "VAT", "Monthly", "Sale", "Intra-EU", "Capital Goods", "Zero", "Reporting Currency Taxable Base"] ,    
                 ["Belgium", "VAT", "Monthly", "Sale", "Intra-EU", "Commodities & Raw Materials", "Zero", "Reporting Currency Taxable Base"] ,
                 ["Belgium", "VAT", "Monthly", "Sale", "Intra-EU", "Various Goods", "Zero", "Reporting Currency Taxable Base"]
-
-                #
-                # Goods Online ???
-                #
             ],
-    "Box 47 - Autres opérations exemptées et autres opérations effectuées à l’étranger",
-    "Box 48 - Montant des notes de crédit délivrées et des corrections négatives - relatif aux opérations inscrites en grilles 44 et 46",
-    "Box 49 - Montant des notes de crédit délivrées et des corrections négatives - relatif aux autres opérations du cadre II",
-    <h2>Achats</h2>
-    "Box 81 - Montant des opérations à l’entrée compte tenu des notes de crédit reçues et autres corrections - marchandises, matières premières et matières auxiliaires ",
-    "Box 82 - Montant des opérations à l’entrée compte tenu des notes de crédit reçues et autres corrections - services et biens divers ",
-    "Box 83 - Montant des opérations à l’entrée compte tenu des notes de crédit reçues et autres corrections - biens d’investissement ",
+            "Box 47 - Autres opérations exemptées et autres opérations effectuées à l’étranger" => 
+            [
+                ["Belgium", "VAT", "Monthly", "Sale", "Intra-EU", "Goods Sold Online", "Zero", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Sale", "Outside-EU", "Capital Goods", "Zero", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Sale", "Outside-EU", "Commodities & Raw Materials", "Zero", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Sale", "Outside-EU", "Services", "Zero", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Sale", "Outside-EU", "Goods Sold Online", "Zero", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Sale", "Outside-EU", "Various Goods", "Zero", "Reporting Currency Taxable Base"]
+            ],
+            # "Box 48 - Montant des notes de crédit délivrées et des corrections négatives - relatif aux opérations inscrites en grilles 44 et 46",
+            # "Box 49 - Montant des notes de crédit délivrées et des corrections négatives - relatif aux autres opérations du cadre II",
+            # <h2>Achats</h2>
+
+# sides_operation = ["Purchase", "Sale"]
+# locations_operation = ["Domestic", "Intra-EU", "Outside-EU", "Intra VAT Group"]
+# types_operation = ["Capital Goods", "Commodities & Raw Materials", "Services", "Goods Sold Online", "Various Goods"]
+# rates_operation = ["Standard", "Intermediate", "Reduced", "Zero", "Exempt"]
+
+            "Box 81 - Montant des opérations à l’entrée compte tenu des notes de crédit reçues et autres corrections - marchandises, matières premières et matières auxiliaires" => 
+            [
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Commodities & Raw Materials", "Standard", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Commodities & Raw Materials", "Intermediate", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Commodities & Raw Materials", "Reduced", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Commodities & Raw Materials", "Zero", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Commodities & Raw Materials", "Exempt", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Intra-EU", "Commodities & Raw Materials", "Zero", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Intra-EU", "Commodities & Raw Materials", "Exempt", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Outside-EU", "Commodities & Raw Materials", "Zero", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Outside-EU", "Commodities & Raw Materials", "Exempt", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Intra VAT Group", "Commodities & Raw Materials", "Zero", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Intra VAT Group", "Commodities & Raw Materials", "Exempt", "Reporting Currency Taxable Base"],
+            ],
+            "Box 82 - Montant des opérations à l’entrée compte tenu des notes de crédit reçues et autres corrections - services et biens divers" =>
+            [
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Services", "Standard", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Services", "Intermediate", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Services", "Reduced", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Services", "Zero", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Services", "Exempt", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Various Goods", "Standard", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Various Goods", "Intermediate", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Various Goods", "Reduced", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Various Goods", "Zero", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Various Goods", "Exempt", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Intra-EU", "Services", "Reduced", "Zero Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Intra-EU", "Various Goods", "Zero", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Intra-EU", "Services", "Reduced", "Exempt Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Intra-EU", "Various Goods", "Exempt", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Outside-EU", "Services", "Reduced", "Zero Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Outside-EU", "Various Goods", "Zero", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Outside-EU", "Services", "Reduced", "Exempt Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Outside-EU", "Various Goods", "Exempt", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Intra VAT Group", "Services", "Reduced", "Zero Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Intra VAT Group", "Various Goods", "Zero", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Intra VAT Group", "Services", "Reduced", "Exempt Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Intra VAT Group", "Various Goods", "Exempt", "Reporting Currency Taxable Base"]
+
+            ],
+            "Box 83 - Montant des opérations à l’entrée compte tenu des notes de crédit reçues et autres corrections - biens d’investissement" => 
+            [
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Capital Goods", "Standard", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Capital Goods", "Intermediate", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Capital Goods", "Reduced", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Capital Goods", "Zero", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Domestic", "Capital Goods", "Exempt", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Intra-EU", "Capital Goods", "Zero", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Intra-EU", "Capital Goods", "Exempt", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Outside-EU", "Capital Goods", "Zero", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Outside-EU", "Capital Goods", "Exempt", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Intra VAT Group", "Capital Goods", "Zero", "Reporting Currency Taxable Base"],
+                ["Belgium", "VAT", "Monthly", "Purchase", "Intra VAT Group", "Capital Goods", "Exempt", "Reporting Currency Taxable Base"]
+            ],
     "Box 84 - Montant des notes de crédit reçues et des corrections négatives - relatif aux opérations inscrites en grilles 86 et 88 ",
     "Box 85 - Montant des notes de crédit reçues et des corrections négatives - relatif aux autres opérations du cadre III ",
     "Box 86 - Acquisitions intracommunautaires effectuées en Belgique et ventes ABC ",
