@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_19_184006) do
+ActiveRecord::Schema.define(version: 2021_04_26_155407) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -156,12 +156,12 @@ ActiveRecord::Schema.define(version: 2021_04_19_184006) do
 
   create_table "return_boxes", force: :cascade do |t|
     t.float "amount"
-    t.bigint "box_informations_id", null: false
-    t.bigint "returns_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["box_informations_id"], name: "index_return_boxes_on_box_informations_id"
-    t.index ["returns_id"], name: "index_return_boxes_on_returns_id"
+    t.bigint "box_name_id", null: false
+    t.bigint "return_id", null: false
+    t.index ["box_name_id"], name: "index_return_boxes_on_box_name_id"
+    t.index ["return_id"], name: "index_return_boxes_on_return_id"
   end
 
   create_table "returns", force: :cascade do |t|
@@ -255,8 +255,8 @@ ActiveRecord::Schema.define(version: 2021_04_19_184006) do
   add_foreign_key "periodicity_to_project_types", "countries"
   add_foreign_key "periodicity_to_project_types", "periodicities"
   add_foreign_key "periodicity_to_project_types", "project_types"
-  add_foreign_key "return_boxes", "box_informations", column: "box_informations_id"
-  add_foreign_key "return_boxes", "returns", column: "returns_id"
+  add_foreign_key "return_boxes", "box_names"
+  add_foreign_key "return_boxes", "returns"
   add_foreign_key "returns", "countries"
   add_foreign_key "returns", "due_dates"
   add_foreign_key "returns", "entities"

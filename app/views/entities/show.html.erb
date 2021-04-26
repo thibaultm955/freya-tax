@@ -12,7 +12,7 @@
 
 <ul>
     <%@declarations.each do |declaration|%>
-        <li><a href="./<%=declaration.entity.id%>/declarations/<%=declaration.id%>"> <%=declaration.start_date%> - <%=declaration.end_date%> - <%=declaration.type_of_project%></a></li>
+        <li><a href="./<%=declaration.entity.id%>/returns/<%=declaration.id%>"> <%=declaration.begin_date%> - <%=declaration.end_date%> - <%=declaration.periodicity_to_project_type.project_type.name%></a></li>
     <%end%>
 </ul>
 

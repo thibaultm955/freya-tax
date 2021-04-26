@@ -7,51 +7,27 @@
 <a class="btn btn-primary" href="<%=company_entity_return_transactions_path(current_user.company.id, @return.entity.id, @return.id)%>"> See all transactions </a>  
 <a class="btn btn-primary" href="<%=new_company_entity_return_transaction_path(current_user.company.id, @return.entity.id, @return.id)%>"> Add a transaction </a>  
 
-<%if @return.country_id == 2%>
-<ul>
-  <h2>Ventes</h2>
-  <li>Box 00 - Opérations soumises à un régime particulier </li>
-  <li>Box 01 - Opérations pour lesquelles la TVA est due par le déclarant - 6% </li>
-  <li>Box 02 - Opérations pour lesquelles la TVA est due par le déclarant - 12%  </li>
-  <li>Box 02 - Opérations pour lesquelles la TVA est due par le déclarant - 21%  </li>
-  <li>Box 44 - Services pour lesquels la TVA étrangère est due par le cocontractant  </li>
-  <li>Box 45 - Opérations pour lesquelles la TVA est due par le cocontractant  </li>
-  <li>Box 46 - Livraisons intracommunautaires exemptées effectuées en Belgique et ventes ABC</li>
-  <li>Box 47 - Autres opérations exemptées et autres opérations effectuées à l’étranger</li>
-  <li>Box 48 - Montant des notes de crédit délivrées et des corrections négatives - relatif aux opérations inscrites en grilles 44 et 46</li>
-  <li>Box 49 - Montant des notes de crédit délivrées et des corrections négatives - relatif aux autres opérations du cadre II</li>
-  <h2>Achats</h2>
-  <li>Box 81 - Montant des opérations à l’entrée compte tenu des notes de crédit reçues et autres corrections - marchandises, matières premières et matières auxiliaires </li>
-  <li>Box 82 - Montant des opérations à l’entrée compte tenu des notes de crédit reçues et autres corrections - services et biens divers </li>
-  <li>Box 83 - Montant des opérations à l’entrée compte tenu des notes de crédit reçues et autres corrections - biens d’investissement </li>
-  <li>Box 84 - Montant des notes de crédit reçues et des corrections négatives - relatif aux opérations inscrites en grilles 86 et 88 </li>
-  <li>Box 85 - Montant des notes de crédit reçues et des corrections négatives - relatif aux autres opérations du cadre III </li>
-  <li>Box 86 - Acquisitions intracommunautaires effectuées en Belgique et ventes ABC </li>
-  <li>Box 87 - Autres opérations à l’entrée pour lesquelles la TVA est due par le déclarant </li>
-  <li>Box 88 - Services intracommunautaires avec report de perception </li>
-  <h2>TVA</h2>
-  <li>Box 54 - TVA relative aux opérations déclarées en grilles 01, 02 et 03 </li>
-  <li>Box 55-  TVA relative aux opérations déclarées en grilles 86 et 88 </li>
-  <li>Box 56 - TVA relative aux opérations déclarées en grille 87, à l’exception des importations avec report de perception</li>
-  <li>Box 57 - TVA relative aux importations avec report de perception </li>
-  <li>Box 61 - Diverses régularisations TVA en faveur de l’Etat </li>
-  <li>Box 63 - TVA à reverser mentionnée sur les notes de crédit reçues </li>
-  <li>Box 65 - A ne pas compléter</li>
-  <li>Box XX - Total des grilles 54, 55, 56, 57, 61 et 63</li>
-  <li>Box 59 - TVA déductible </li>
-  <li>Box 62 - Diverses régularisations TVA en faveur du déclarant  </li>
-  <li>Box 64 - TVA à récupérer mentionnée sur les notes de crédit délivrées</li>
-  <li>Box 66 - A ne pas compléter</li>
-  <li>Box YY - Total des grilles 59, 62 et 64</li>
-  <h2>Sommes</h2>
-  <li>Box 71 - Taxe due à l’Etat</li>
-  <li>Box 72 - Sommes dues par l’Etat  </li>
-  <li>Box 91 - Concerne uniquement la déclaration mensuelle de décembre TVA réellement due pour la période du 1er au 20 décembre  </li>
+<table class="table">
 
-
-<%else%>
-
-<%end%>
+  <tbody>
+  <%i = 1%>
+    <% @return_boxes.each do |return_box| %>
+        <tr>
+          <% if return_box.box_name.name[0..2] == "Box" %>
+            <td><%=return_box.box_name.name%></td>
+            <td><%=return_box.amount%></td>
+          <% else %>
+            <td><%=return_box.box_name.name%></td>
+            <td></td>
+          <% end%>
+            <td>
+                 <a class="btn btn-primary" href="./return_boxes/<%=return_box.id%>/edit"> Manually Update the Amount </a>   
+            </td> 
+        </tr>
+        <%i += 1%>
+   <%end%>
+  </tbody>
+</table>
 
 </br>
 </br>

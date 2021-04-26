@@ -1,4 +1,4 @@
 class ReturnBox < ApplicationRecord
-  belongs_to :box_informations
-  belongs_to :returns
+  belongs_to :box_name
+  belongs_to :return
 end
