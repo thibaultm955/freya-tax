@@ -21,6 +21,24 @@ class TransactionsController < ApplicationController
         @transaction.return = @return
         @tax_code = EntityTaxCode.find(params_tax_code[:tax_code_id])
         @transaction.entity_tax_code = @tax_code
+
+        box_informations = BoxInformation.where(tax_code_operation_location_id: @tax_code.country_tax_code.tax_code_operation_location_id, tax_code_operation_rate_id: @tax_code.country_tax_code.tax_code_operation_rate_id, tax_code_operation_side_id: @tax_code.country_tax_code.tax_code_operation_side_id, tax_code_operation_type_id: @tax_code.country_tax_code.tax_code_operation_type_id )
+
+        box_informations.each do |box_information|
+            return_box = ReturnBox.where(box_name_id: box_information.box_name_id)[0]
+            amount = box_information.amount.name
+            if amount == "Reporting Currency Taxable Basis"
+                updated_amount = return_box.amount + params_new_transaction[:net_amount].to_f
+                return_box = return_box.update(amount: updated_amount)
+            elsif amount == "Reporting Currency VAT Amount"
+                updated_amount = return_box.amount + params_new_transaction[:vat_amount].to_f
+                return_box = return_box.update(amount: updated_amount)
+            elsif amount == "Reporting Currency Gross Amount"
+                updated_amount = return_box.amount + params_new_transaction[:total_amount].to_f
+                return_box = return_box.update(amount: updated_amount)
+            end
+        end
+        
         if @transaction.save!
             redirect_to company_entity_return_transactions_path(current_user.company.id, @return.entity.id, @return.id)
         else 
