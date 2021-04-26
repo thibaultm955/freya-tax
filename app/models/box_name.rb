@@ -1,0 +1,2 @@
+class BoxName < ApplicationRecord
+end

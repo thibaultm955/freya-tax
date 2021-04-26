@@ -1,6 +1,7 @@
 <h1>Your Transactions</h1>
 
 <a class="btn btn-primary" href="<%=company_entity_return_path(@company, @entity, @return)%>"> Back to Return informations </a>  
+<a class="btn btn-primary" href="<%=new_company_entity_return_transaction_path(current_user.company.id, @return.entity.id, @return.id)%>"> Add a transaction </a>  
 
 
     
@@ -31,7 +32,6 @@
             <td><%=transaction.vat_amount%></td>
             <td>
                  <a class="btn btn-primary" href="./transactions/<%=transaction.id%>/edit"> Edit </a>
-                 <a class="btn btn-danger" href="./transactions/<%=transaction.id%>.delete"> Delete </a>
                  <%= button_to "Delete the Transaction", { action: "destroy", id: transaction.id }, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger"  %>
 
                     

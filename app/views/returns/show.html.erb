@@ -7,12 +7,33 @@
 <a class="btn btn-primary" href="<%=company_entity_return_transactions_path(current_user.company.id, @return.entity.id, @return.id)%>"> See all transactions </a>  
 <a class="btn btn-primary" href="<%=new_company_entity_return_transaction_path(current_user.company.id, @return.entity.id, @return.id)%>"> Add a transaction </a>  
 
+<table class="table">
 
-<p>First 10 Transactions</p>
+  <tbody>
+  <%i = 1%>
+    <% @return_boxes.each do |return_box| %>
+        <tr>
+          <% if return_box.box_name.name[0..2] == "Box" %>
+            <td><%=return_box.box_name.name%></td>
+            <td><%=return_box.amount%></td>
+          <% else %>
+            <td><%=return_box.box_name.name%></td>
+            <td></td>
+          <% end%>
+            <td>
+                 <a class="btn btn-primary" href="./return_boxes/<%=return_box.id%>/edit"> Manually Update the Amount </a>   
+            </td> 
+        </tr>
+        <%i += 1%>
+   <%end%>
+  </tbody>
+</table>
 
+</br>
+</br>
 
-
-    
+<h1>First 10 Transactions</h2>
+</br>
 
 <table class="table">
   <thead>
