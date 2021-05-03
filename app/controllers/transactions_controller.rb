@@ -7,6 +7,37 @@ class TransactionsController < ApplicationController
         @entity = @return.entity
     end
 
+    def show
+
+        # if set to destroy, remove the amount from the return box
+        if params[:format] == "destroy"
+            @return = Return.find(params_transaction[:return_id])
+            @transaction = Transaction.find(params_transaction[:id])
+            @periodicity_to_project_type = @return.periodicity_to_project_type
+            box_names = BoxName.where(periodicity_to_project_type_id: @periodicity_to_project_type.id, language_id: 2)
+            @tax_code = @transaction.entity_tax_code
+            box_informations = BoxInformation.where(tax_code_operation_location_id: @tax_code.country_tax_code.tax_code_operation_location_id, tax_code_operation_rate_id: @tax_code.country_tax_code.tax_code_operation_rate_id, tax_code_operation_side_id: @tax_code.country_tax_code.tax_code_operation_side_id, tax_code_operation_type_id: @tax_code.country_tax_code.tax_code_operation_type_id )
+
+            box_informations.each do |box_information|
+                return_box = ReturnBox.where(box_name_id: box_information.box_name_id)[0]
+                amount = box_information.amount.name
+                if amount == "Reporting Currency Taxable Basis"
+                    updated_amount = return_box.amount - @transaction.net_amount
+                    return_box = return_box.update(amount: updated_amount)
+                elsif amount == "Reporting Currency VAT Amount"
+                    updated_amount = return_box.amount - @transaction.vat_amount
+                    return_box = return_box.update(amount: updated_amount)
+                elsif amount == "Reporting Currency Gross Amount"
+                    updated_amount = return_box.amount - @transaction.total_amount
+                    return_box = return_box.update(amount: updated_amount)
+                end
+            end
+
+            @transaction.destroy
+            redirect_to company_entity_return_transactions_path(current_user.company.id, @return.entity.id, @return.id)
+        end
+    end
+
     def new
         @return = Return.find(params[:return_id])
         @company = current_user.company
@@ -58,6 +89,28 @@ class TransactionsController < ApplicationController
     def update
         @return = Return.find(params_transaction[:return_id])
         @transaction = Transaction.find(params_transaction[:id])
+
+        # Remove previous amount from return
+        @periodicity_to_project_type = @return.periodicity_to_project_type
+        box_names = BoxName.where(periodicity_to_project_type_id: @periodicity_to_project_type.id, language_id: 2)
+        @tax_code = @transaction.entity_tax_code
+        box_informations = BoxInformation.where(tax_code_operation_location_id: @tax_code.country_tax_code.tax_code_operation_location_id, tax_code_operation_rate_id: @tax_code.country_tax_code.tax_code_operation_rate_id, tax_code_operation_side_id: @tax_code.country_tax_code.tax_code_operation_side_id, tax_code_operation_type_id: @tax_code.country_tax_code.tax_code_operation_type_id )
+
+        box_informations.each do |box_information|
+            return_box = ReturnBox.where(box_name_id: box_information.box_name_id)[0]
+            amount = box_information.amount.name
+            if amount == "Reporting Currency Taxable Basis"
+                updated_amount = return_box.amount - @transaction.net_amount
+                return_box = return_box.update(amount: updated_amount)
+            elsif amount == "Reporting Currency VAT Amount"
+                updated_amount = return_box.amount - @transaction.vat_amount
+                return_box = return_box.update(amount: updated_amount)
+            elsif amount == "Reporting Currency Gross Amount"
+                updated_amount = return_box.amount - @transaction.total_amount
+                return_box = return_box.update(amount: updated_amount)
+            end
+        end
+
         # if user didn't update the tax code
         if params_tax_code[:tax_code_id].empty?
             @transaction = @transaction.update(invoice_number: params_new_transaction[:invoice_number], invoice_date: params_new_transaction[:invoice_date], vat_amount: params_new_transaction[:vat_amount], net_amount: params_new_transaction[:net_amount], total_amount: params_new_transaction[:total_amount], business_partner_name: params_new_transaction[:business_partner_name], business_partner_vat_number: params_new_transaction[:business_partner_vat_number])
@@ -65,6 +118,28 @@ class TransactionsController < ApplicationController
             @tax_code = EntityTaxCode.find(params_tax_code[:tax_code_id])
             @transaction = @transaction.update(invoice_number: params_new_transaction[:invoice_number], invoice_date: params_new_transaction[:invoice_date], vat_amount: params_new_transaction[:vat_amount], net_amount: params_new_transaction[:net_amount], total_amount: params_new_transaction[:total_amount], business_partner_name: params_new_transaction[:business_partner_name], business_partner_vat_number: params_new_transaction[:business_partner_vat_number], entity_tax_code_id: @tax_code.id)
         end
+
+        @transaction = Transaction.find(params_transaction[:id])
+        @periodicity_to_project_type = @return.periodicity_to_project_type
+        box_names = BoxName.where(periodicity_to_project_type_id: @periodicity_to_project_type.id, language_id: 2)
+        @tax_code = @transaction.entity_tax_code
+        box_informations = BoxInformation.where(tax_code_operation_location_id: @tax_code.country_tax_code.tax_code_operation_location_id, tax_code_operation_rate_id: @tax_code.country_tax_code.tax_code_operation_rate_id, tax_code_operation_side_id: @tax_code.country_tax_code.tax_code_operation_side_id, tax_code_operation_type_id: @tax_code.country_tax_code.tax_code_operation_type_id )
+
+        box_informations.each do |box_information|
+            return_box = ReturnBox.where(box_name_id: box_information.box_name_id)[0]
+            amount = box_information.amount.name
+            if amount == "Reporting Currency Taxable Basis"
+                updated_amount = return_box.amount + @transaction.net_amount
+                return_box = return_box.update(amount: updated_amount)
+            elsif amount == "Reporting Currency VAT Amount"
+                updated_amount = return_box.amount + @transaction.vat_amount
+                return_box = return_box.update(amount: updated_amount)
+            elsif amount == "Reporting Currency Gross Amount"
+                updated_amount = return_box.amount + @transaction.total_amount
+                return_box = return_box.update(amount: updated_amount)
+            end
+        end
+
         redirect_to company_entity_return_transactions_path(current_user.company.id, @return.entity.id, @return.id)
     end
 
@@ -83,7 +158,11 @@ class TransactionsController < ApplicationController
     end
 
     def params_new_transaction
-        params.require(:transaction).permit(:invoice_number, :invoice_date, :vat_amount, :net_amount, :total_amount, :business_partner_name, :business_partner_vat_number)
+        if params[:transaction].nil?
+            
+        else
+            params.require(:transaction).permit(:invoice_number, :invoice_date, :vat_amount, :net_amount, :total_amount, :business_partner_name, :business_partner_vat_number)
+        end
     end
 
     def params_tax_code

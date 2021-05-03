@@ -11,17 +11,17 @@
 
   <tbody>
   <%i = 1%>
-    <% @return_boxes.each do |return_box| %>
+    <% @box_names.each do |box_name| %>
         <tr>
-          <% if return_box.box_name.name[0..2] == "Box" %>
-            <td><%=return_box.box_name.name%></td>
-            <td><%=return_box.amount%></td>
+          <% if box_name.name[0..2] == "Box" %>
+            <td><%=box_name.name%></td>
+            <td><%= ReturnBox.where(box_name_id: box_name.id, return_id: @return.id)[0].amount%></td>
           <% else %>
-            <td><%=return_box.box_name.name%></td>
+            <td><%=box_name.name%></td>
             <td></td>
           <% end%>
             <td>
-                 <a class="btn btn-primary" href="./return_boxes/<%=return_box.id%>/edit"> Manually Update the Amount </a>   
+                 <a class="btn btn-primary" href="./return_boxes/<%=ReturnBox.where(box_name_id: box_name.id, return_id: @return.id)[0].id%>/edit"> Manually Update the Amount </a>   
             </td> 
         </tr>
         <%i += 1%>
@@ -60,8 +60,9 @@
             <td><%=transaction.net_amount%></td>
             <td><%=transaction.vat_amount%></td>
             <td>
-                 <a class="btn btn-primary" href="./transactions/<%=transaction.id%>/edit"> Edit </a>
-                 <a class="btn btn-danger" href="./transactions/<%=transaction.id%>.delete"> Delete </a>
+                 <a class="btn btn-primary" href="./<%= @return.id%>/transactions/<%=transaction.id%>/edit"> Edit </a>
+                 <%= button_to "Delete the Transaction", { action: "destroy", id: (transaction.id.to_s + @return.id.to_s).to_i}, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger"  %>
+                 <a class="btn btn-danger" href="./<%= @return.id%>/transactions/<%=transaction.id%>.destroy"> Delete </a>
                 
                     
                    </td> 
