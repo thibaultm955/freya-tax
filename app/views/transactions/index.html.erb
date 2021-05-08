@@ -33,6 +33,7 @@
             <td>
                  <a class="btn btn-primary" href="./transactions/<%=transaction.id%>/edit"> Edit </a>
                  <%= button_to "Delete the Transaction", { action: "destroy", id: transaction.id }, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger"  %>
+                 <a class="btn btn-danger" href="./<%= @return.id%>/transactions/<%=transaction.id%>.destroy"> Delete </a>
 
                     
                    </td> 

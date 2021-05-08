@@ -72,6 +72,7 @@ class ReturnsController < ApplicationController
 
     def show
         @return = Return.find(params[:id])
+        @box_names = BoxName.where(periodicity_to_project_type_id: @return.periodicity_to_project_type, language_id: 2  )
         @return_boxes = ReturnBox.where(return_id: @return.id)
         @entity = @return.entity
         @transactions = @return.transactions
