@@ -6,6 +6,7 @@
 <a class="btn btn-primary" href="../returns/<%=@return.id%>/edit"> Edit </a>  
 <a class="btn btn-primary" href="<%=company_entity_return_transactions_path(current_user.company.id, @return.entity.id, @return.id)%>"> See all transactions </a>  
 <a class="btn btn-primary" href="<%=new_company_entity_return_transaction_path(current_user.company.id, @return.entity.id, @return.id)%>"> Add a transaction </a>  
+<a class="btn btn-primary" href="./<%=@return.id%>/transactions/new.file_upload"> Upload a file </a>  
 
 <table class="table">
 
