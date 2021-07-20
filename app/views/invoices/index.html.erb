@@ -1,0 +1,43 @@
+<h1> Your Invoices </h1>
+
+<%= link_to "Create Invoice", new_company_invoice_path(current_user.company) %>
+
+<%i=1%>
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Entity Name</th>
+      <th scope="col">Jurisdiction</th>
+      <th scope="col">Tax Code Name</th>
+      <th scope="col">Side</th>
+      <th scope="col">Location</th>
+      <th scope="col">Type</th>
+      <th scope="col">Rate</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+  <%@invoices.each do |invoice| %>
+    <tr>
+      <th scope="row"><%=i%></th>
+      <td><%=invoice.entity.name%></td>
+      <td><%=invoice.entity.country.name%></td>
+      <td><%=invoice.name%></td>
+      <td><%=invoice.invoice_date%></td>
+      <td><%=invoice.invoice_number%></td>
+      <td><%=invoice.payment_date%></td>
+      <td><%=invoice.customer.name%></td>
+      <td>
+        <a class="btn btn-light" href="./invoice/<%=invoice.id%>"> Open </a>
+        <a class="btn btn-primary" href="./invoice/<%=invoice.id%>/edit"> Edit </a>  
+        <%= button_to "Delete the Tax Code", { action: "destroy", id: invoice.id }, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger"  %>
+      </td> 
+    </tr>
+    <%i += 1%>
+    <%end%>
+  </tbody>
+</table>
+
+
