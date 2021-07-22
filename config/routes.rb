@@ -22,7 +22,9 @@ Rails.application.routes.draw do
       get "select_country", to: "entities#render_select_country"
     end
 
-    resources :invoices    
+    resources :invoices do
+      get "add_item", to: "invoices#render_add_item"
+    end
     resources :customers
   end
 

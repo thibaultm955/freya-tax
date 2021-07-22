@@ -1,5 +1,5 @@
 <h1> Create a new Invoice </h1>
-<div data-controller="taxCode">
+<div data-controller="invoice">
      <%= simple_form_for([@company, @invoice]) do |f| %>
         <%= f.input :invoice_name %>
 
@@ -25,8 +25,41 @@
         options_from_collection_for_select(@customers, "id", "name"),
         include_blank: true %>
 
+        <button data-action="invoice#greet2">
+        Add Item
+        </button>
+<br/>
+
+        <%= label :test, ""%>
+        <div data-taxCode-target="test">
+        </div>
+        <ul>
+        <%= f.fields_for :transactions do |transactions_form| %>
+        <li>
+            <%= transactions_form.label :vat_amount %>
+            <%= transactions_form.text_field :vat_amount %>
+    
+            <%= transactions_form.label :net_amount %>
+            <%= transactions_form.text_field :net_amount %>
+        </li>
+        <% end %>
+    </ul>
+
+    <%= submit_tag "Add address", :type => 'button', :id => 'addAddress' %> 
+  <br>
+  <div id="addressHeader" style="display:none">Address information:  </div>
+  <br>
+  <ul id="myList">
+  </ul>
+ 
+        <%=label :cust, "Cust"%>
+        <%= submit_tag :cust, :type => "button", data: { action: "click->invoice#greet" }%>
+        <% submit_tag "Add address", :type =>  "button", :id => "addAddress",               :onclick => 'addAddressField()'%> 
+
         <%= f.submit "Save", class: "btn btn-primary" %>
     <% end %>
+
 </div>
+<% submit_tag "Add address", :type =>  "button", :id => "addAddress",               :onclick => 'addAddressField()'%> 
 
 <%= link_to "Create Customer", new_company_customer_path(current_user.company) %>
