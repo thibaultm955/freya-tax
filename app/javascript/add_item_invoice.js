@@ -1,5 +1,3 @@
-console.log("Hello invoice.js");
-
 document.getElementById('addAddress').addEventListener("click",function() 
 {
       //create Date object
@@ -63,3 +61,16 @@ document.getElementById('addAddress').addEventListener("click",function()
       $("#addressHeader").show(); 
   }
 ) ;
+
+window.onload = function() {
+      var reloading = sessionStorage.getItem("reloading");
+      if (reloading) {
+          sessionStorage.removeItem("reloading");
+          myFunction();
+      }
+  }
+  function reloadP() {
+      sessionStorage.setItem("reloading", "true");
+      document.location.reload();
+  }
+  
