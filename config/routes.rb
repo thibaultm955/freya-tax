@@ -11,6 +11,8 @@ Rails.application.routes.draw do
 
 
   resources :companies do
+    get '/invoices/add_item' , to: 'invoices#render_add_item'
+    get '/invoices/test', to: "invoices#test"
     resources :entities do
       resources :returns do
         resources :transactions
@@ -23,7 +25,9 @@ Rails.application.routes.draw do
     end
 
     resources :invoices do
+      get 'add_item', action: :index, controller: 'users'
       get "add_item", to: "invoices#render_add_item"
+      get "greet", to: "invoices#test"
     end
     resources :customers
   end

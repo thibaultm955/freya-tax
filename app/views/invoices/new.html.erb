@@ -4,7 +4,7 @@
         <%= f.input :invoice_name %>
 
         <%= label :entity, "Entity" %>
-        <%= select_tag :country,
+        <%= select_tag :entity,
         options_from_collection_for_select(@entities, "id", "name"),
         include_blank: true %>
 
@@ -50,8 +50,29 @@
   <div id="addressHeader" style="display:none">Address information:  </div>
   <br>
   <ul id="myList">
+  
+  <li>
+  <div data-invoice-target="other" >
+  </div>
+  </li>
   </ul>
+
+
+  <button data-action="click->invoice#greet">Greet</button>
+      <input class="btn btn-primary" type="button" value="add_item" data-action="click->invoice#add_item">
+
+      
  
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+<%= select_tag :entity,
+                            options_from_collection_for_select(@entities, "id", "name"),
+                            include_blank: true,
+                            data: { action: "invoice#entity" },
+                            class: "form-control select2" %>
         <%=label :cust, "Cust"%>
         <%= submit_tag :cust, :type => "button", data: { action: "click->invoice#greet" }%>
         <% submit_tag "Add address", :type =>  "button", :id => "addAddress",               :onclick => 'addAddressField()'%> 
