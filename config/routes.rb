@@ -12,7 +12,7 @@ Rails.application.routes.draw do
 
   resources :companies do
     get '/invoices/add_item' , to: 'invoices#render_add_item'
-    get '/invoices/test', to: "invoices#test"
+    get '/invoices/add_item/:entity_id', to: "invoices#test"
     resources :entities do
       resources :returns do
         resources :transactions

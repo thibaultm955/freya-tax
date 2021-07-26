@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_21_151140) do
+ActiveRecord::Schema.define(version: 2021_07_26_191315) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -250,10 +250,9 @@ ActiveRecord::Schema.define(version: 2021_07_21_151140) do
     t.string "business_partner_name"
     t.string "business_partner_vat_number"
     t.bigint "invoice_id"
-    t.bigint "item_id"
+    t.string "comment"
     t.index ["entity_tax_code_id"], name: "index_transactions_on_entity_tax_code_id"
     t.index ["invoice_id"], name: "index_transactions_on_invoice_id"
-    t.index ["item_id"], name: "index_transactions_on_item_id"
     t.index ["return_id"], name: "index_transactions_on_return_id"
   end
 
@@ -304,6 +303,5 @@ ActiveRecord::Schema.define(version: 2021_07_21_151140) do
   add_foreign_key "returns", "periodicity_to_project_types"
   add_foreign_key "transactions", "entity_tax_codes"
   add_foreign_key "transactions", "invoices"
-  add_foreign_key "transactions", "items"
   add_foreign_key "transactions", "returns"
 end

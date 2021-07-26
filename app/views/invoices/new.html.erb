@@ -20,6 +20,12 @@
         autofocus: true,
         input_html: {class: "datepicker_full"}%>
 
+        <%= f.input :invoice_number,
+        as: :string,
+        required: true,
+        autofocus: true,
+        input_html: { class: "datepicker_full"} %>
+
         <%= label :customer, "Customer" %>
         <%= select_tag :customer,
         options_from_collection_for_select(@customers, "id", "name"),
@@ -30,25 +36,7 @@
         </button>
 <br/>
 
-        <%= label :test, ""%>
-        <div data-taxCode-target="test">
-        </div>
-        <ul>
-        <%= f.fields_for :transactions do |transactions_form| %>
-        <li>
-            <%= transactions_form.label :vat_amount %>
-            <%= transactions_form.text_field :vat_amount %>
-    
-            <%= transactions_form.label :net_amount %>
-            <%= transactions_form.text_field :net_amount %>
-        </li>
-        <% end %>
-    </ul>
 
-    <%= submit_tag "Add address", :type => 'button', :id => 'addAddress' %> 
-  <br>
-  <div id="addressHeader" style="display:none">Address information:  </div>
-  <br>
   <ul id="myList">
   
   <li>
@@ -58,24 +46,8 @@
   </ul>
 
 
-  <button data-action="click->invoice#greet">Greet</button>
       <input class="btn btn-primary" type="button" value="add_item" data-action="click->invoice#add_item">
 
-      
- 
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-<%= select_tag :entity,
-                            options_from_collection_for_select(@entities, "id", "name"),
-                            include_blank: true,
-                            data: { action: "invoice#entity" },
-                            class: "form-control select2" %>
-        <%=label :cust, "Cust"%>
-        <%= submit_tag :cust, :type => "button", data: { action: "click->invoice#greet" }%>
-        <% submit_tag "Add address", :type =>  "button", :id => "addAddress",               :onclick => 'addAddressField()'%> 
 
         <%= f.submit "Save", class: "btn btn-primary" %>
     <% end %>
