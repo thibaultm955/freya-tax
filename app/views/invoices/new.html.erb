@@ -20,20 +20,13 @@
         autofocus: true,
         input_html: {class: "datepicker_full"}%>
 
-        <%= f.input :invoice_number,
-        as: :string,
-        required: true,
-        autofocus: true,
-        input_html: { class: "datepicker_full"} %>
+        <%= f.input :invoice_number%>
 
         <%= label :customer, "Customer" %>
         <%= select_tag :customer,
         options_from_collection_for_select(@customers, "id", "name"),
         include_blank: true %>
 
-        <button data-action="invoice#greet2">
-        Add Item
-        </button>
 <br/>
 
 

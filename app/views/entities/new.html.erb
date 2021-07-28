@@ -25,5 +25,9 @@
                 collection: @countries,
                 required: true,
                 autofocus: true %>
+    <%= f.input :phone_number,
+                required: true,
+                autofocus: true %>
+                
     <%= f.submit "Save", class: "btn btn-primary" %>
 <% end %>

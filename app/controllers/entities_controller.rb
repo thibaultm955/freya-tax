@@ -8,7 +8,7 @@ class EntitiesController < ApplicationController
 
     def create
         @company = Company.find(params[:company_id])
-        @entity = Entity.new(name: entity_params[:name], address: entity_params[:address], vat_number: entity_params[:vat_number], postal_code: entity_params[:postal_code], city: entity_params[:city])
+        @entity = Entity.new(name: entity_params[:name], address: entity_params[:address], vat_number: entity_params[:vat_number], postal_code: entity_params[:postal_code], city: entity_params[:city], phone_number: entity_params[:phone_number])
         @entity.company = @company
         @country = Country.find(entity_params[:country])
         @entity.country = @country
@@ -28,7 +28,7 @@ class EntitiesController < ApplicationController
     def update
         @company = Company.find(params[:company_id])
         @entity = Entity.find(params[:id])
-        @entity.update(entity_params)
+        @entity.update(name: entity_params[:name], address: entity_params[:address], vat_number: entity_params[:vat_number], postal_code: entity_params[:postal_code], city: entity_params[:city], phone_number: entity_params[:phone_number], country_id: entity_params[:country].to_i)
         redirect_to company_path(@company.id)
     end
 
@@ -77,6 +77,6 @@ class EntitiesController < ApplicationController
     private
 
     def entity_params
-        params.require(:entity).permit(:name, :address, :postal_code, :city, :vat_number, :country)
+        params.require(:entity).permit(:name, :address, :postal_code, :city, :vat_number, :country, :phone_number)
     end
 end

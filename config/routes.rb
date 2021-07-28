@@ -11,8 +11,8 @@ Rails.application.routes.draw do
 
 
   resources :companies do
-    get '/invoices/add_item' , to: 'invoices#render_add_item'
-    get '/invoices/add_item/:entity_id', to: "invoices#test"
+    get '/invoices/add_item/:entity_id', to: "invoices#render_add_item"
+    get '/invoices/:invoice_id.show', to: "invoices#show"
     resources :entities do
       resources :returns do
         resources :transactions
@@ -24,11 +24,8 @@ Rails.application.routes.draw do
       get "select_country", to: "entities#render_select_country"
     end
 
-    resources :invoices do
-      get 'add_item', action: :index, controller: 'users'
-      get "add_item", to: "invoices#render_add_item"
-      get "greet", to: "invoices#test"
-    end
+    resources :invoices 
+
     resources :customers
   end
 

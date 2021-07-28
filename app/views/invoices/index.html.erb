@@ -24,14 +24,14 @@
       <th scope="row"><%=i%></th>
       <td><%=invoice.entity.name%></td>
       <td><%=invoice.entity.country.name%></td>
-      <td><%=invoice.name%></td>
+      <td><%=invoice.invoice_name%></td>
       <td><%=invoice.invoice_date%></td>
       <td><%=invoice.invoice_number%></td>
       <td><%=invoice.payment_date%></td>
       <td><%=invoice.customer.name%></td>
       <td>
-        <a class="btn btn-light" href="./invoice/<%=invoice.id%>"> Open </a>
-        <a class="btn btn-primary" href="./invoice/<%=invoice.id%>/edit"> Edit </a>  
+        <a class="btn btn-light" href="./invoices/<%=invoice.id%>"> Open </a>
+        <a class="btn btn-primary" href="./invoices/<%=invoice.id%>/edit"> Edit </a>  
         <%= button_to "Delete the Tax Code", { action: "destroy", id: invoice.id }, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger"  %>
       </td> 
     </tr>

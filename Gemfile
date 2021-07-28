@@ -66,3 +66,5 @@ gem 'devise'
 gem 'execjs'
 
 gem 'csv'
+
+gem 'prawn-rails'
