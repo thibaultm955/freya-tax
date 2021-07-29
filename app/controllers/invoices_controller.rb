@@ -13,10 +13,10 @@ class InvoicesController < ApplicationController
         @customers = Customer.where(company_id: current_user.company)
     end
 
-    def create
+    def create  
         @entity_tax_codes = EntityTaxCode.find(params[:entity_tax_codes][:entity_tax_codes_id])
         @entity = @entity_tax_codes.entity
-        @invoice = Invoice.new(invoice_date: params[:invoice][:invoice_date], invoice_name: params[:invoice][:invoice_name], payment_date: params[:invoice][:payment_date], customer_id: params[:customer].to_i, entity_id: @entity_tax_codes.entity.id)
+        @invoice = Invoice.new(invoice_date: params[:invoice][:invoice_date], invoice_name: params[:invoice][:invoice_name], payment_date: params[:invoice][:payment_date], invoice_number: params[:invoice][:invoice_number], customer_id: params[:customer].to_i, entity_id: @entity_tax_codes.entity.id)
         transactions = params[:comment]
         i = 0
         transactions.each do |key, value| 
@@ -75,6 +75,7 @@ class InvoicesController < ApplicationController
               pdf = Prawn::Document.new
               pdf.text 'Invoice', :align => :right, :size => 32
               pdf.text ''
+              # Entity Information
               pdf.text @invoice.entity.name, :align => :right, :size => size_text, :style => :bold
               pdf.text @invoice.entity.address, :align => :right, :size => size_text
               pdf.text @invoice.entity.city + ', ' + @invoice.entity.postal_code, :align => :right, :size => size_text 
@@ -83,8 +84,30 @@ class InvoicesController < ApplicationController
               pdf.stroke_horizontal_rule
               pdf.text ' '
               pdf.text ' '
-              pdf.text 'Bill_To' + '                                                                                                          ' + 'Invoice Number:' + '   ' + ( @invoice.invoice_number.nil? ? '' : @invoice.invoice_number), :align => :left, :size => size_text
-              pdf.text [@invoice.customer.name]  
+              pdf.text 'Bill_To', :align => :left, :size => size_text
+              # Customer Information
+              pdf.draw_text @invoice.customer.name, :at => [0, 562], :size => size_text, :style => :bold
+              pdf.draw_text @invoice.customer.vat_number, :at => [0, 547], :size => size_text
+              pdf.draw_text @invoice.customer.street, :at => [0, 532], :size => size_text
+              pdf.draw_text @invoice.customer.city + ', ' + @invoice.customer.post_code, :at => [0, 517], :size => size_text
+              pdf.draw_text @invoice.customer.country.name, :at => [0, 502], :size => size_text
+              # Invoice Information
+              pdf.draw_text 'Invoice Number:', :at => [340, 577], :size => size_text, :style => :bold
+              pdf.draw_text @invoice.invoice_number, :at => [450, 577], :size => size_text
+              pdf.draw_text 'Invoice Date:', :at => [340, 547], :size => size_text, :style => :bold
+              pdf.draw_text @invoice.invoice_date, :at => [450, 547], :size => size_text
+              pdf.draw_text 'Payment Date:', :at => [340, 517], :size => size_text, :style => :bold
+              pdf.draw_text @invoice.payment_date, :at => [450, 517], :size => size_text
+
+              # need to do AMount Due
+              pdf.text ' '
+              pdf.text ' '
+              pdf.text ' '
+              pdf.text ' '
+              pdf.text ' '
+              pdf.text ' '
+              pdf.text ' '
+              pdf.text ' '
               pdf.table([
                 ["Base Price", "$275,99"],
                 ["Canary Cozy Sound Isolation Blankey", "$11.00"]
