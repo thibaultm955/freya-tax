@@ -36,5 +36,5 @@ document.addEventListener('turbolinks:load', () => {
 
 import "controllers"
 
-require("add_item_invoice")
+
 

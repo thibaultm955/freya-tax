@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_28_201301) do
+ActiveRecord::Schema.define(version: 2021_08_17_162416) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -123,6 +123,10 @@ ActiveRecord::Schema.define(version: 2021_07_28_201301) do
     t.string "postal_code"
     t.string "city"
     t.string "phone_number"
+    t.string "email"
+    t.string "website"
+    t.string "iban"
+    t.string "bic"
     t.index ["company_id"], name: "index_entities_on_company_id"
     t.index ["country_id"], name: "index_entities_on_country_id"
   end
@@ -153,11 +157,26 @@ ActiveRecord::Schema.define(version: 2021_07_28_201301) do
     t.index ["entity_id"], name: "index_invoices_on_entity_id"
   end
 
+  create_table "item_transactions", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "item_id", null: false
+    t.bigint "transaction_id", null: false
+    t.float "net_amount"
+    t.float "vat_amount"
+    t.integer "quantity"
+    t.index ["item_id"], name: "index_item_transactions_on_item_id"
+    t.index ["transaction_id"], name: "index_item_transactions_on_transaction_id"
+  end
+
   create_table "items", force: :cascade do |t|
     t.string "item_name"
     t.string "item_description"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.float "price"
+    t.bigint "entity_id", null: false
+    t.index ["entity_id"], name: "index_items_on_entity_id"
   end
 
   create_table "languages", force: :cascade do |t|
@@ -293,6 +312,9 @@ ActiveRecord::Schema.define(version: 2021_07_28_201301) do
   add_foreign_key "entity_tax_codes", "country_tax_codes"
   add_foreign_key "entity_tax_codes", "entities"
   add_foreign_key "invoices", "entities"
+  add_foreign_key "item_transactions", "items"
+  add_foreign_key "item_transactions", "transactions"
+  add_foreign_key "items", "entities"
   add_foreign_key "periodicity_to_project_types", "countries"
   add_foreign_key "periodicity_to_project_types", "periodicities"
   add_foreign_key "periodicity_to_project_types", "project_types"

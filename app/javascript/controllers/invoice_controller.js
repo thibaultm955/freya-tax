@@ -1,11 +1,19 @@
 import { Controller } from "stimulus";
 
 export default class extends Controller {  
-      static targets = [ 'other' ];
+      static targets = [ 'other', 'items' ];
 
   entity(event) {
     console.log("controller connected country !");
+    var entity_id = document.getElementById("entity").value;
+    console.log(entity_id);
 
+    fetch(`../entities/${entity_id}/get_items_entity`, { headers: { accept: 'application/json' } })
+    .then(response => response.json())
+    .then((data) => {
+      console.log(data);
+      this.itemsTarget.innerHTML = data.html_string;
+    });
  }
  add_item(event) {
     console.log("entity connected !");
@@ -35,9 +43,12 @@ export default class extends Controller {
             .then((data) => {
                   var result = data.html_string;
                   result = result.replace("entity_tax_codes_entity_tax_codes_id", `entity_tax_codes_entity_tax_codes_id[${mSec}]`);
-                  result = result.replaceAll("comment_update_with_timestamp", `comment[${mSec}]`)
-                  result = result.replaceAll("vat_amount_update_with_timestamp", `vat_amount[${mSec}]`)
-                  result = result.replaceAll("net_amount_update_with_timestamp", `net_amount[${mSec}]`)
+                  result = result.replace("item_item_id", `item_item_id[${mSec}]`);
+                  result = result.replaceAll("item_update_with_timestamp", `item[${mSec}]`);
+                  result = result.replaceAll("comment_update_with_timestamp", `comment[${mSec}]`);
+                  result = result.replaceAll("vat_amount_update_with_timestamp", `vat_amount[${mSec}]`);
+                  result = result.replaceAll("net_amount_update_with_timestamp", `net_amount[${mSec}]`);
+                  result = result.replaceAll("quantity_update_with_timestamp", `quantity[${mSec}]`);
                   console.log(result);
                   elementId.innerHTML += (result);
 
@@ -48,5 +59,7 @@ export default class extends Controller {
       }
       
   }
+
+
   
 }

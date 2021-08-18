@@ -5,6 +5,10 @@ class InvoicesController < ApplicationController
         @invoices = Invoice.order("invoice_date asc").where(entity_id: current_user.company.entities)
     end
 
+    def show
+        @invoice = Invoice.find(params[:id])
+    end
+
     def new
         @invoice = Invoice.new
         2.times { @invoice.transactions.build }
@@ -46,8 +50,16 @@ class InvoicesController < ApplicationController
             end
 
             if @invoice.save!
-                @transaction = Transaction.new(invoice_number: i, invoice_date: params[:invoice][:invoice_date], vat_amount: params[:vat_amount][key].to_i, net_amount: params[:net_amount][key].to_i, total_amount: (params[:vat_amount][key].to_i + params[:net_amount][key].to_i), comment: params[:comment][key], invoice_id: @invoice.id, entity_tax_code_id: @entity_tax_codes.id, return_id: @return.id)
+                @item = Item.find(params[:item][key].to_i)
+                net_amount = params[:net_amount][key].to_f
+                vat_amount = params[:vat_amount][key].to_f
+                total_amount = params[:vat_amount][key].to_f + params[:net_amount][key].to_f
+                quantity = params[:quantity][key].to_i
+                # will have to multiply quantity with what is specified
+                @transaction = Transaction.new(invoice_number: params[:invoice][:invoice_number], invoice_date: params[:invoice][:invoice_date], vat_amount: vat_amount * quantity, net_amount: net_amount * quantity, total_amount: total_amount * quantity, comment: params[:comment][key], invoice_id: @invoice.id, entity_tax_code_id: @entity_tax_codes.id, return_id: @return.id)
                 @transaction.save!
+                @item_transaction = ItemTransaction.new(quantity: quantity, item_id: @item.id, transaction_id: @transaction.id, net_amount: net_amount, vat_amount: vat_amount)
+                @item_transaction.save!
             end
         end
         # A transaction is linked to an invoice, so need to first create the invoice
@@ -61,12 +73,15 @@ class InvoicesController < ApplicationController
         test = request.original_url
         testo = test.split("#")[1]
         @entity_tax_codes = EntityTaxCode.where(entity_id: params[:entity_id])
-        html_string = render_to_string(partial: "add_item.html.erb", locals: {entity_tax_codes: @entity_tax_codes})
+        @entity = Entity.find(params[:entity_id])
+        @items = @entity.items
+        html_string = render_to_string(partial: "add_item.html.erb", locals: {entity_tax_codes: @entity_tax_codes, items: @items})
         render json: {html_string: html_string}
     end
 
-    def show
+    def generate_pdf
         @invoice = Invoice.find(params[:invoice_id])
+        @transactions = @invoice.transactions
         size_text = 12
         respond_to do |format|
             # some other formats like: format.html { render :show }
@@ -99,7 +114,7 @@ class InvoicesController < ApplicationController
               pdf.draw_text 'Payment Date:', :at => [340, 517], :size => size_text, :style => :bold
               pdf.draw_text @invoice.payment_date, :at => [450, 517], :size => size_text
 
-              # need to do AMount Due
+              # need to do Amount Due
               pdf.text ' '
               pdf.text ' '
               pdf.text ' '
@@ -108,10 +123,27 @@ class InvoicesController < ApplicationController
               pdf.text ' '
               pdf.text ' '
               pdf.text ' '
-              pdf.table([
-                ["Base Price", "$275,99"],
-                ["Canary Cozy Sound Isolation Blankey", "$11.00"]
-              ])
+              total_amount = 0
+              total_vat = 0
+              data = [["Items", "Comments", "Quantity", "Net Amount / Unit", "VAT Amount / Unit", "Total Price"]]
+              @transactions.each do |transaction|
+                data += [[transaction.item_transaction[0].item.item_name, transaction.comment, transaction.item_transaction[0].quantity, transaction.item_transaction[0].net_amount, transaction.item_transaction[0].vat_amount, transaction.total_amount]]
+                total_amount += transaction.total_amount
+                total_vat += transaction.item_transaction[0].vat_amount * transaction.item_transaction[0].quantity
+              end
+
+              pdf.table data, :position => :left
+              pdf.text ' '
+              pdf.text ' '
+              pdf.text ' '
+              pdf.table [['Total Amount', total_amount], ['Total VAT', total_vat]]  
+              footer_line_1 = @invoice.entity.name
+              pdf.text_box footer_line_1, :at => [-02, 047], :size => size_text, :align => :center
+
+              footer_line_2 = 'Email:  ' +   @invoice.entity.email + '   Website:  ' + @invoice.entity.website + '   VAT:  ' + @invoice.entity.vat_number
+              pdf.text_box footer_line_2, :at => [-02, 28], :size => size_text, :align => :center
+              footer_line_3 = 'IBAN:  ' + @invoice.entity.iban + '   BIC:  ' + @invoice.entity.bic
+              pdf.text_box footer_line_3, :at => [-02, 15], :align => :center, :size => size_text
 
               send_data pdf.render,
                 filename: "export.pdf",

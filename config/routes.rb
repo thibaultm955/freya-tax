@@ -12,8 +12,9 @@ Rails.application.routes.draw do
 
   resources :companies do
     get '/invoices/add_item/:entity_id', to: "invoices#render_add_item"
-    get '/invoices/:invoice_id.show', to: "invoices#show"
+    get '/invoices/:invoice_id.generate_pdf', to: "invoices#generate_pdf"
     resources :entities do
+      get '/get_items_entity', to: "entities#render_items_entity"
       resources :returns do
         resources :transactions
       end
@@ -27,6 +28,8 @@ Rails.application.routes.draw do
     resources :invoices 
 
     resources :customers
+
+    resources :items
   end
 
   resources :returns do

@@ -6,7 +6,8 @@
         <%= label :entity, "Entity" %>
         <%= select_tag :entity,
         options_from_collection_for_select(@entities, "id", "name"),
-        include_blank: true %>
+        include_blank: true,
+        data: { action: "invoice#entity" } %>
 
         <%= f.input :invoice_date,
         as: :string,
@@ -49,3 +50,4 @@
 <% submit_tag "Add address", :type =>  "button", :id => "addAddress",               :onclick => 'addAddressField()'%> 
 
 <%= link_to "Create Customer", new_company_customer_path(current_user.company) %>
+<%= link_to "Create Item", new_company_item_path(current_user.company) %>

@@ -9,6 +9,12 @@
                 required: true,
                 autofocus: true,
                 placeholder: "Rue de la loi, 21"%>
+    <%= f.input :email,
+                required: true,
+                autofocus: true%>
+    <%= f.input :website,
+                required: true,
+                autofocus: true%>
     <%= f.input :postal_code,
                 required: true,
                 autofocus: true,
@@ -21,11 +27,13 @@
                 required: true,
                 autofocus: true,
                 placeholder: "BE 001.002.24.26"%>
-    <%= f.input :country,
-                collection: @countries,
+    <%= f.input :phone_number,
                 required: true,
                 autofocus: true %>
-    <%= f.input :phone_number,
+    <%= f.input :iban,
+                required: true,
+                autofocus: true %>
+    <%= f.input :bic,
                 required: true,
                 autofocus: true %>
     <%= f.submit "Save", class: "btn btn-primary" %>

@@ -1,12 +1,17 @@
+<%= select_tag "item_update_with_timestamp", options_from_collection_for_select(@items, "id", "item_name" ),
+include_blank: true, class: "form-control"%>
 
 <%= select_tag "entity_tax_codes[entity_tax_codes_id]", options_from_collection_for_select(@entity_tax_codes, "id", 'name' ),
                             include_blank: true,
-                            data: { action: "taxCode#side" }, class: "form-control" %>
+                            class: "form-control" %>
 <%= label_tag 'comment'%>
 <%= text_field_tag :comment_update_with_timestamp%> 
 
-<%= label_tag 'vat_amount'%>
-<%= text_field_tag :vat_amount_update_with_timestamp%> 
+<%= label_tag 'quantity'%>
+<%= number_field_tag :quantity_update_with_timestamp%> 
 
-<%= label_tag 'net_amount'%>
+<%= label_tag 'net_amount (per unit)'%>
 <%= text_field_tag :net_amount_update_with_timestamp%> 
+
+<%= label_tag 'vat_amount (per unit)'%>
+<%= text_field_tag :vat_amount_update_with_timestamp%> 
