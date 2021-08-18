@@ -34,7 +34,8 @@ document.addEventListener('turbolinks:load', () => {
     initFlatPicker();
   });
 
-import "controllers"
+// Removed it and took out all the duplicated call
+//import "controllers"
 
 
 

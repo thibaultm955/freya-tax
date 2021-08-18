@@ -6,8 +6,7 @@
         <%= label :entity, "Entity" %>
         <%= select_tag :entity,
         options_from_collection_for_select(@entities, "id", "name"),
-        include_blank: true,
-        data: { action: "invoice#entity" } %>
+        include_blank: true %>
 
         <%= f.input :invoice_date,
         as: :string,
