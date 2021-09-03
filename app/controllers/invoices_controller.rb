@@ -57,7 +57,7 @@ class InvoicesController < ApplicationController
                 total_amount = params[:vat_amount][key].to_f + params[:net_amount][key].to_f
                 quantity = params[:quantity][key].to_i
                 # will have to multiply quantity with what is specified
-                @transaction = Transaction.new(invoice_number: params[:invoice][:invoice_number], invoice_date: params[:invoice][:invoice_date], vat_amount: vat_amount * quantity, net_amount: net_amount * quantity, total_amount: total_amount * quantity, comment: params[:comment][key], invoice_id: @invoice.id, entity_tax_code_id: @entity_tax_codes.id, return_id: @return.id)
+                @transaction = Transaction.new(vat_amount: vat_amount * quantity, net_amount: net_amount * quantity, total_amount: total_amount * quantity, comment: params[:comment][key], invoice_id: @invoice.id, entity_tax_code_id: @entity_tax_codes.id, return_id: @return.id)
                 @transaction.save!
                 @item_transaction = ItemTransaction.new(quantity: quantity, item_id: @item.id, transaction_id: @transaction.id, net_amount: net_amount, vat_amount: vat_amount)
                 @item_transaction.save!
@@ -96,7 +96,7 @@ class InvoicesController < ApplicationController
 
 
     def save_transaction
-        hjk
+ 
         @invoice = Invoice.find(params[:invoice_id])
 
         # if you don't have a new transaction, don't need to do an update
@@ -107,14 +107,14 @@ class InvoicesController < ApplicationController
             i = 0
             transactions.each do |key, value| 
                 i += 1
-                @return = Return.where(["begin_date <= ? and end_date >= ? and entity_id = ? and country_id = ?",   params[:invoice][:invoice_date],  params[:invoice][:invoice_date], @entity_tax_codes.entity.id, 2])[0]
+                @return = Return.where(["begin_date <= ? and end_date >= ? and entity_id = ? and country_id = ?",   @invoice.invoice_date,  @invoice.invoice_date, @entity_tax_codes.entity.id, 2])[0]
                 @item = Item.find(params[:item][key].to_i)
                 net_amount = params[:net_amount][key].to_f
                 vat_amount = params[:vat_amount][key].to_f
                 total_amount = vat_amount + net_amount
                 quantity = params[:quantity][key].to_f
                 # will have to multiply quantity with what is specified
-                @transaction = Transaction.new(invoice_number: params[:invoice][:invoice_number], invoice_date: params[:invoice][:invoice_date], vat_amount: vat_amount * quantity, net_amount: net_amount * quantity, total_amount: total_amount * quantity, comment: params[:comment][key], invoice_id: @invoice.id, entity_tax_code_id: @entity_tax_codes.id, return_id: @return.id)
+                @transaction = Transaction.new(vat_amount: vat_amount * quantity, net_amount: net_amount * quantity, total_amount: total_amount * quantity, comment: params[:comment][key], invoice_id: @invoice.id, entity_tax_code_id: @entity_tax_codes.id, return_id: @return.id)
                 @transaction.save!
                 @item_transaction = ItemTransaction.new(quantity: quantity, item_id: @item.id, transaction_id: @transaction.id, net_amount: net_amount, vat_amount: vat_amount)
                 @item_transaction.save!

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_03_123012) do
+ActiveRecord::Schema.define(version: 2021_09_03_125727) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -258,8 +258,6 @@ ActiveRecord::Schema.define(version: 2021_09_03_123012) do
   end
 
   create_table "transactions", force: :cascade do |t|
-    t.string "invoice_number"
-    t.date "invoice_date"
     t.float "vat_amount"
     t.float "net_amount"
     t.float "total_amount"
@@ -267,8 +265,6 @@ ActiveRecord::Schema.define(version: 2021_09_03_123012) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "return_id", null: false
     t.bigint "entity_tax_code_id", null: false
-    t.string "business_partner_name"
-    t.string "business_partner_vat_number"
     t.bigint "invoice_id"
     t.string "comment"
     t.index ["entity_tax_code_id"], name: "index_transactions_on_entity_tax_code_id"
