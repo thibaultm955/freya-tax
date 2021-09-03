@@ -1,0 +1,25 @@
+<p><%=@transaction.item_transaction.item.item_name%></p>
+<p><%=@transaction.comment%></p>
+<p><%=@transaction.item_transaction.quantity%></p>
+<p><%=@transaction.item_transaction.net_amount%></p>
+<p><%=@transaction.item_transaction.vat_amount%></p>
+<p><%=@transaction.total_amount%></p>
+
+<form action="./save_transaction_invoice">
+
+    <%= select_tag :item_id, options_from_collection_for_select(@items, "id", "item_name", @transaction.item_transaction.item.id ),class: "form-control"%>
+
+    <%= select_tag :entity_tax_codes_id, options_from_collection_for_select(@entity_tax_codes, "id", 'name', @transaction.entity_tax_code.id ), class: "form-control" %>
+
+    <%= label_tag 'comment'%>
+    <%= text_field_tag :comment, @transaction.comment%> 
+    <%= label_tag 'quantity'%>
+    <%= number_field_tag :quantity, @transaction.item_transaction.quantity%> 
+
+    <%= label_tag 'net_amount (per unit)'%>
+    <%= text_field_tag :net_amount, @transaction.item_transaction.net_amount%> 
+
+    <%= label_tag 'vat_amount (per unit)'%>
+    <%= text_field_tag :vat_amount, @transaction.item_transaction.vat_amount%> 
+  <input type="submit" value="Submit">
+</form>

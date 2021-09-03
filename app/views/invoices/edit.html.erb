@@ -1,0 +1,32 @@
+<h1> Create a new Invoice </h1>
+<div data-controller="invoice">
+     <%= simple_form_for([@company, @invoice]) do |f| %>
+        <%= f.input :invoice_name %>
+
+        <%= f.input :invoice_date,
+        as: :string,
+        required: true,
+        autofocus: true,
+        input_html: { class: "datepicker_full"} %>
+
+        <%= f.input :payment_date, 
+        as: :string ,
+        required: true,
+        autofocus: true,
+        input_html: {class: "datepicker_full"}%>
+
+        <%= f.input :invoice_number%>
+
+        <%= label :customer, "Customer" %>
+        <%= select_tag :customer,
+        options_from_collection_for_select(@customers, "id", "name", @invoice.customer.id) %>
+
+
+        <%= f.submit "Save", class: "btn btn-primary" %>
+    <% end %>
+
+</div>
+<% submit_tag "Add address", :type =>  "button", :id => "addAddress",               :onclick => 'addAddressField()'%> 
+
+<%= link_to "Create Customer", new_company_customer_path(current_user.company) %>
+<%= link_to "Create Item", new_company_item_path(current_user.company) %>

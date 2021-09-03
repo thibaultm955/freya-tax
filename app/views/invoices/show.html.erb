@@ -1,0 +1,53 @@
+<h1>Invoice Information</h1>
+<p>Invoice Name: <%=@invoice.invoice_name%></p>
+<p>Invoice Date: <%=@invoice.invoice_date%></p>
+<p>Payment Date: <%=@invoice.payment_date%></p>
+<p>Invoice Number: <%=@invoice.invoice_number%></p>
+<p>Customer Name: <%=@invoice.customer.name%></p>
+<p>Entity Name: <%=@invoice.entity.name%></p>
+
+</br>
+
+<a class="btn btn-primary" href="./<%=@invoice.id%>.generate_pdf.pdf" role="button">Generate PDF</a>
+<a class="btn btn-primary" href="./<%=@invoice.id%>/edit" role="button">Edit Information Invoice</a>
+<a class="btn btn-primary" href="./<%=@invoice.id%>/add_transaction" role="button">Add a Transaction</a>
+
+
+</br>
+</br>
+</br>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Items</th>
+      <th scope="col">Comments</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Net Amount / Unit</th>
+      <th scope="col">VAT Amount / Unit</th>
+      <th scope="col">Total Price</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+  <%i=1%>
+  <%@transactions.each do |transaction|%>
+    <tr>
+      <th scope="row"><%=i%></th>
+      <td><%=transaction.item_transaction.item.item_name%></td>
+      <td><%=transaction.comment%></td>
+      <td><%=transaction.item_transaction.quantity%></td>
+      <td><%=transaction.item_transaction.net_amount%></td>
+      <td><%=transaction.item_transaction.vat_amount%></td>
+      <td><%=transaction.total_amount%></td>
+      <td>
+        <a class="btn btn-primary" href="./<%=@invoice.id%>/transactions/<%=transaction.id%>/edit_transaction_invoice" role="button">Edit Transaction</a>
+      </td>
+    </tr>
+    <%i +=1%>
+    <%end%>
+  </tbody>
+</table>
+
+

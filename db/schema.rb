@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_17_162416) do
+ActiveRecord::Schema.define(version: 2021_09_03_123012) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -164,7 +164,7 @@ ActiveRecord::Schema.define(version: 2021_08_17_162416) do
     t.bigint "transaction_id", null: false
     t.float "net_amount"
     t.float "vat_amount"
-    t.integer "quantity"
+    t.float "quantity"
     t.index ["item_id"], name: "index_item_transactions_on_item_id"
     t.index ["transaction_id"], name: "index_item_transactions_on_transaction_id"
   end
