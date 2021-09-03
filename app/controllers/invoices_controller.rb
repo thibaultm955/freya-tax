@@ -173,14 +173,14 @@ class InvoicesController < ApplicationController
               pdf.draw_text @invoice.customer.city + ', ' + @invoice.customer.post_code, :at => [0, 517], :size => size_text
               pdf.draw_text @invoice.customer.country.name, :at => [0, 502], :size => size_text
               # Invoice Information
-              pdf.draw_text 'Invoice Name:', :at => [340, 577], :size => size_text, :style => :bold
-              pdf.draw_text @invoice.invoice_name, :at => [450, 577], :size => size_text
-              pdf.draw_text 'Invoice Number:', :at => [340, 557], :size => size_text, :style => :bold
-              pdf.draw_text @invoice.invoice_number, :at => [450, 557], :size => size_text
-              pdf.draw_text 'Invoice Date:', :at => [340, 537], :size => size_text, :style => :bold
-              pdf.draw_text @invoice.invoice_date, :at => [450, 537], :size => size_text
-              pdf.draw_text 'Payment Date:', :at => [340, 517], :size => size_text, :style => :bold
-              pdf.draw_text @invoice.payment_date, :at => [450, 517], :size => size_text
+              pdf.draw_text 'Invoice Name:', :at => [320, 577], :size => size_text, :style => :bold
+              pdf.draw_text @invoice.invoice_name, :at => [430, 577], :size => size_text
+              pdf.draw_text 'Invoice Number:', :at => [320, 557], :size => size_text, :style => :bold
+              pdf.draw_text @invoice.invoice_number, :at => [430, 557], :size => size_text
+              pdf.draw_text 'Invoice Date:', :at => [320, 537], :size => size_text, :style => :bold
+              pdf.draw_text @invoice.invoice_date, :at => [430, 537], :size => size_text
+              pdf.draw_text 'Payment Date:', :at => [320, 517], :size => size_text, :style => :bold
+              pdf.draw_text @invoice.payment_date, :at => [430, 517], :size => size_text
 
               # need to do Amount Due
               pdf.text ' '
@@ -193,25 +193,66 @@ class InvoicesController < ApplicationController
               pdf.text ' '
               total_amount = 0
               total_vat = 0
+
+              footer_line_1 = @invoice.entity.name
+              footer_line_2 = 'Email:  ' +   @invoice.entity.email + '   Website:  ' + @invoice.entity.website + '   VAT:  ' + @invoice.entity.vat_number
+              footer_line_3 = 'IBAN:  ' + @invoice.entity.iban + '   BIC:  ' + @invoice.entity.bic
+
+              i = 0
+              # pagingation
+              u = 1
               data = [["Items", "Comments", "Quantity", "Net Amount / Unit", "VAT Amount / Unit", "Total Price"]]
-              @transactions.each do |transaction|
-                data += [[transaction.item_transaction.item.item_name, transaction.comment, transaction.item_transaction.quantity, transaction.item_transaction.net_amount, transaction.item_transaction.vat_amount, transaction.total_amount]]
-                total_amount += transaction.total_amount
-                total_vat += transaction.item_transaction.vat_amount * transaction.item_transaction.quantity
+        
+              if @transactions.count < 10
+                @transactions.each do |transaction|
+                    data += [[transaction.item_transaction.item.item_name, transaction.comment, transaction.item_transaction.quantity, transaction.item_transaction.net_amount, transaction.item_transaction.vat_amount, transaction.total_amount]]
+                    total_amount += transaction.total_amount
+                    total_vat += transaction.item_transaction.vat_amount * transaction.item_transaction.quantity
+                end
+                pdf.table data, :position => :left
+              else
+                while i < @transactions.count - 1
+                    i +=1
+                    # For every 10 transactions, you'll create a new page
+                    if ( i % 10 ) == 0
+                        page_number = u.to_s + " / " + ( @transactions.count / 10 + 1).to_i.to_s 
+                        pdf.table data, :position => :left, :column_widths => {0 => 115,1 => 160,2 => 60,3 => 60,4 => 60,5 => 85}
+                        
+                        pdf.text_box footer_line_1, :at => [-02, 60], :size => size_text, :align => :center
+                        pdf.text_box footer_line_2, :at => [-02, 45], :size => size_text, :align => :center
+                        pdf.text_box footer_line_3, :at => [-02, 30], :align => :center, :size => size_text
+                        pdf.text_box page_number, :at => [-02, 15], :align => :center, :size => size_text
+
+                        pdf.start_new_page
+                        data = [["Items", "Comments", "Quantity", "Net Amount / Unit", "VAT Amount / Unit", "Total Price"]]
+                        u += 1
+                    else
+                        data += [[@transactions[i].item_transaction.item.item_name, @transactions[i].comment, @transactions[i].item_transaction.quantity, @transactions[i].item_transaction.net_amount, @transactions[i].item_transaction.vat_amount, @transactions[i].total_amount]]
+                        total_amount += @transactions[i].total_amount
+                        total_vat += @transactions[i].item_transaction.vat_amount * @transactions[i].item_transaction.quantity
+                        page_number = u.to_s + " / " + ( @transactions.count / 10 + 1).to_i.to_s 
+                        pdf.text_box page_number, :at => [-02, 15], :align => :center, :size => size_text
+
+
+                    end
+                    
+                end
+                @transactions.each do |transaction|
+
+                end
               end
 
-              pdf.table data, :position => :left
+              pdf.table data, :position => :left, :column_widths => {0 => 115,1 => 160,2 => 60,3 => 60,4 => 60,5 => 85}
+
+
               pdf.text ' '
               pdf.text ' '
               pdf.text ' '
               pdf.table [['Total Amount', total_amount], ['Total VAT', total_vat]]  
-              footer_line_1 = @invoice.entity.name
-              pdf.text_box footer_line_1, :at => [-02, 047], :size => size_text, :align => :center
 
-              footer_line_2 = 'Email:  ' +   @invoice.entity.email + '   Website:  ' + @invoice.entity.website + '   VAT:  ' + @invoice.entity.vat_number
-              pdf.text_box footer_line_2, :at => [-02, 28], :size => size_text, :align => :center
-              footer_line_3 = 'IBAN:  ' + @invoice.entity.iban + '   BIC:  ' + @invoice.entity.bic
-              pdf.text_box footer_line_3, :at => [-02, 15], :align => :center, :size => size_text
+              pdf.text_box footer_line_1, :at => [-02, 60], :size => size_text, :align => :center
+              pdf.text_box footer_line_2, :at => [-02, 45], :size => size_text, :align => :center
+              pdf.text_box footer_line_3, :at => [-02, 30], :align => :center, :size => size_text
 
               send_data pdf.render,
                 filename: "export.pdf",
