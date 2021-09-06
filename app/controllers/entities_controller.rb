@@ -8,7 +8,7 @@ class EntitiesController < ApplicationController
 
     def create
         @company = Company.find(params[:company_id])
-        @entity = Entity.new(name: entity_params[:name], address: entity_params[:address], vat_number: entity_params[:vat_number], postal_code: entity_params[:postal_code], city: entity_params[:city])
+        @entity = Entity.new(name: entity_params[:name], address: entity_params[:address], vat_number: entity_params[:vat_number], postal_code: entity_params[:postal_code], city: entity_params[:city], phone_number: entity_params[:phone_number], email: entity_params[:email], website: entity_params[:website])
         @entity.company = @company
         @country = Country.find(entity_params[:country])
         @entity.country = @country
@@ -28,7 +28,7 @@ class EntitiesController < ApplicationController
     def update
         @company = Company.find(params[:company_id])
         @entity = Entity.find(params[:id])
-        @entity.update(entity_params)
+        @entity.update(name: entity_params[:name], address: entity_params[:address], vat_number: entity_params[:vat_number], postal_code: entity_params[:postal_code], city: entity_params[:city], phone_number: entity_params[:phone_number], email: entity_params[:email], website: entity_params[:website], iban: entity_params[:iban], bic: entity_params[:bic])
         redirect_to company_path(@company.id)
     end
 
@@ -74,9 +74,17 @@ class EntitiesController < ApplicationController
     end
     
 
+    def render_items_entity
+        @entity = Entity.find(params[:entity_id])
+        @items = @entity.items
+        html_string = render_to_string(partial: "all_items_entity.html.erb", locals: {items: @items})
+        render json: {html_string: html_string}
+    end 
+
+
     private
 
     def entity_params
-        params.require(:entity).permit(:name, :address, :postal_code, :city, :vat_number, :country)
+        params.require(:entity).permit(:name, :address, :postal_code, :city, :vat_number, :country, :phone_number, :email, :website, :iban, :bic)
     end
 end

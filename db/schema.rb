@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_26_155407) do
+ActiveRecord::Schema.define(version: 2021_09_03_125727) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -88,6 +88,20 @@ ActiveRecord::Schema.define(version: 2021_04_26_155407) do
     t.index ["tax_code_operation_type_id"], name: "index_country_tax_codes_on_tax_code_operation_type_id"
   end
 
+  create_table "customers", force: :cascade do |t|
+    t.string "name"
+    t.string "vat_number"
+    t.string "street"
+    t.string "city"
+    t.string "post_code"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "company_id", null: false
+    t.bigint "country_id", null: false
+    t.index ["company_id"], name: "index_customers_on_company_id"
+    t.index ["country_id"], name: "index_customers_on_country_id"
+  end
+
   create_table "due_dates", force: :cascade do |t|
     t.date "begin_date"
     t.date "end_date"
@@ -108,6 +122,11 @@ ActiveRecord::Schema.define(version: 2021_04_26_155407) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "postal_code"
     t.string "city"
+    t.string "phone_number"
+    t.string "email"
+    t.string "website"
+    t.string "iban"
+    t.string "bic"
     t.index ["company_id"], name: "index_entities_on_company_id"
     t.index ["country_id"], name: "index_entities_on_country_id"
   end
@@ -123,6 +142,41 @@ ActiveRecord::Schema.define(version: 2021_04_26_155407) do
     t.boolean "is_exempt_supply_article_44"
     t.index ["country_tax_code_id"], name: "index_entity_tax_codes_on_country_tax_code_id"
     t.index ["entity_id"], name: "index_entity_tax_codes_on_entity_id"
+  end
+
+  create_table "invoices", force: :cascade do |t|
+    t.date "invoice_date"
+    t.date "payment_date"
+    t.string "invoice_number"
+    t.bigint "customer_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "invoice_name"
+    t.bigint "entity_id", null: false
+    t.index ["customer_id"], name: "index_invoices_on_customer_id"
+    t.index ["entity_id"], name: "index_invoices_on_entity_id"
+  end
+
+  create_table "item_transactions", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "item_id", null: false
+    t.bigint "transaction_id", null: false
+    t.float "net_amount"
+    t.float "vat_amount"
+    t.float "quantity"
+    t.index ["item_id"], name: "index_item_transactions_on_item_id"
+    t.index ["transaction_id"], name: "index_item_transactions_on_transaction_id"
+  end
+
+  create_table "items", force: :cascade do |t|
+    t.string "item_name"
+    t.string "item_description"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.float "price"
+    t.bigint "entity_id", null: false
+    t.index ["entity_id"], name: "index_items_on_entity_id"
   end
 
   create_table "languages", force: :cascade do |t|
@@ -204,8 +258,6 @@ ActiveRecord::Schema.define(version: 2021_04_26_155407) do
   end
 
   create_table "transactions", force: :cascade do |t|
-    t.string "invoice_number"
-    t.date "invoice_date"
     t.float "vat_amount"
     t.float "net_amount"
     t.float "total_amount"
@@ -213,9 +265,10 @@ ActiveRecord::Schema.define(version: 2021_04_26_155407) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "return_id", null: false
     t.bigint "entity_tax_code_id", null: false
-    t.string "business_partner_name"
-    t.string "business_partner_vat_number"
+    t.bigint "invoice_id"
+    t.string "comment"
     t.index ["entity_tax_code_id"], name: "index_transactions_on_entity_tax_code_id"
+    t.index ["invoice_id"], name: "index_transactions_on_invoice_id"
     t.index ["return_id"], name: "index_transactions_on_return_id"
   end
 
@@ -247,11 +300,17 @@ ActiveRecord::Schema.define(version: 2021_04_26_155407) do
   add_foreign_key "country_tax_codes", "tax_code_operation_rates"
   add_foreign_key "country_tax_codes", "tax_code_operation_sides"
   add_foreign_key "country_tax_codes", "tax_code_operation_types"
+  add_foreign_key "customers", "companies"
+  add_foreign_key "customers", "countries"
   add_foreign_key "due_dates", "periodicity_to_project_types"
   add_foreign_key "entities", "companies"
   add_foreign_key "entities", "countries"
   add_foreign_key "entity_tax_codes", "country_tax_codes"
   add_foreign_key "entity_tax_codes", "entities"
+  add_foreign_key "invoices", "entities"
+  add_foreign_key "item_transactions", "items"
+  add_foreign_key "item_transactions", "transactions"
+  add_foreign_key "items", "entities"
   add_foreign_key "periodicity_to_project_types", "countries"
   add_foreign_key "periodicity_to_project_types", "periodicities"
   add_foreign_key "periodicity_to_project_types", "project_types"
@@ -262,5 +321,6 @@ ActiveRecord::Schema.define(version: 2021_04_26_155407) do
   add_foreign_key "returns", "entities"
   add_foreign_key "returns", "periodicity_to_project_types"
   add_foreign_key "transactions", "entity_tax_codes"
+  add_foreign_key "transactions", "invoices"
   add_foreign_key "transactions", "returns"
 end

@@ -1,0 +1,41 @@
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 offset-sm-4">
+    <h1 style='font-size: 25px; text-align: center'> Update Transaction </h1>
+    <p id="double-spaced" style="line-height: 50%;">
+
+      <form  action="./save_transaction_invoice">
+
+          <%= select_tag :item_id, options_from_collection_for_select(@items, "id", "item_name", @transaction.item_transaction.item.id ),class: "form-control"%>
+
+          </br>
+
+          <%= select_tag :entity_tax_codes_id, options_from_collection_for_select(@entity_tax_codes, "id", 'name', @transaction.entity_tax_code.id ), class: "form-control" %>
+
+          </br>
+          
+          <%= label_tag 'comment'%>
+          <%= text_field_tag :comment, @transaction.comment, class:"form-control"%> 
+                      
+          </br>
+
+          <%= label_tag 'quantity'%>
+          <%= number_field_tag :quantity, @transaction.item_transaction.quantity, class:"form-control"%> 
+
+          </br>
+
+          <%= label_tag 'net_amount (per unit)'%>
+          <%= text_field_tag :net_amount, @transaction.item_transaction.net_amount, class:"form-control"%> 
+
+          <%= label_tag 'vat_amount (per unit)'%>
+          <%= text_field_tag :vat_amount, @transaction.item_transaction.vat_amount, class:"form-control"%> 
+
+          </br>
+          
+        <input type="submit" value="Submit" class="btn btn-primary">
+      </form>
+      </p>
+    </div>  
+  </div>
+</div>

@@ -16,6 +16,10 @@
           <%= link_to "My Company", company_path(current_user.company), class: "dropdown-item" %>
           <%= link_to "My Declarations", company_returns_path(current_user.company), class: "dropdown-item"%>
           <%= link_to "My Tax Codes", company_entity_tax_codes_path(current_user.company), class: "dropdown-item"%>
+          <%= link_to "My Invoices", company_invoices_path(current_user.company), class: "dropdown-item"%>
+          <%= link_to "My Customers", company_customers_path(current_user.company), class: "dropdown-item"%>
+          <%= link_to "My Items", company_items_path(current_user.company), class: "dropdown-item"%>
+
           <%= link_to "My Dashboard", "#", class: "dropdown-item"%>
           
                 

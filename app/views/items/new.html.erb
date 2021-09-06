@@ -1,0 +1,20 @@
+<h1> Create a new Invoice </h1>
+     <%= simple_form_for([@company, @item]) do |f| %>
+        <%= f.input :item_name %>
+
+        <%= f.input :item_description %>
+
+        <%= f.input :price %>
+
+        <%= label :entity, "Entity" %>
+        <%= select_tag :entity,
+        options_from_collection_for_select(@entities, "id", "name"),
+        include_blank: true,
+        data: { action: "invoice#entity" } %>
+
+
+
+        <%= f.submit "Save", class: "btn btn-primary" %>
+    <% end %>
+
+

@@ -1,0 +1,61 @@
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 offset-sm-4">
+      <h1  style='font-size: 25px; text-align: center'> Create a new Invoice </h1>
+      <div data-controller="invoice">
+          <%= simple_form_for([@company, @invoice]) do |f| %>
+              <%= f.input :invoice_name %>
+
+              <%= label :entity, "Entity" %>
+              <%= select_tag :entity,
+              options_from_collection_for_select(@entities, "id", "name"),
+              include_blank: true, 
+              class:"form-control" %>
+                </br>
+              <%= f.input :invoice_date,
+              as: :string,
+              required: true,
+              autofocus: true,
+              class:"form-control",
+              input_html: { class: "datepicker_full"} %>
+
+              <%= f.input :payment_date, 
+              as: :string ,
+              required: true,
+              autofocus: true,
+              class:"form-control",
+              input_html: {class: "datepicker_full"}%>
+
+              <%= f.input :invoice_number%>
+
+              <%= label :customer, "Customer" %>
+              <%= select_tag :customer,
+              options_from_collection_for_select(@customers, "id", "name"),
+              include_blank: true,
+              class:"form-control" %>
+
+      <br/>
+
+
+        <div id="myList">
+        
+        <div data-invoice-target="other" >
+        </div>
+        
+        </div>
+
+                
+            <input class="btn btn-primary" type="button" value="add_item" data-action="click->invoice#add_item">
+
+
+              <%= f.submit "Save", class: "btn btn-primary" %>
+          <% end %>
+
+      </div>
+      <% submit_tag "Add address", :type =>  "button", :id => "addAddress",               :onclick => 'addAddressField()'%> 
+
+      <%= link_to "Create Customer", new_company_customer_path(current_user.company) %>
+      <%= link_to "Create Item", new_company_item_path(current_user.company) %>
+    </div>  
+  </div>
+</div>

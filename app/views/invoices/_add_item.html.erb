@@ -1,0 +1,34 @@
+<p id="double-spaced" style="line-height: 80%;">
+
+<h2 style='font-size: 15px; text-align: center'> New Transaction </h1>
+<p> Item</p>
+<%= select_tag "item_update_with_timestamp", options_from_collection_for_select(@items, "id", "item_name" ),
+include_blank: true, class: "form-control"%>
+
+<p> Tax Code</p>
+
+<%= select_tag "entity_tax_codes[entity_tax_codes_id]", options_from_collection_for_select(@entity_tax_codes, "id", 'name' ),
+                            include_blank: true,
+                            class: "form-control" %>
+
+
+
+<%= label_tag 'comment'%>
+<input type="text" name="comment_update_with_timestamp" class="form-control">
+
+
+
+<%= label_tag 'quantity'%>
+<input type="test" name="quantity_update_with_timestamp" class="form-control">
+
+
+<%= label_tag 'net_amount (per unit)'%>
+<input type="test" name="net_amount_update_with_timestamp" class="form-control">
+
+
+<%= label_tag 'vat_amount (per unit)'%>
+<input type="test" name="vat_amount_update_with_timestamp" class="form-control">
+
+</br>
+
+</p>
