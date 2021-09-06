@@ -15,6 +15,23 @@ class ItemsController < ApplicationController
         end
     end
 
+    def index
+        @entities = Entity.where(company_id: current_user.company.id)
+        @items = Item.where(entity_id: @entities)
+
+    end
+
+    def edit
+        @item = Item.find(params[:id])
+        @entities = Entity.where(company_id: current_user.company.id)
+
+    end
+
+    def update
+
+        hjkl
+    end
+
     private
 
     def params_items

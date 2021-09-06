@@ -1,0 +1,36 @@
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 offset-sm-4">
+
+      <h1 style='font-size: 25px'> Edit Item </h1>
+
+
+        <form action="./update">
+        
+        <%= label_tag 'Item Name'%>
+        <%= text_field_tag :item_name, @item.item_name, class:"form-control"%> 
+
+        <%= label_tag 'Item Description'%>
+        <%= text_field_tag :item_description, @item.item_description, class:"form-control"%> 
+          
+        <%= label_tag 'Net Amount'%>
+        <%= text_field_tag :net_amount, @item.net_amount, class:"form-control"%> 
+
+        <%= label_tag 'VAT Amount'%>
+        <%= text_field_tag :vat_amount, @item.vat_amount, class:"form-control"%> 
+
+        <%= label_tag 'Entity'%>
+        <%= select_tag :entity_id, options_from_collection_for_select(@entities, "id", "name", @item.entity.id ),class: "form-control"%>
+
+
+            <input type="submit" value="Submit" class="btn btn-primary">
+        </form>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
