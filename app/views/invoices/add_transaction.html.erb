@@ -1,27 +1,29 @@
-<h1> Create a new Invoice </h1>
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 offset-sm-4">
 
-<div data-controller="invoice">
+      <h1 style='font-size: 25px'> Create a new Transaction </h1>
 
-<form action="./save_transaction">
+      <div data-controller="invoice">
 
-<%= select_tag :entity,
-        options_from_collection_for_select(@entities, "id", "name", @invoice.id), style: "#{'display:none'}"%>
+        <form action="./save_transaction">
 
-<ul id="myList">
-<li>
-<div data-invoice-target="other" >
+          <%= select_tag :entity,
+                  options_from_collection_for_select(@entities, "id", "name", @invoice.id), style: "#{'display:none'}"%>
+
+          <div id="myList">
+            <div data-invoice-target="other" >
+            </div>
+          </div>
+
+            <input class="btn btn-primary" type="button" value="add_item" data-action="click->invoice#add_item">
+            <input type="submit" value="Submit" class="btn btn-primary">
+        </form>
+
+      </div>
+
+      <%= link_to "Create Customer", new_company_customer_path(current_user.company) %>
+      <%= link_to "Create Item", new_company_item_path(current_user.company) %>
+    </div>
+  </div>
 </div>
-</li>
-</ul>
-
-
-    <input class="btn btn-primary" type="button" value="add_item" data-action="click->invoice#add_item">
-  <input type="submit" value="Submit" class="btn btn-primary">
-</form>
-
-</div>
-
-<% submit_tag "Add address", :type =>  "button", :id => "addAddress",               :onclick => 'addAddressField()'%> 
-
-<%= link_to "Create Customer", new_company_customer_path(current_user.company) %>
-<%= link_to "Create Item", new_company_item_path(current_user.company) %>

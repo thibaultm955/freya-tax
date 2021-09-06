@@ -21,6 +21,8 @@ Rails.application.routes.draw do
     get '/invoices/:invoice_id/add_transaction', to: "invoices#add_transaction"
     get '/invoices/:invoice_id/save_transaction', to: "invoices#save_transaction"
 
+    # Delete invoice
+    get '/invoices/:invoice_id/delete_transaction', to: "invoices#delete_transaction"
 
     get '/invoices/:invoice_id/add_item/:entity_id' , to: "invoices#render_add_item"
     resources :entities do
@@ -40,7 +42,9 @@ Rails.application.routes.draw do
       get '/transactions/:transaction_id/edit_transaction_invoice', to: "transactions#edit_transaction_invoice"
       get '/transactions/:transaction_id/save_transaction_invoice', to: "transactions#save_transaction_invoice"
 
-      
+      # Remove transaction from Invoice Screen
+      get '/transactions/:transaction_id/delete_transaction', to: "transactions#delete_transaction"
+
 
 
       resources :transactions

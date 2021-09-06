@@ -218,6 +218,17 @@ class TransactionsController < ApplicationController
         
     end
 
+    def delete_transaction
+        @transaction = Transaction.find(params[:transaction_id])
+        @item_transaction = @transaction.item_transaction
+        @invoice = @transaction.invoice
+        @item_transaction.destroy
+        @transaction.destroy
+        redirect_to company_invoice_path(current_user.company, @invoice.id)
+
+        
+    end
+
     private
 
     def params_transaction

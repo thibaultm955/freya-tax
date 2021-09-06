@@ -125,6 +125,11 @@ class InvoicesController < ApplicationController
         redirect_to company_invoice_path(current_user.company, @invoice.id)
     end
 
+    def delete_transaction
+
+        jhk
+    end
+
     def render_add_item
         test = request.original_url
         testo = test.split("#")[1]
@@ -209,7 +214,6 @@ class InvoicesController < ApplicationController
                     total_amount += transaction.total_amount
                     total_vat += transaction.item_transaction.vat_amount * transaction.item_transaction.quantity
                 end
-                pdf.table data, :position => :left
               else
                 while i < @transactions.count - 1
                     i +=1

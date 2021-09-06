@@ -12,6 +12,8 @@
 <a class="btn btn-primary" href="./<%=@invoice.id%>/edit" role="button">Edit Information Invoice</a>
 <a class="btn btn-primary" href="./<%=@invoice.id%>/add_transaction" role="button">Add a Transaction</a>
 
+<% total_amount = 0 %>
+<% total_vat = 0 %>
 
 </br>
 </br>
@@ -33,6 +35,8 @@
   <tbody>
   <%i=1%>
   <%@transactions.each do |transaction|%>
+    <% total_amount += transaction.total_amount %>
+    <% total_vat += transaction.item_transaction.vat_amount * transaction.item_transaction.quantity %>
     <tr>
       <th scope="row"><%=i%></th>
       <td><%=transaction.item_transaction.item.item_name%></td>
@@ -43,6 +47,7 @@
       <td><%=transaction.total_amount%></td>
       <td>
         <a class="btn btn-primary" href="./<%=@invoice.id%>/transactions/<%=transaction.id%>/edit_transaction_invoice" role="button">Edit Transaction</a>
+        <a class="btn btn-danger" href="./<%=@invoice.id%>/transactions/<%=transaction.id%>/delete_transaction" onclick="return confirm('Are you sure?')"> Delete </a>
       </td>
     </tr>
     <%i +=1%>
@@ -50,4 +55,5 @@
   </tbody>
 </table>
 
-
+<p> <b>Total Amount</b>: <%= total_amount %> </p>
+<p> <b>Total VAT Amount</b>: <%=total_vat %></p>

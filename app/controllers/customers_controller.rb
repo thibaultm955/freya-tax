@@ -1,5 +1,9 @@
 class CustomersController < ApplicationController
 
+    def index
+        @customers = Customer.where(params[:customer_id])
+    end
+
     def new
         @company = Company.find(params[:company_id])
         @customer = Customer.new

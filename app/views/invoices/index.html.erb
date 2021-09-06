@@ -4,7 +4,7 @@
 
 <%i=1%>
 
-<table class="table table-hover">
+<table class="table table-hover" style="text-align: center">
   <thead>
     <tr>
       <th scope="col">#</th>
@@ -31,8 +31,9 @@
       <td><%=invoice.customer.name%></td>
       <td>
         <a class="btn btn-light" href="./invoices/<%=invoice.id%>"> Open </a>
-        <a class="btn btn-primary" href="./invoices/<%=invoice.id%>/edit"> Edit </a>  
-        <%= button_to "Delete the Tax Code", { action: "destroy", id: invoice.id }, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger"  %>
+        <a class="btn btn-primary" href="./invoices/<%=invoice.id%>/edit"> Edit </a> 
+        <a class="btn btn-danger" href="./invoices/<%=invoice.id%>/delete_invoice" onclick="return confirm('Are you sure?')"> Delete </a>
+
       </td> 
     </tr>
     <%i += 1%>

@@ -7,9 +7,11 @@
         <%= f.input :street %>
         <%= f.input :city %>
         <%= f.input :post_code %>
+        <%= label_tag :Country %>
         <%= select_tag :country,
         options_from_collection_for_select(@countries, "id", "name"),
-        include_blank: true %>
+        include_blank: true,
+        class:"form-control" %>
 
  
 
