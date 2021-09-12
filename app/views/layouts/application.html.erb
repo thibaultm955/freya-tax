@@ -12,7 +12,11 @@
   </head>
 
   <body>
-  <%= render 'shared/navbar' %>
+  <%if current_user.language.name == 'English' %>
+    <%= render 'shared/navbar' %>
+  <%elsif current_user.language.name == 'French' %>
+    <%= render 'shared/navbar_french' %>
+  <%end%>
     <%= yield %>
   </body>
 </html>

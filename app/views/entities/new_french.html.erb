@@ -1,0 +1,44 @@
+<h1 style='font-size: 30px; text-align: center'> Créer une nouvelle Entité </h1>
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 offset-sm-4">
+        <form action='./create'%>
+            <%= label_tag "Nom" %>
+            <%= text_field_tag :name, '', required: true, class: 'form-control'%>
+
+            <%= label_tag "Adresse" %>
+            <%= text_field_tag :address, '', required: true, class: 'form-control'%>
+            
+            <%= label_tag "Email" %>
+            <%= text_field_tag :email, '', required: true, class: 'form-control'%>
+
+            <%= label_tag "Site Web" %>
+            <%= text_field_tag :website, '', class: 'form-control'%>
+
+            <%= label_tag "Code Postal" %>
+            <%= text_field_tag :postal_code, '', required: true, class: 'form-control'%>
+
+            <%= label_tag "Ville" %>
+            <%= text_field_tag :city, '', required: true, class: 'form-control'%>
+
+            <%= label_tag "Numéro de TVA" %>
+            <%= text_field_tag :vat_number, '', required: true, class: 'form-control'%>
+
+            <%= label_tag "Pays" %>
+            <%= select_tag :country, options_from_collection_for_select(@countries, 'id', 'name'), include_blank: true, class: 'form-control'%>
+
+            <%= label_tag "Numéro de Téléphone" %>
+            <%= text_field_tag :phone_number, '', class: 'form-control'%>
+
+            <%= label_tag "IBAN" %>
+            <%= text_field_tag :iban, '', required: true, class: 'form-control'%>
+
+            <%= label_tag "BIC" %>
+            <%= text_field_tag :bic, '', required: true, class: 'form-control'%>
+
+            <input type='submit' value='Sauvegarder' class='btn btn-primary'>
+
+        </form>
+      </div>
+    </div>
+</div>

@@ -194,39 +194,70 @@ class TransactionsController < ApplicationController
         @transaction = Transaction.find(params[:transaction_id])
         @company = current_user.company
         @invoice = @transaction.invoice
-        @entity = @transaction.entity_tax_code.entity
+        @item = @transaction.item
+        @entity = @item.entity
         @items = @entity.items
-        @entity_tax_codes = EntityTaxCode.where(entity_id: @transaction.entity_tax_code.entity.id)
-        
 
     end
 
     def save_transaction_invoice
         @item = Item.find(params[:item_id])
         @invoice = Invoice.find(params[:invoice_id])
-        @entity_tax_codes = EntityTaxCode.find(params[:entity_tax_codes_id])
         @transaction = Transaction.find(params[:transaction_id])
-        @item_transaction = @transaction.item_transaction 
         quantity = params[:quantity].to_f
-        vat_amount = params[:vat_amount].to_f
-        net_amount = params[:net_amount].to_f
-        total_amount = vat_amount + net_amount
-        @transaction.update(:comment => params[:comment], :net_amount => net_amount * quantity, :vat_amount => vat_amount * quantity, :total_amount => total_amount * quantity)
-        @item_transaction.update(:item_id => @item.id, :net_amount => net_amount, :vat_amount => vat_amount, :quantity => quantity)
-        
+        net_amount = quantity * @item.net_amount
+        vat_amount = quantity * @item.vat_amount
+        # will have to multiply quantity with what is specified
+        @transaction.update!(vat_amount: vat_amount, net_amount: net_amount, comment: params[:comment], invoice_id: @invoice.id, :item_id => @item.id, :quantity => quantity)
+    
         redirect_to company_invoice_path(current_user.company, @invoice.id)
         
     end
 
     def delete_transaction
         @transaction = Transaction.find(params[:transaction_id])
-        @item_transaction = @transaction.item_transaction
         @invoice = @transaction.invoice
-        @item_transaction.destroy
         @transaction.destroy
         redirect_to company_invoice_path(current_user.company, @invoice.id)
 
         
+    end
+
+    # French
+
+    def edit_transaction_french_invoice
+        @transaction = Transaction.find(params[:transaction_id])
+        @company = current_user.company
+        @invoice = @transaction.invoice
+        @item = @transaction.item
+        @entity = @item.entity
+        @items = @entity.items
+    end
+
+    def save_transaction_french_invoice
+        @company = Company.find(params[:company_id])
+        @item = Item.find(params[:item_id])
+        @invoice = Invoice.find(params[:invoice_id])
+        @transaction = Transaction.find(params[:transaction_id])
+        quantity = params[:quantity].to_f
+        net_amount = quantity * @item.net_amount
+        vat_amount = quantity * @item.vat_amount
+        # will have to multiply quantity with what is specified
+        @transaction.update!(vat_amount: vat_amount, net_amount: net_amount, comment: params[:comment], invoice_id: @invoice.id, :item_id => @item.id, :quantity => quantity)
+    
+        path = '/companie/' + @company.id.to_s + '/factures/' + @invoice.id.to_s 
+        redirect_to path
+
+    end
+
+    def delete_transaction_french
+        @company = Company.find(params[:company_id])
+        @transaction = Transaction.find(params[:transaction_id])
+        @invoice = @transaction.invoice
+        @transaction.destroy
+        path = '/companie/' + @company.id.to_s + '/factures/' + @invoice.id.to_s 
+        redirect_to path
+
     end
 
     private

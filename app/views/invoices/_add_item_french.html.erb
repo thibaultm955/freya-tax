@@ -1,14 +1,14 @@
 <p id="double-spaced" style="line-height: 80%;">
 
-<h2 style='font-size: 15px; text-align: center'> New Transaction </h1>
-<%= label_tag :item %>
+<h2 style='font-size: 15px; text-align: center'> Nouvelle Transaction </h1>
+<%= label_tag :article %>
 <%= select_tag "item_update_with_timestamp", options_from_collection_for_select(@items, "id", "item_name" ),
 include_blank: true, class: "form-control"%>
 
-<%= label_tag 'comment'%>
+<%= label_tag 'Commentaire'%>
 <input type="text" name="comment_update_with_timestamp" class="form-control">
 
-<%= label_tag 'quantity'%>
+<%= label_tag 'Quantité'%>
 <input type="test" name="quantity_update_with_timestamp" class="form-control">
 
 </br>

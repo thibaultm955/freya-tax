@@ -5,4 +5,5 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
   has_one :assignment
   has_one :company, through: :assignment
+  belongs_to  :language
 end

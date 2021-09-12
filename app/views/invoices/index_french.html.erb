@@ -1,0 +1,44 @@
+<h1> Your Invoices </h1>
+
+<a class="btn btn-primary" href="./factures/new"> Créer une facture </a> 
+
+<%i=1%>
+
+<table class="table table-hover" style="text-align: center">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Nom de l'Entité</th>
+      <th scope="col">Juridiction</th>
+      <th scope="col">Nom de la Facture</th>
+      <th scope="col">Date de la Facture</th>
+      <th scope="col">Numéro de la Facture</th>
+      <th scope="col">Date de Paiement</th>
+      <th scope="col">Nom du Client</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+  <%@invoices.each do |invoice| %>
+    <tr>
+      <th scope="row"><%=i%></th>
+      <td><%=invoice.entity.name%></td>
+      <td><%=invoice.entity.country.name%></td>
+      <td><%=invoice.invoice_name%></td>
+      <td><%=invoice.invoice_date%></td>
+      <td><%=invoice.invoice_number%></td>
+      <td><%=invoice.payment_date%></td>
+      <td><%=invoice.customer.name%></td>
+      <td>
+        <a class="btn btn-light" href="./factures/<%=invoice.id%>"> Ouvrir </a>
+        <a class="btn btn-primary" href="./factures/<%=invoice.id%>/edit"> Modifier </a> 
+        <a class="btn btn-danger" href="./factures/<%=invoice.id%>/delete_invoice" onclick="return confirm('Etes-vous sûr?')"> Supprimer </a>
+
+      </td> 
+    </tr>
+    <%i += 1%>
+    <%end%>
+  </tbody>
+</table>
+
+

@@ -27,9 +27,7 @@
       <td><%=customer.post_code%></td>
       <td><%=customer.country.name%></td>
       <td>
-        <a class="btn btn-light" href="./entity_tax_codes/"> Open </a>
-        <a class="btn btn-primary" href="./entity_tax_codes/edit"> Edit </a>  
-        <a class="btn btn-danger" href="./transactions//delete_transaction" onclick="return confirm('Are you sure?')"> Delete </a>
+        <a class="btn btn-primary" href="./customers/<%=customer.id%>/edit"> Edit </a>  
       </td> 
     </tr>
     <%i += 1%>
