@@ -327,7 +327,7 @@ class InvoicesController < ApplicationController
             @invoice.save!  
         end
         # A transaction is linked to an invoice, so need to first create the invoice
-        path = '/companie/' + @company.id.to_s + '/factures/' + @invoice.id.to_s 
+        path = '/entreprises/' + @company.id.to_s + '/factures/' + @invoice.id.to_s 
         redirect_to path
 
     end
@@ -383,7 +383,7 @@ class InvoicesController < ApplicationController
 
             end
         end
-        path = '/companie/' + @company.id.to_s + '/factures/' + @invoice.id.to_s 
+        path = '/entreprises/' + @company.id.to_s + '/factures/' + @invoice.id.to_s 
         redirect_to path
     end
 
@@ -400,7 +400,7 @@ class InvoicesController < ApplicationController
         @customer = Customer.find(params_update_french[:customer].to_i)
         @invoice = Invoice.find(params[:invoice_id])
         @invoice.update(:invoice_date => params_update_french[:invoice_date], :payment_date => params_update_french[:payment_date], :invoice_number => params_update_french[:invoice_number], :invoice_name => params_update_french[:invoice_name], :customer_id => params_update_french[:customer].to_i)
-        path = '/companie/' + @company.id.to_s + '/factures/' + @invoice.id.to_s 
+        path = '/entreprises/' + @company.id.to_s + '/factures/' + @invoice.id.to_s 
         redirect_to path
     end
 
@@ -408,7 +408,7 @@ class InvoicesController < ApplicationController
         @invoice = Invoice.find(params[:invoice_id])
         @company = current_user.company
         @invoice.destroy
-        path = '/companie/' + @company.id.to_s + '/factures'
+        path = '/entreprises/' + @company.id.to_s + '/factures'
         redirect_to path
     end
 
@@ -428,17 +428,20 @@ class InvoicesController < ApplicationController
               pdf.text @invoice.entity.address, :align => :right, :size => size_text
               pdf.text @invoice.entity.city + ', ' + @invoice.entity.postal_code, :align => :right, :size => size_text 
               pdf.text @invoice.entity.phone_number, :align => :right, :size => size_text 
+              country_entity = LanguageCountry.where( language_id: current_user.language.id, country_id: @invoice.entity.country.id)[0]
+              pdf.text country_entity.name, :align => :right, :size => size_text 
               pdf.text ' '
               pdf.stroke_horizontal_rule
               pdf.text ' '
-              pdf.text ' '
-              pdf.text 'Client', :align => :left, :size => size_text
+
+              pdf.text 'Client:', :align => :left, :size => size_text
               # Customer Information
               pdf.draw_text @invoice.customer.name, :at => [0, 562], :size => size_text, :style => :bold
               pdf.draw_text @invoice.customer.vat_number, :at => [0, 547], :size => size_text
               pdf.draw_text @invoice.customer.street, :at => [0, 532], :size => size_text
               pdf.draw_text @invoice.customer.city + ', ' + @invoice.customer.post_code, :at => [0, 517], :size => size_text
-              pdf.draw_text @invoice.customer.country.name, :at => [0, 502], :size => size_text
+              country_customer = LanguageCountry.where( language_id: current_user.language.id, country_id: @invoice.customer.country.id)[0]
+              pdf.draw_text country_customer.name, :at => [0, 502], :size => size_text
               # Invoice Information
               pdf.draw_text 'Nom de la Facture:', :at => [300, 577], :size => size_text, :style => :bold
               pdf.draw_text @invoice.invoice_name, :at => [430, 577], :size => size_text

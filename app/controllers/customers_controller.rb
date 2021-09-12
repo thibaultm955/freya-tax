@@ -60,7 +60,7 @@ class CustomersController < ApplicationController
         @company = current_user.company
         @customer = Customer.find(params[:customer_id])
         @customer.update!(name: params_french[:name], vat_number: params_french[:vat_number], street: params_french[:street], city: params_french[:city], post_code: params_french[:post_code], country_id: params_french[:country].to_i, company_id: @company.id)
-        path = '/companie/' + @company.id.to_s + '/clients'
+        path = '/entreprises/' + @company.id.to_s + '/clients'
         redirect_to path
     end
 
@@ -73,7 +73,7 @@ class CustomersController < ApplicationController
     def create_french
         @company = current_user.company
         @customer = Customer.new(name: params_french[:name], vat_number: params_french[:vat_number], street: params_french[:street], city: params_french[:city], post_code: params_french[:post_code], country_id: params_french[:country].to_i, company_id: @company.id)
-        path = '/companie/' + @company.id.to_s + '/clients'
+        path = '/entreprises/' + @company.id.to_s + '/clients'
         if @customer.save
             redirect_to path
         else

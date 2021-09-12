@@ -13,11 +13,11 @@
       <% if user_signed_in? %>
         <%= link_to "Homepage", root_path , class: "dropdown-item"%>
         <%if !current_user.company.nil? %>
-          <a class="dropdown-item" href="/companie/<%=current_user.id%>"> Entreprise </a>  
-          <a class="dropdown-item" href="/companie/<%=current_user.id%>/factures"> Factures </a>  
-          <a class="dropdown-item" href="/companie/<%=current_user.id%>/clients"> Clients </a>  
-          <a class="dropdown-item" href="/companie/<%=current_user.id%>/articles"> Articles </a>  
-          <a class="dropdown-item" href="/companie/<%=current_user.id%>/dashboard"> Dashboard </a>  
+          <a class="dropdown-item" href="/entreprises/<%=current_user.id%>"> Entreprise </a>  
+          <a class="dropdown-item" href="/entreprises/<%=current_user.id%>/factures"> Factures </a>  
+          <a class="dropdown-item" href="/entreprises/<%=current_user.id%>/clients"> Clients </a>  
+          <a class="dropdown-item" href="/entreprises/<%=current_user.id%>/articles"> Articles </a>  
+          <a class="dropdown-item" href="/entreprises/<%=current_user.id%>/dashboard"> Dashboard </a>  
           
                 
           <li class="nav-item dropdown">

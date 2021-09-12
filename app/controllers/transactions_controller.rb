@@ -245,7 +245,7 @@ class TransactionsController < ApplicationController
         # will have to multiply quantity with what is specified
         @transaction.update!(vat_amount: vat_amount, net_amount: net_amount, comment: params[:comment], invoice_id: @invoice.id, :item_id => @item.id, :quantity => quantity)
     
-        path = '/companie/' + @company.id.to_s + '/factures/' + @invoice.id.to_s 
+        path = '/entreprises/' + @company.id.to_s + '/factures/' + @invoice.id.to_s 
         redirect_to path
 
     end
@@ -255,7 +255,7 @@ class TransactionsController < ApplicationController
         @transaction = Transaction.find(params[:transaction_id])
         @invoice = @transaction.invoice
         @transaction.destroy
-        path = '/companie/' + @company.id.to_s + '/factures/' + @invoice.id.to_s 
+        path = '/entreprises/' + @company.id.to_s + '/factures/' + @invoice.id.to_s 
         redirect_to path
 
     end

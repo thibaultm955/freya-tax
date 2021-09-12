@@ -1,4 +1,4 @@
-<h1> Your Invoices </h1>
+<h1> Vos Factures </h1>
 
 <a class="btn btn-primary" href="./factures/new"> Créer une facture </a> 
 
@@ -23,7 +23,8 @@
     <tr>
       <th scope="row"><%=i%></th>
       <td><%=invoice.entity.name%></td>
-      <td><%=invoice.entity.country.name%></td>
+      <% country = LanguageCountry.where( language_id: current_user.language.id, country_id: invoice.entity.country.id)[0] %>
+      <td class="text-center"><%=country.name%></td>
       <td><%=invoice.invoice_name%></td>
       <td><%=invoice.invoice_date%></td>
       <td><%=invoice.invoice_number%></td>

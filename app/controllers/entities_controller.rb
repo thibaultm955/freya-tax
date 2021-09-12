@@ -98,7 +98,7 @@ class EntitiesController < ApplicationController
         @company = Company.find(update_french_params[:company_id])
         @entity = Entity.find(update_french_params[:entity_id])
         @entity.update(name: update_french_params[:name], address: update_french_params[:address], vat_number: update_french_params[:vat_number], postal_code: update_french_params[:postal_code], city: update_french_params[:city], phone_number: update_french_params[:phone_number], email: update_french_params[:email], website: update_french_params[:website], iban: update_french_params[:iban], bic: update_french_params[:bic])
-        path = '/companie/' + @company.id.to_s + '/entite/' + @entity.id.to_s 
+        path = '/entreprises/' + @company.id.to_s + '/entite/' + @entity.id.to_s 
         redirect_to path
 
     end
@@ -116,7 +116,7 @@ class EntitiesController < ApplicationController
         @entity.company = @company
         @country = Country.find(params_french[:country])
         @entity.country = @country
-        path = '/companie/' + @company.id.to_s
+        path = '/entreprises/' + @company.id.to_s
         if @entity.save
             redirect_to path
         else

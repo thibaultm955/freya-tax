@@ -73,7 +73,7 @@ class ItemsController < ApplicationController
         vat_amount = vat_amount.truncate(2)
 
         @item = Item.new(:item_name => params_french[:item_name], :item_description => params_french[:item_description], :net_amount => params_french[:net_amount].to_f, :entity_id => params_french[:entity_id], :tax_code_operation_rate_id => params_french[:rate_id], :vat_amount => vat_amount)
-        path = '/companie/' + @company.id.to_s + '/articles'
+        path = '/entreprises/' + @company.id.to_s + '/articles'
 
         if @item.save!
             redirect_to path
@@ -99,7 +99,7 @@ class ItemsController < ApplicationController
         # make sure we only have 2 number
         vat_amount = vat_amount.truncate(2)
         @item.update(:item_name => params_items_edit[:item_name], :item_description => params_items_edit[:item_description], :net_amount => params_items_edit[:net_amount].to_f, :entity_id => params_items_edit[:entity_id], :tax_code_operation_rate_id => params_items_edit[:rate_id], :vat_amount => vat_amount)
-        path = '/companie/' + @company.id.to_s + '/articles'
+        path = '/entreprises/' + @company.id.to_s + '/articles'
         redirect_to path
     end
 

@@ -10,7 +10,7 @@
 
   </div>
 </div>
-<a href="/companie/<%=current_user.company.id%>/entite/new">+ Créer une Entité</a>
+<a href="/entreprises/<%=current_user.company.id%>/entite/new">+ Créer une Entité</a>
     
 <% i = 1 %>
 <% if @entities != [] %>
@@ -29,12 +29,12 @@
             <% @entities.each do |entity| %>
                 <tr>
                 <th class="text-center" scope="row"><%=i%></th>
-                <td class="text-center"><a href='../companie/<%=current_user.company.id%>/entite/<%=entity.id%>'> <%=entity.name%></a></td>
+                <td class="text-center"><a href='../entreprises/<%=current_user.company.id%>/entite/<%=entity.id%>'> <%=entity.name%></a></td>
                 <% country = LanguageCountry.where( language_id: current_user.language.id, country_id: entity.country.id)[0] %>
-                <td><%=country.name%></td>
+                <td class="text-center"><%=country.name%></td>
                 <td class="text-center"><%=entity.vat_number%></td>
                  <td>
-                 <a class="btn btn-light" href='../companie/<%=current_user.company.id%>/entite/<%=entity.id%>'> Ouvrir </a>
+                 <a class="btn btn-light" href='../entreprises/<%=current_user.company.id%>/entite/<%=entity.id%>'> Ouvrir </a>
                  <a class="btn btn-primary" href='./<%=@company.id%>/entite/<%=entity.id%>/edit'> Modifier </a>
 
                     
