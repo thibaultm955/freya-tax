@@ -87,11 +87,11 @@ Rails.application.routes.draw do
   get '/entreprises/:company_id', to: "companies#show_french"
 
   #entity
-  get '/entreprises/:company_id/entite/new', to: "entities#new_french"
-  get '/entreprises/:company_id/entite/create', to: "entities#create_french"
-  get '/entreprises/:company_id/entite/:entity_id', to: "entities#show_french"
-  get '/entreprises/:company_id/entite/:entity_id/edit', to: "entities#edit_french"
-  get '/entreprises/:company_id/entite/:entity_id/update', to: "entities#udpate_french"
+  get '/entreprises/:company_id/entites/new', to: "entities#new_french"
+  get '/entreprises/:company_id/entites/create', to: "entities#create_french"
+  get '/entreprises/:company_id/entites/:entity_id', to: "entities#show_french"
+  get '/entreprises/:company_id/entites/:entity_id/edit', to: "entities#edit_french"
+  get '/entreprises/:company_id/entites/:entity_id/update', to: "entities#udpate_french"
 
   #Invoice
   get '/entreprises/:company_id/factures', to: "invoices#index_french"
