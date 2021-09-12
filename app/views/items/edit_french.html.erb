@@ -1,0 +1,35 @@
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 offset-sm-4">
+
+      <h1 style='font-size: 25px'> Modifier </h1>
+
+
+        <form action="./update">
+        
+        <%= label_tag 'Nom'%>
+        <%= text_field_tag :item_name, @item.item_name, class:"form-control"%> 
+
+        <%= label_tag 'Description'%>
+        <%= text_field_tag :item_description, @item.item_description, class:"form-control"%> 
+          
+        <%= label_tag 'Montant Hors TVA / Unité'%>
+        <%= text_field_tag :net_amount, @item.net_amount, class:"form-control"%> 
+
+        <%= label_tag 'Entité'%>
+        <%= select_tag :entity_id, options_from_collection_for_select(@entities, "id", "name", @item.entity.id ),class: "form-control"%>
+
+        <%= label_tag 'Taux de TVA'%>
+        <%= select_tag :rate_id, options_from_collection_for_select(@tax_code_rates, "id", "name" ),class: "form-control"%>
+
+            <input type="submit" value="Submit" class="btn btn-primary">
+        </form>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+

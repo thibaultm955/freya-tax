@@ -38,6 +38,15 @@ class CompaniesController < ApplicationController
         render json: {html_string: html_string}
 
     end
+
+
+    # French
+    def show_french
+        @company = current_user.assignment.company
+        @entities = @company.entities.order('name ASC')
+    end
+
+
     private
 
     def params_company

@@ -1,0 +1,36 @@
+<h2> Vos Articles </h2>
+<a class="btn btn-primary" href="./articles/new"> Créer un Article </a>  
+
+<%i=1%>
+
+<table class="table table-hover" style='text-align:center'>
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Nom</th>
+      <th scope="col">Description</th>
+      <th scope="col">Montant Hors TVA</th>
+      <th scope="col">Montant TVA</th>
+      <th scope="col">Nom de l'Entité</th>
+      <th scope="col">Taux de TVA</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+  <%@items.each do |item| %>
+    <tr>
+      <th scope="row"><%=i%></th>
+      <td><%=item.item_name%></td>
+      <td><%=item.item_description%></td>
+      <td><%=item.net_amount%></td>
+      <td><%=item.vat_amount%></td>
+      <td><%=item.entity.name%></td>
+      <td><%=item.tax_code_operation_rate.name%></td>
+      <td>
+        <a class="btn btn-primary" href="./articles/<%=item.id%>/edit"> Modifier </a>  
+      </td> 
+    </tr>
+    <%i += 1%>
+    <%end%>
+  </tbody>
+</table>

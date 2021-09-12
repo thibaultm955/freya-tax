@@ -11,11 +11,14 @@ Rails.application.routes.draw do
     get "select_country", to: "entities#render_select_country"
   end
 
-
+# english
   resources :companies do
     
     get '/invoices/add_item/:entity_id', to: "invoices#render_add_item"
     get '/invoices/:invoice_id.generate_pdf', to: "invoices#generate_pdf"
+
+    # Delete Invoice
+    get '/invoices/:invoice_id/delete_invoice', to: "invoices#delete_invoice"
 
     # Add transaction to invoice
     get '/invoices/:invoice_id/add_transaction', to: "invoices#add_transaction"
@@ -52,7 +55,15 @@ Rails.application.routes.draw do
 
     resources :customers
 
+    # Delete Customer from customer index form
+    get '/customers/:customer_id/delete', to: 'customers#delete'
+
     resources :items
+
+    # Edit Item from edit form
+    get '/items/:item_id/update_item', to: "items#update_item"
+
+    
   end
 
   resources :returns do
@@ -71,4 +82,53 @@ Rails.application.routes.draw do
     end
   end
 
+# French
+  #company
+  get '/entreprises/:company_id', to: "companies#show_french"
+
+  #entity
+  get '/entreprises/:company_id/entites/new', to: "entities#new_french"
+  get '/entreprises/:company_id/entites/create', to: "entities#create_french"
+  get '/entreprises/:company_id/entites/:entity_id', to: "entities#show_french"
+  get '/entreprises/:company_id/entites/:entity_id/edit', to: "entities#edit_french"
+  get '/entreprises/:company_id/entites/:entity_id/update', to: "entities#udpate_french"
+
+  #Invoice
+  get '/entreprises/:company_id/factures', to: "invoices#index_french"
+  get '/entreprises/:company_id/factures/new', to: "invoices#new_french"
+  get '/entreprises/:company_id/factures/create', to: "invoices#create_french"
+  get '/entreprises/:company_id/factures/:invoice_id', to: "invoices#show_french"
+  get '/entreprises/:company_id/factures/:invoice_id/edit', to: "invoices#edit_french"
+  get '/entreprises/:company_id/factures/:invoice_id/update', to: "invoices#update_french"
+  get '/entreprises/:company_id/factures/:invoice_id.generate_pdf', to: "invoices#generate_french_pdf"
+  get '/entreprises/:company_id/factures/:invoice_id/delete_invoice', to: "invoices#delete_invoice_french"
+  # create invoice with transaction
+  get '/entreprises/:company_id/factures/add_item/:entity_id' , to: "invoices#render_add_item_french"
+
+  # Transaction
+  get '/entreprises/:company_id/factures/:invoice_id/add_transaction', to: "invoices#add_transaction_french"
+  get '/entreprises/:company_id/factures/:invoice_id/add_item/:entity_id' , to: "invoices#render_add_item_french"
+  get '/entreprises/:company_id/factures/:invoice_id/save_transaction', to: "invoices#save_transaction_french"
+  get '/entreprises/:company_id/factures/:invoice_id/transactions/:transaction_id/edit_transaction_invoice', to: "transactions#edit_transaction_french_invoice"
+  get '/entreprises/:company_id/factures/:invoice_id/transactions/:transaction_id/save_transaction_invoice', to: "transactions#save_transaction_french_invoice"
+  get '/entreprises/:company_id/factures/:invoice_id/transactions/:transaction_id/delete_transaction', to: "transactions#delete_transaction_french"
+
+  # Customer
+  get '/entreprises/:company_id/clients', to: 'customers#index_french'
+  get '/entreprises/:company_id/clients/new', to: 'customers#new_french'
+  get '/entreprises/:company_id/clients/create', to: 'customers#create_french'
+  get '/entreprises/:company_id/clients/:customer_id/edit', to: 'customers#edit_french'
+  get '/entreprises/:company_id/clients/:customer_id/update', to: 'customers#update_french'
+  # too dangerous, can break all invoice & co
+  get '/entreprises/:company_id/clients/:customer_id/delete', to: 'customers#delete_french'
+
+
+  # Items
+  get '/entreprises/:company_id/articles', to: 'items#index_french'
+  get '/entreprises/:company_id/articles/new', to: 'items#new_french'
+  get '/entreprises/:company_id/articles/create', to: 'items#create_french'
+  get '/entreprises/:company_id/articles/:item_id/edit', to: 'items#edit_french'
+  get '/entreprises/:company_id/articles/:item_id/update', to: 'items#update_french'
 end
+
+

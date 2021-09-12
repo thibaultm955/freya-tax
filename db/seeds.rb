@@ -16,6 +16,43 @@ countries.each do |country|
     end
 end
 
+language_country = {"Belgium": {'1': "Belgium", '2': "Belgique"}, "France": {"1": "France", "2": "France"},
+                    "Australia": {'1': "Australia", '2': "Australie"}, "Czech Republic": {"1": "Czech Republic", "2": "République tchèque"},
+                    "Finland": {'1': "Finland", '2': "Finlande"}, "Germany": {"1": "Germany", "2": "Allemagne"},
+                    "Italy": {'1': "Italy", '2': "Italie"}, "Luxembourg": {"1": "Luxembourg", "2": "Luxembourg"},
+                    "Netherlands": {'1': "Netherlands", '2': "Pays-Bas"}, "Norway": {"1": "Norway", "2": "Norvège"},
+                    "Portugal": {'1': "Portugal", '2': "Portugal"}, "Spain": {"1": "Spain", "2": "Espagne"},
+                    "Sweden": {'1': "Sweden", '2': "Suède"}, "Switzerland": {"1": "Switzerland", "2": "Suisse"},
+                    "United Kingdom": {'1': "United Kingdom", '2': "Royaume-Uni"}, "United States": {"1": "United States", "2": "Etats-Unis d'Amérique"},
+                    "Russia": {'1': "Russia", '2': "Russie"}, "Turkey": {"1": "Turkey", "2": "Turquie"},
+                    "Ukraine": {'1': "Ukraine", '2': "Ukraine"}, "Poland": {"1": "Poland", "2": "Pologne"},
+                    "Romania": {'1': "Romania", '2': "Roumanie"}, "Kazakhstan": {"1": "Kazakhstan", "2": "Kazakhstan"},
+                    "Greece": {'1': "Greece", '2': "Grèce"}, "Azerbaijan": {"1": "Azerbaijan", "2": "Azerbaïdjan"},
+                    "Hungary": {'1': "Hungary", '2': "Hongrie"}, "Belarus": {"1": "Belarus", "2": "Biélorussie"},
+                    "Austria": {'1': "Austria", '2': "Autriche"}, "Serbia": {"1": "Serbia", "2": "Serbie"},
+                    "Denmark": {'1': "Denmark", '2': "Danemark"}, "Slovakia": {"1": "Slovakia", "2": "Slovaquie"},
+                    "Ireland": {'1': "Ireland", '2': "Irlande"}, "Croatia": {"1": "Croatia", "2": "Croatie"},
+                    "Georgia": {'1': "Georgia", '2': "Géorgie"}, "Bosnia and Herzegovina": {"1": "Bosnia and Herzegovina", "2": "Bosnie-Herzégovine"},
+                    "Armenia": {'1': "Armenia", '2': "Arménie"}, "Albania": {"1": "Albania", "2": "Albanie"},
+                    "Lithuania": {'1': "Lithuania", '2': "Lituanie"}, "Moldova": {"1": "Moldova", "2": "Moldavie"},
+                    "North Macedonia": {'1': "North Macedonia", '2': "Macédoine du Nord"}, "Slovenia": {"1": "Slovenia", "2": "Slovénie"},
+                    "Latvia": {'1': "Latvia", '2': "Lettonie"}, "Kosovo": {"1": "Kosovo", "2": "Kosovo"},
+                    "Canada": {'1': "Canada", '2': "Canada"}, "Cyprus": {"1": "Cyprus", "2": "Chypre"},
+                    "Israel": {'1': "Israel", '2': "Israel"}, "Estonia": {"1": "Estonia", "2": "Estonie"},
+                    "Brazil": {'1': "Brazil", '2': "Brésil"}, "Mexico": {"1": "Mexico", "2": "Mexique"},
+                    "Bulgaria": {'1': "Bulgaria", '2': "Bulgarie"}
+                    }
+language_country.each do |key, value|
+    value.each do |language_id, name|
+        country = Country.where(name: key)[0]
+        p country
+        # need to_s.to_i because it is a symbol
+        language_country_save = LanguageCountry.new(name: name, language_id: language_id.to_s.to_i, country_id: country.id)
+        language_country_save.save!
+        p language_country_save
+    end
+end
+
 project_types = ["VAT", "ESPL", "LSPL", "ANNUAL"]
 
 project_types.each do |project_type|

@@ -1,0 +1,15 @@
+<h1> Update User </h1>
+
+
+    <%= simple_form_for(@user) do |f| %>
+        <%= f.input :email %>
+        <%= label_tag :language %>
+        <%= select_tag :language,
+        options_from_collection_for_select(@languages, "id", "name", @user.language.id),
+        include_blank: true,
+        class:"form-control" %>
+ 
+
+        <%= f.submit "Save", class: "btn btn-primary" %>
+    <% end %>
+

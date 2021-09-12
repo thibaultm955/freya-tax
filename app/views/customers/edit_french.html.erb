@@ -1,0 +1,34 @@
+<h1 style='font-size: 30px; text-align: center'> Modifier Client </h1>
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 offset-sm-4">
+        <form action='./update'%>
+        <%= label_tag 'Nom' %>
+        <%= text_field_tag :name, @customer.name, class:"form-control"%>
+
+        <%= label_tag "Numéro de TVA"%>
+        <%= text_field_tag :vat_number, @customer.vat_number, class:"form-control"%>
+
+        <%= label_tag "Rue" %>
+        <%=text_field_tag :street, @customer.street, class:"form-control"%>
+
+        <%= label_tag 'Ville' %>
+        <%= text_field_tag :city, @customer.city, class:"form-control"%>
+
+        <%= label_tag "Code Postal"%>
+        <%= text_field_tag :post_code, @customer.post_code, class:"form-control"%>
+
+        <%= label_tag "Pays" %>
+        <%= select_tag :country,
+        options_from_collection_for_select(@countries, "id", "name", @customer.country.id),
+        include_blank: true,
+        class:"form-control" %>
+
+
+
+        <input type='submit' value='Sauvegarder' class='btn btn-primary'%>
+        </form>
+
+    </div>
+  </div>
+</div>

@@ -8,7 +8,7 @@ class EntitiesController < ApplicationController
 
     def create
         @company = Company.find(params[:company_id])
-        @entity = Entity.new(name: entity_params[:name], address: entity_params[:address], vat_number: entity_params[:vat_number], postal_code: entity_params[:postal_code], city: entity_params[:city], phone_number: entity_params[:phone_number], email: entity_params[:email], website: entity_params[:website])
+        @entity = Entity.new(name: entity_params[:name], address: entity_params[:address], vat_number: entity_params[:vat_number], postal_code: entity_params[:postal_code], city: entity_params[:city], phone_number: entity_params[:phone_number], email: entity_params[:email], website: entity_params[:website], iban: entity_params[:iban], bic: entity_params[:bic])
         @entity.company = @company
         @country = Country.find(entity_params[:country])
         @entity.country = @country
@@ -31,13 +31,13 @@ class EntitiesController < ApplicationController
         @entity.update(name: entity_params[:name], address: entity_params[:address], vat_number: entity_params[:vat_number], postal_code: entity_params[:postal_code], city: entity_params[:city], phone_number: entity_params[:phone_number], email: entity_params[:email], website: entity_params[:website], iban: entity_params[:iban], bic: entity_params[:bic])
         redirect_to company_path(@company.id)
     end
-
+=begin
     def destroy
         @company = Company.find(current_user.company_id)
         @entity = Entity.find(params[:id])
         redirect_to company_path(@company.id)
     end
-    
+=end    
     def show
         @entity = Entity.find(params[:id])
         @declarations = @entity.returns
@@ -81,10 +81,60 @@ class EntitiesController < ApplicationController
         render json: {html_string: html_string}
     end 
 
+    # French 
+
+    def show_french
+        @entity = Entity.find(params[:entity_id])
+        @declarations = @entity.returns.order("begin_date asc")
+    end
+
+    def edit_french
+        @company = Company.find(params[:company_id])
+        @entity = Entity.find(params[:entity_id])
+        @countries = Country.order("name asc").all
+    end
+
+    def udpate_french
+        @company = Company.find(update_french_params[:company_id])
+        @entity = Entity.find(update_french_params[:entity_id])
+        @entity.update(name: update_french_params[:name], address: update_french_params[:address], vat_number: update_french_params[:vat_number], postal_code: update_french_params[:postal_code], city: update_french_params[:city], phone_number: update_french_params[:phone_number], email: update_french_params[:email], website: update_french_params[:website], iban: update_french_params[:iban], bic: update_french_params[:bic])
+        path = '/entreprises/' + @company.id.to_s + '/entites/' + @entity.id.to_s 
+        redirect_to path
+
+    end
+
+    def new_french
+        @company = Company.find(params[:company_id])
+        @entity = Entity.new
+        @countries = Country.order("name asc").all
+
+    end
+
+    def create_french
+        @company = Company.find(params[:company_id])
+        @entity = Entity.new(name: params_french[:name], address: params_french[:address], vat_number: params_french[:vat_number], postal_code: params_french[:postal_code], city: params_french[:city], phone_number: params_french[:phone_number], email: params_french[:email], website: params_french[:website], iban: params_french[:iban], bic: params_french[:bic])
+        @entity.company = @company
+        @country = Country.find(params_french[:country])
+        @entity.country = @country
+        path = '/entreprises/' + @company.id.to_s
+        if @entity.save
+            redirect_to path
+        else
+            render :new
+        end
+    end
 
     private
 
     def entity_params
         params.require(:entity).permit(:name, :address, :postal_code, :city, :vat_number, :country, :phone_number, :email, :website, :iban, :bic)
+    end
+
+    def update_french_params
+        params.permit(:name, :address, :postal_code, :city, :vat_number, :phone_number, :iban, :bic, :company_id, :entity_id, :email)
+    end
+
+    def params_french
+        params.permit(:name, :address, :postal_code, :city, :vat_number, :country, :phone_number, :email, :website, :iban, :bic)
     end
 end

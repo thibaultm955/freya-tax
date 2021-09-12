@@ -1,0 +1,37 @@
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 offset-sm-4">
+
+        <h1 style='font-size: 30px; text-align: center'> Update Invoice </h1>
+            <div data-controller="invoice">
+                <form action="./update">
+
+                <%= label_tag 'Nom de la Facture'%>
+                <%= text_field_tag :invoice_name, @invoice.invoice_name, class:"form-control"%> 
+            
+                <%= label_tag 'Date de la Facture'%>
+                <%= text_field_tag :invoice_date, @invoice.invoice_date, class:"form-control datepicker_full"%> 
+
+                <%= label_tag 'Date de Paiement'%>
+                <%= text_field_tag :payment_date, @invoice.payment_date, class:"form-control datepicker_full"%> 
+
+                <%= label_tag 'Numéro de Facture'%>
+                <%= text_field_tag :invoice_number, @invoice.invoice_number, class:"form-control"%> 
+
+                <%= label_tag :client %>
+                <%= select_tag :customer,
+                options_from_collection_for_select(@customers, "id", "name", @invoice.customer.id),
+                class: "form-control" %>
+
+
+                <input type="submit" value="Sauvegarder" class="btn btn-primary">
+                </form>
+
+            </div>
+
+            <a href="/entreprises/<%=current_user.company.id%>/clients/new">Créer un Client</a>
+            <a href="/entreprises/<%=current_user.company.id%>/articles/new">Créer un Article</a>
+
+        </div>  
+    </div>
+</div>

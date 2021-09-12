@@ -1,11 +1,27 @@
 <h1>Invoice Information</h1>
-<p>Invoice Name: <%=@invoice.invoice_name%></p>
-<p>Invoice Date: <%=@invoice.invoice_date%></p>
-<p>Payment Date: <%=@invoice.payment_date%></p>
-<p>Invoice Number: <%=@invoice.invoice_number%></p>
-<p>Customer Name: <%=@invoice.customer.name%></p>
-<p>Entity Name: <%=@invoice.entity.name%></p>
 
+<div class="container text-center">
+  <div class="row">
+    <div class="col">
+      <p><b>Invoice Name</b>: <%=@invoice.invoice_name%> </p>
+    </div>
+    <div class="col">
+      <p><b>Invoice Date</b>:  </br><%=@invoice.invoice_date%></p>
+    </div>
+    <div class="col">
+      <p><b>Payment Date</b>: <%=@invoice.payment_date%></p>
+    </div>
+    <div class="col">
+      <p><b>Invoice Number</b>: <%=@invoice.invoice_number%> </p>
+    </div>
+    <div class="col">
+      <p><b>Customer Name</b>: <%=@invoice.customer.name%></p>
+    </div>
+    <div class="col">
+      <p><b>Entity Name</b>:  </br><%=@invoice.entity.name%></p>
+    </div>
+  </div>
+</div>
 </br>
 
 <a class="btn btn-primary" href="./<%=@invoice.id%>.generate_pdf.pdf" role="button">Generate PDF</a>
@@ -35,16 +51,16 @@
   <tbody>
   <%i=1%>
   <%@transactions.each do |transaction|%>
-    <% total_amount += transaction.total_amount %>
-    <% total_vat += transaction.item_transaction.vat_amount * transaction.item_transaction.quantity %>
+    <% total_amount += transaction.net_amount+ transaction.vat_amount %>
+    <% total_vat += transaction.vat_amount  %>
     <tr>
       <th scope="row"><%=i%></th>
-      <td><%=transaction.item_transaction.item.item_name%></td>
+      <td><%=transaction.item.item_name%></td>
       <td><%=transaction.comment%></td>
-      <td><%=transaction.item_transaction.quantity%></td>
-      <td><%=transaction.item_transaction.net_amount%></td>
-      <td><%=transaction.item_transaction.vat_amount%></td>
-      <td><%=transaction.total_amount%></td>
+      <td><%=transaction.quantity%></td>
+      <td><%=transaction.net_amount%></td>
+      <td><%=transaction.vat_amount%></td>
+      <td><%=transaction.net_amount+ transaction.vat_amount%></td>
       <td>
         <a class="btn btn-primary" href="./<%=@invoice.id%>/transactions/<%=transaction.id%>/edit_transaction_invoice" role="button">Edit Transaction</a>
         <a class="btn btn-danger" href="./<%=@invoice.id%>/transactions/<%=transaction.id%>/delete_transaction" onclick="return confirm('Are you sure?')"> Delete </a>
