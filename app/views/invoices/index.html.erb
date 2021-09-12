@@ -2,6 +2,35 @@
 
 <%= link_to "Create Invoice", new_company_invoice_path(current_user.company) %>
 
+
+</br>
+
+<form action="./invoices" method="get">
+  <div class="row">
+    <div class="col text-center">
+      <%= label_tag "Name"%>
+      <%= text_field_tag :query_name, '', class:"form-control"%>
+    </div>
+    <div class="col text-center">
+      <%= label_tag "From Date"%>
+      <%= text_field_tag :from_date, '', class:"form-control datepicker_full"%> 
+    </div>
+    <div class="col text-center">
+      <%= label_tag 'To Date'%>
+      <%= text_field_tag :to_date, '', class:"form-control datepicker_full"%> 
+    </div>
+  </div>
+  </br>
+  <div class="row">
+    <div class="col text-center">
+      <input type="submit" value="Search" class="btn btn-primary">
+    </div>
+  </div>
+</form>
+
+</br>
+
+
 <%i=1%>
 
 <table class="table table-hover" style="text-align: center">
