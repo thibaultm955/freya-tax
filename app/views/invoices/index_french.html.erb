@@ -2,6 +2,33 @@
 
 <a class="btn btn-primary" href="./factures/new"> Créer une facture </a> 
 
+</br>
+
+<form action="./factures" method="get">
+  <div class="row">
+    <div class="col text-center">
+      <%= label_tag "Nom"%>
+      <%= text_field_tag :query_name, '', class:"form-control"%>
+    </div>
+    <div class="col text-center">
+      <%= label_tag "Depuis"%>
+      <%= text_field_tag :from_date, '', class:"form-control datepicker_full"%> 
+    </div>
+    <div class="col text-center">
+      <%= label_tag 'A'%>
+      <%= text_field_tag :to_date, '', class:"form-control datepicker_full"%> 
+    </div>
+  </div>
+  </br>
+  <div class="row">
+    <div class="col text-center">
+      <input type="submit" value="Search" class="btn btn-primary">
+    </div>
+  </div>
+</form>
+
+</br>
+
 <%i=1%>
 
 <table class="table table-hover" style="text-align: center">

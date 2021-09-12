@@ -2,7 +2,28 @@ class InvoicesController < ApplicationController
 
     def index
         @entities = current_user.company.entities
-        @invoices = Invoice.order("invoice_date asc").where(entity_id: current_user.company.entities)
+
+        if params_query[:query_name].present? || params_query[:from_date].present? || params_query[:to_date].present?
+            sql_query = "invoice_name ILIKE :query"
+            if params_query[:query_name].present? & params_query[:from_date].present? & params_query[:to_date].present?
+                @invoices = Invoice.order("invoice_date asc").where(sql_query, query: "%#{params_query[:query_name]}%").where(["invoice_date >= ? and invoice_date <= ?",   params_query[:from_date],  params_query[:to_date]])
+            elsif params_query[:query_name].present? & params_query[:from_date].present? 
+                @invoices = Invoice.order("invoice_date asc").where(sql_query, query: "%#{params_query[:query_name]}%").where(["invoice_date >= ?",   params_query[:from_date]])
+            elsif params_query[:from_date].present? & params_query[:to_date].present?
+                @invoices = Invoice.order("invoice_date asc").where(["invoice_date >= ? and invoice_date <= ?",   params_query[:from_date],  params_query[:to_date]])
+            elsif params_query[:query_name].present? 
+                @invoices = Invoice.order("invoice_date asc").where(sql_query, query: "%#{params_query[:query_name]}%")
+            elsif params_query[:from_date].present? 
+                @invoices = Invoice.order("invoice_date asc").where(["invoice_date >= ?",   params_query[:from_date]])
+            elsif params_query[:to_date].present?
+                @invoices = Invoice.order("invoice_date asc").where(["invoice_date <= ?",   params_query[:to_date]])
+            end
+    
+        else
+            @invoices = Invoice.order("invoice_date asc").where(entity_id: current_user.company.entities)
+    
+        end
+        
     end
 
     def show
@@ -334,7 +355,27 @@ class InvoicesController < ApplicationController
 
     def index_french
         @entities = current_user.company.entities
-        @invoices = Invoice.order("invoice_date asc").where(entity_id: current_user.company.entities)
+
+        if params_query[:query_name].present? || params_query[:from_date].present? || params_query[:to_date].present?
+            sql_query = "invoice_name ILIKE :query"
+            if params_query[:query_name].present? & params_query[:from_date].present? & params_query[:to_date].present?
+                @invoices = Invoice.order("invoice_date asc").where(sql_query, query: "%#{params_query[:query_name]}%").where(["invoice_date >= ? and invoice_date <= ?",   params_query[:from_date],  params_query[:to_date]])
+            elsif params_query[:query_name].present? & params_query[:from_date].present? 
+                @invoices = Invoice.order("invoice_date asc").where(sql_query, query: "%#{params_query[:query_name]}%").where(["invoice_date >= ?",   params_query[:from_date]])
+            elsif params_query[:from_date].present? & params_query[:to_date].present?
+                @invoices = Invoice.order("invoice_date asc").where(["invoice_date >= ? and invoice_date <= ?",   params_query[:from_date],  params_query[:to_date]])
+            elsif params_query[:query_name].present? 
+                @invoices = Invoice.order("invoice_date asc").where(sql_query, query: "%#{params_query[:query_name]}%")
+            elsif params_query[:from_date].present? 
+                @invoices = Invoice.order("invoice_date asc").where(["invoice_date >= ?",   params_query[:from_date]])
+            elsif params_query[:to_date].present?
+                @invoices = Invoice.order("invoice_date asc").where(["invoice_date <= ?",   params_query[:to_date]])
+            end
+    
+        else
+            @invoices = Invoice.order("invoice_date asc").where(entity_id: current_user.company.entities)
+    
+        end
     end
 
     def show_french
@@ -550,4 +591,7 @@ class InvoicesController < ApplicationController
         params.permit(:invoice_date, :payment_date, :invoice_number, :invoice_name, :customer)
     end
 
+    def params_query
+        params.permit(:query_name, :from_date, :to_date)
+    end
 end
