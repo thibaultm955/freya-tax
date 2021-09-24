@@ -21,12 +21,19 @@
       <p><b>Nom de l'Entité</b>:  </br><%=@invoice.entity.name%></p>
     </div>
   </div>
+  <div class="row">
+    <div class="col">
+      <%@invoice.is_paid.nil? ? paid = "Non" : paid = "Oui"%>
+      <p><b>Payé</b>: </br><%=paid%></p>
+    </div>
+  </div>
 </div>
 </br>
 
 <a class="btn btn-primary" href="./<%=@invoice.id%>.generate_pdf.pdf" role="button">Générer un PDF</a>
 <a class="btn btn-primary" href="./<%=@invoice.id%>/edit" role="button">Modifier</a>
 <a class="btn btn-primary" href="./<%=@invoice.id%>/add_transaction" role="button">Ajouter une Transaction</a>
+<a class="btn btn-primary" href="<%= "/entreprises/" + current_user.company.id.to_s + "/factures/" + @invoice.id.to_s + "/paid"%>"> Payer </a>
 
 <% total_amount = 0 %>
 <% total_vat = 0 %>

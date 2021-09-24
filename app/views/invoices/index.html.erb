@@ -44,6 +44,7 @@
       <th scope="col">Invoice Number</th>
       <th scope="col">Payment Date</th>
       <th scope="col">Customer Name</th>
+      <th scope="col">Paid</th>
       <th scope="col">Action</th>
     </tr>
   </thead>
@@ -58,8 +59,11 @@
       <td><%=invoice.invoice_number%></td>
       <td><%=invoice.payment_date%></td>
       <td><%=invoice.customer.name%></td>
+      <%invoice.is_paid ? paid = "Yes" : paid = "No"%>
+      <td><%=paid%></td>
       <td>
         <a class="btn btn-light" href="./invoices/<%=invoice.id%>"> Open </a>
+        <a class="btn btn-primary" href="<%= "/companies/" + current_user.company.id.to_s + "/invoices/" + invoice.id.to_s + "/paid"%>"> Payer </a>
         <a class="btn btn-primary" href="./invoices/<%=invoice.id%>/edit"> Edit </a> 
         <a class="btn btn-danger" href="./invoices/<%=invoice.id%>/delete_invoice" onclick="return confirm('Are you sure?')"> Delete </a>
 

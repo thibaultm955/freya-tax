@@ -11,11 +11,11 @@
       <%= text_field_tag :query_name, '', class:"form-control"%>
     </div>
     <div class="col text-center">
-      <%= label_tag "Depuis"%>
+      <%= label_tag "Du"%>
       <%= text_field_tag :from_date, '', class:"form-control datepicker_full"%> 
     </div>
     <div class="col text-center">
-      <%= label_tag 'A'%>
+      <%= label_tag 'Au'%>
       <%= text_field_tag :to_date, '', class:"form-control datepicker_full"%> 
     </div>
   </div>
@@ -42,6 +42,7 @@
       <th scope="col">Numéro de la Facture</th>
       <th scope="col">Date de Paiement</th>
       <th scope="col">Nom du Client</th>
+      <th scope="col">Payé</th>
       <th scope="col">Action</th>
     </tr>
   </thead>
@@ -57,11 +58,13 @@
       <td><%=invoice.invoice_number%></td>
       <td><%=invoice.payment_date%></td>
       <td><%=invoice.customer.name%></td>
+      <%invoice.is_paid ? paid = "Oui" : paid = "Non"%>
+      <td><%=paid%></td>
       <td>
-        <a class="btn btn-light" href="./factures/<%=invoice.id%>"> Ouvrir </a>
+        <a class="btn btn-light" href="<%= "/entreprises/" + current_user.company.id.to_s + "/factures/" + invoice.id.to_s%>"> Ouvrir </a>
+        <a class="btn btn-primary" href="<%= "/entreprises/" + current_user.company.id.to_s + "/factures/" + invoice.id.to_s + "/paid"%>"> Payer </a>
         <a class="btn btn-primary" href="./factures/<%=invoice.id%>/edit"> Modifier </a> 
         <a class="btn btn-danger" href="./factures/<%=invoice.id%>/delete_invoice" onclick="return confirm('Etes-vous sûr?')"> Supprimer </a>
-
       </td> 
     </tr>
     <%i += 1%>

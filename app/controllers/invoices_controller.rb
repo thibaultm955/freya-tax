@@ -154,6 +154,19 @@ class InvoicesController < ApplicationController
         redirect_to company_invoice_path(current_user.company, @invoice.id)
     end
 
+    def paid
+        @company = current_user.company
+        @invoice = Invoice.find(params[:invoice_id])
+
+        if @invoice.is_paid == true
+            @invoice.update(:is_paid => false)
+        else
+            @invoice.update(:is_paid => true)
+        end
+        path = '/companies/' + @company.id.to_s + '/invoices' 
+        redirect_to path
+    end
+
     def delete_transaction
 
         jhk
@@ -442,6 +455,19 @@ class InvoicesController < ApplicationController
         @invoice = Invoice.find(params[:invoice_id])
         @invoice.update(:invoice_date => params_update_french[:invoice_date], :payment_date => params_update_french[:payment_date], :invoice_number => params_update_french[:invoice_number], :invoice_name => params_update_french[:invoice_name], :customer_id => params_update_french[:customer].to_i)
         path = '/entreprises/' + @company.id.to_s + '/factures/' + @invoice.id.to_s 
+        redirect_to path
+    end
+
+    def paid_french
+        @company = current_user.company
+        @invoice = Invoice.find(params[:invoice_id])
+
+        if @invoice.is_paid == true
+            @invoice.update(:is_paid => false)
+        else
+            @invoice.update(:is_paid => true)
+        end
+        path = '/entreprises/' + @company.id.to_s + '/factures' 
         redirect_to path
     end
 

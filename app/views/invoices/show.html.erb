@@ -21,6 +21,12 @@
       <p><b>Entity Name</b>:  </br><%=@invoice.entity.name%></p>
     </div>
   </div>
+  <div class="row">
+    <div class="col">
+      <%@invoice.is_paid.nil? ? paid = "No" : paid = "Yes"%>
+      <p><b>Payé</b>: </br><%=paid%></p>
+    </div>
+  </div>
 </div>
 </br>
 

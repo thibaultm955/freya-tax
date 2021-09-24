@@ -22,8 +22,9 @@
                 <%= select_tag :customer,
                 options_from_collection_for_select(@customers, "id", "name", @invoice.customer.id),
                 class: "form-control" %>
-
-
+                
+                </br>
+                
                 <input type="submit" value="Sauvegarder" class="btn btn-primary">
                 </form>
 

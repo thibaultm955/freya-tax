@@ -1,0 +1,10 @@
+<h1><%=@company.name%></h1>
+
+<p> Overdue Invoice  - <a href="/entreprises/<%=current_user.company.id%>/factures"> See More  </a></p>
+<ul>
+    <% @invoices_top_5.each do |invoice| %>
+        <li><a href="/entreprises/<%=current_user.company.id%>/factures/<%=invoice.id%>"> <%= invoice.invoice_name%> </a> - Payment Date: <%= invoice.invoice_date%></li>
+    <%end%>
+</ul>
+
+

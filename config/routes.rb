@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   resources :companies do
     
     get '/invoices/add_item/:entity_id', to: "invoices#render_add_item"
+    get '/invoices/:invoice_id/paid', to: "invoices#paid"
     get '/invoices/:invoice_id.generate_pdf', to: "invoices#generate_pdf"
 
     # Delete Invoice
@@ -100,6 +101,7 @@ Rails.application.routes.draw do
   get '/entreprises/:company_id/factures/:invoice_id', to: "invoices#show_french"
   get '/entreprises/:company_id/factures/:invoice_id/edit', to: "invoices#edit_french"
   get '/entreprises/:company_id/factures/:invoice_id/update', to: "invoices#update_french"
+  get '/entreprises/:company_id/factures/:invoice_id/paid', to: "invoices#paid_french"
   get '/entreprises/:company_id/factures/:invoice_id.generate_pdf', to: "invoices#generate_french_pdf"
   get '/entreprises/:company_id/factures/:invoice_id/delete_invoice', to: "invoices#delete_invoice_french"
   # create invoice with transaction
@@ -129,6 +131,9 @@ Rails.application.routes.draw do
   get '/entreprises/:company_id/articles/create', to: 'items#create_french'
   get '/entreprises/:company_id/articles/:item_id/edit', to: 'items#edit_french'
   get '/entreprises/:company_id/articles/:item_id/update', to: 'items#update_french'
+
+  # Dashboard
+  get '/entreprises/:company_id/dashboard', to: 'dashboard#index_french'
 end
 
 
