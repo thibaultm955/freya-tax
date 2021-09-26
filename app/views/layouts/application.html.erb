@@ -1,6 +1,22 @@
 <!DOCTYPE html>
 <html>
   <head>
+  <style>
+         .bar {
+            fill: green;
+         }
+        
+         .highlight {
+            fill: red;
+         }
+         
+         .title {
+            fill: blue;
+            font-weight: bold;
+         }
+      </style>
+      <script src = "https://d3js.org/d3.v4.min.js"></script>
+    
     <title>FreyaTax</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -11,7 +27,7 @@
   </head>
 
   <body>
-  <%iif current_user.language.name == 'English' %>
+  <%if current_user.language.name == 'English' %>
     <%= render 'shared/navbar' %>
   <%elsif current_user.language.name == 'French' %>
     <%= render 'shared/navbar_french' %>
