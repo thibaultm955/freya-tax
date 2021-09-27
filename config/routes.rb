@@ -85,6 +85,7 @@ Rails.application.routes.draw do
 
 # French
   #company
+  get '/entreprises/new', to: "companies#new_french"
   get '/entreprises/:company_id', to: "companies#show_french"
 
   #entity

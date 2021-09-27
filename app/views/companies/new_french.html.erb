@@ -1,0 +1,14 @@
+<h1> Nouvelle Entreprise </h1>
+     <%= simple_form_for @company do |f| %>
+        <%= f.input :name, 
+                    label: 'Nom',
+                    required: true,
+                    autofocus: true,
+                    placeholder: "Freya-Tax" %>
+        <%= f.input :country,
+                    label: "Pays",
+                    collection: @countries,
+                    required: true,
+                    autofocus: true %>
+        <%= f.submit "Save", class: "btn btn-primary" %>
+    <% end %>
