@@ -68,3 +68,7 @@ gem 'execjs'
 gem 'csv'
 
 gem 'prawn-rails'
+
+gem "chartkick"
+
+gem 'groupdate'

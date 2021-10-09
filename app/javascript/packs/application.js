@@ -24,6 +24,7 @@ require("channels")
 // External imports
 import "bootstrap";
 import initFlatPicker from "../plugins/flatpickr"
+import "chartkick/chart.js"
 
 // Internal imports, e.g:
 // import { initSelect2 } from '../components/init_select2';
@@ -36,6 +37,5 @@ document.addEventListener('turbolinks:load', () => {
 
 // Removed it and took out all the duplicated call
 //import "controllers"
-
 
 
