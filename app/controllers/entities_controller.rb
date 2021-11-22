@@ -4,11 +4,12 @@ class EntitiesController < ApplicationController
         @company = Company.find(params[:company_id])
         @entity = Entity.new
         @countries = Country.order("name asc").all
+        @periodicity = Periodicity.all
     end
 
     def create
         @company = Company.find(params[:company_id])
-        @entity = Entity.new(name: entity_params[:name], address: entity_params[:address], vat_number: entity_params[:vat_number], postal_code: entity_params[:postal_code], city: entity_params[:city], phone_number: entity_params[:phone_number], email: entity_params[:email], website: entity_params[:website], iban: entity_params[:iban], bic: entity_params[:bic])
+        @entity = Entity.new(name: entity_params[:name], address: entity_params[:address], vat_number: entity_params[:vat_number], postal_code: entity_params[:postal_code], city: entity_params[:city], phone_number: entity_params[:phone_number], email: entity_params[:email], website: entity_params[:website], iban: entity_params[:iban], bic: entity_params[:bic], periodicity_id: params[:periodicity])
         @entity.company = @company
         @country = Country.find(entity_params[:country])
         @entity.country = @country
@@ -23,12 +24,13 @@ class EntitiesController < ApplicationController
         @company = Company.find(params[:company_id])
         @entity = Entity.find(params[:id])
         @countries = Country.order("name asc").all
+        @periodicity = Periodicity.all
     end
 
     def update
         @company = Company.find(params[:company_id])
         @entity = Entity.find(params[:id])
-        @entity.update(name: entity_params[:name], address: entity_params[:address], vat_number: entity_params[:vat_number], postal_code: entity_params[:postal_code], city: entity_params[:city], phone_number: entity_params[:phone_number], email: entity_params[:email], website: entity_params[:website], iban: entity_params[:iban], bic: entity_params[:bic])
+        @entity.update(name: entity_params[:name], address: entity_params[:address], vat_number: entity_params[:vat_number], postal_code: entity_params[:postal_code], city: entity_params[:city], phone_number: entity_params[:phone_number], email: entity_params[:email], website: entity_params[:website], iban: entity_params[:iban], bic: entity_params[:bic], periodicity_id: params[:periodicity])
         redirect_to company_path(@company.id)
     end
 =begin

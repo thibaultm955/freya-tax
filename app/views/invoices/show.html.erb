@@ -3,7 +3,7 @@
 <div class="container text-center">
   <div class="row">
     <div class="col">
-      <p><b>Invoice Name</b>: <%=@invoice.invoice_name%> </p>
+      <p><b>Invoice Name</b>: </br><%=@invoice.invoice_name%> </p>
     </div>
     <div class="col">
       <p><b>Invoice Date</b>:  </br><%=@invoice.invoice_date%></p>
@@ -24,7 +24,13 @@
   <div class="row">
     <div class="col">
       <%@invoice.is_paid.nil? ? paid = "No" : paid = "Yes"%>
-      <p><b>Payé</b>: </br><%=paid%></p>
+      <p><b>Paid</b>: </br><%=paid%></p>
+    </div>
+    <div class="col">
+      <p><b>Side</b>: </br><%=@invoice.tax_code_operation_side.name%></p>
+    </div>
+    <div class="col">
+      <p><b>Location</b>: </br><%=@invoice.tax_code_operation_location.name%></p>
     </div>
   </div>
 </div>

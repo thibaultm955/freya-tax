@@ -54,7 +54,7 @@ class TransactionsController < ApplicationController
             @transaction.return = @return
             @tax_code = EntityTaxCode.find(params_tax_code[:tax_code_id])
             @transaction.entity_tax_code = @tax_code
-
+            
             box_informations = BoxInformation.where(tax_code_operation_location_id: @tax_code.country_tax_code.tax_code_operation_location_id, tax_code_operation_rate_id: @tax_code.country_tax_code.tax_code_operation_rate_id, tax_code_operation_side_id: @tax_code.country_tax_code.tax_code_operation_side_id, tax_code_operation_type_id: @tax_code.country_tax_code.tax_code_operation_type_id )
 
             box_informations.each do |box_information|

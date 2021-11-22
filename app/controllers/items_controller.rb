@@ -30,7 +30,7 @@ class ItemsController < ApplicationController
         @item = Item.find(params[:id])
         @entities = Entity.where(company_id: current_user.company.id)
         @tax_code_rates = TaxCodeOperationRate.all
-
+        @types = TaxCodeOperationType.all
     end
 
     def update_item
@@ -42,7 +42,7 @@ class ItemsController < ApplicationController
         # make sure we only have 2 number
         vat_amount = vat_amount.truncate(2)
 
-        @item.update(:item_name => params_items_edit[:item_name], :item_description => params_items_edit[:item_description], :net_amount => params_items_edit[:net_amount].to_f, :entity_id => params_items_edit[:entity_id], :tax_code_operation_rate_id => params_items_edit[:rate_id], :vat_amount => vat_amount)
+        @item.update(:item_name => params_items_edit[:item_name], :item_description => params_items_edit[:item_description], :net_amount => params_items_edit[:net_amount].to_f, :entity_id => params_items_edit[:entity_id], :tax_code_operation_rate_id => params_items_edit[:rate_id], :vat_amount => vat_amount, tax_code_operation_type_id: params[:type])
 
         redirect_to company_items_path(current_user.company)
 

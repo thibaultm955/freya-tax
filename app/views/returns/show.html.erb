@@ -54,10 +54,10 @@
     <%@transactions.each do |transaction|%>
         <tr>
             <th scope="row"><%=i%></th>
-            <td><%=transaction.entity_tax_code.name%></td>
-            <td><%=transaction.business_partner_name%></td>
-            <td><%=transaction.business_partner_vat_number%></td>
-            <td><%=transaction.total_amount%></td>
+            <td><%= transaction.invoice.tax_code_operation_location.name + " | " + transaction.invoice.tax_code_operation_side.name + " | " + transaction.item.tax_code_operation_type.name + " | " + transaction.item.tax_code_operation_rate.name%></td>
+            <td><%=transaction.invoice.customer.name%></td>
+            <td><%=transaction.invoice.customer.vat_number%></td>
+            <td><%=transaction.net_amount + transaction.vat_amount%></td>
             <td><%=transaction.net_amount%></td>
             <td><%=transaction.vat_amount%></td>
             <td>

@@ -42,16 +42,55 @@ language_country = {"Belgium": {'1': "Belgium", '2': "Belgique"}, "France": {"1"
                     "Brazil": {'1': "Brazil", '2': "Brésil"}, "Mexico": {"1": "Mexico", "2": "Mexique"},
                     "Bulgaria": {'1': "Bulgaria", '2': "Bulgarie"}
                     }
+
+eu_country =    {"Belgium": "EU", "France": "EU",
+                "Australia": "NON-EU", "Czech Republic": "EU",
+                "Finland": "EU", "Germany": "EU",
+                "Italy": "EU", "Luxembourg": "EU",
+                "Netherlands": "EU", "Norway": "EU",
+                "Portugal": "EU", "Spain": "EU",
+                "Sweden": "EU", "Switzerland": "EU",
+                "United Kingdom": "NON-EU", "United States": "NON-EU",
+                "Russia": "NON-EU", "Turkey": "NON-EU",
+                "Ukraine": "NON-EU", "Poland": "EU",
+                "Romania": "EU", "Kazakhstan": "NON-EU",
+                "Greece": "EU", "Azerbaijan": "NON-EU",
+                "Hungary": "EU", "Belarus": "NON-EU",
+                "Austria": "EU", "Serbia": "EU",
+                "Denmark": "EU", "Slovakia": "EU",
+                "Ireland": "EU", "Croatia": "EU",
+                "Georgia": "NON-EU", "Bosnia and Herzegovina": "NON-EU",
+                "Armenia": "NON-EU", "Albania": "NON-EU",
+                "Lithuania": "EU", "Moldova": "NON-EU",
+                "North Macedonia": "NON-EU", "Slovenia": "EU",
+                "Latvia": "EU", "Kosovo": "NON-EU",
+                "Canada": "NON-EU", "Cyprus": "EU",
+                "Israel": "NON-EU", "Estonia": "EU",
+                "Brazil": "NON-EU", "Mexico": "NON-EU",
+                "Bulgaria": "EU"
+                }
+
+
 language_country.each do |key, value|
     value.each do |language_id, name|
         country = Country.where(name: key)[0]
         p country
-        # need to_s.to_i because it is a symbol
-        language_country_save = LanguageCountry.new(name: name, language_id: language_id.to_s.to_i, country_id: country.id)
-        language_country_save.save!
-        p language_country_save
+        if LanguageCountry.where(name: name) == []
+            # need to_s.to_i because it is a symbol
+            language_country_save = LanguageCountry.new(name: name, language_id: language_id.to_s.to_i, country_id: country.id)
+            language_country_save.save!
+            p language_country_save
+        end
     end
 end
+
+eu_country.each do |key, value|
+    # if Country.where(:name => country) == []
+        country = Country.where(name: key)[0]
+        value == "EU" ? eu = 1 : eu = 0
+        country.update(is_eu: eu)
+end
+
 
 project_types = ["VAT", "ESPL", "LSPL", "ANNUAL"]
 
@@ -91,7 +130,7 @@ country_projecttype_periodicity.each do |country_name, values|
     end
 end
 
-due_date = DueDate.new(begin_date: '2021-02-01', end_date: '2021-02-28', periodicity_to_project_type_id: '1', due_date: '2021-03-20')
+due_date = DueDate.new(begin_date: '2021-09-01', end_date: '2021-12-31', periodicity_to_project_type_id: '2', due_date: '2022-01-20')
 due_date.save
 
 =begin
