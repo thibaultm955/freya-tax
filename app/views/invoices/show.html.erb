@@ -71,7 +71,7 @@
       <td><%=transaction.comment%></td>
       <td><%=transaction.quantity%></td>
       <td><%=transaction.net_amount%></td>
-      <td><%=transaction.vat_amount%></td>
+      <td><%=transaction.vat_amount.round(2)%></td>
       <td><%=transaction.net_amount+ transaction.vat_amount%></td>
       <td>
         <a class="btn btn-primary" href="./<%=@invoice.id%>/transactions/<%=transaction.id%>/edit_transaction_invoice" role="button">Edit Transaction</a>
@@ -83,5 +83,5 @@
   </tbody>
 </table>
 
-<p> <b>Total Amount</b>: <%= total_amount %> </p>
-<p> <b>Total VAT Amount</b>: <%=total_vat %></p>
+<p> <b>Total Amount</b>: <%= total_amount.round(2) %> </p>
+<p> <b>Total VAT Amount</b>: <%= total_vat.round(2) %></p>
