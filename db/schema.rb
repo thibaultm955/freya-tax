@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_22_210412) do
+ActiveRecord::Schema.define(version: 2021_11_26_134156) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -174,10 +174,9 @@ ActiveRecord::Schema.define(version: 2021_11_22_210412) do
     t.float "net_amount"
     t.float "vat_amount"
     t.bigint "tax_code_operation_rate_id"
-    t.bigint "entity_tax_code_id"
     t.bigint "tax_code_operation_type_id"
+    t.boolean "is_hidden"
     t.index ["entity_id"], name: "index_items_on_entity_id"
-    t.index ["entity_tax_code_id"], name: "index_items_on_entity_tax_code_id"
     t.index ["tax_code_operation_rate_id"], name: "index_items_on_tax_code_operation_rate_id"
     t.index ["tax_code_operation_type_id"], name: "index_items_on_tax_code_operation_type_id"
   end
@@ -271,6 +270,14 @@ ActiveRecord::Schema.define(version: 2021_11_22_210412) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "ticket_to_tax_codes", force: :cascade do |t|
+    t.bigint "tax_code_operation_type_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "name"
+    t.index ["tax_code_operation_type_id"], name: "index_ticket_to_tax_codes_on_tax_code_operation_type_id"
+  end
+
   create_table "transactions", force: :cascade do |t|
     t.float "vat_amount"
     t.float "net_amount"
@@ -284,6 +291,14 @@ ActiveRecord::Schema.define(version: 2021_11_22_210412) do
     t.index ["invoice_id"], name: "index_transactions_on_invoice_id"
     t.index ["item_id"], name: "index_transactions_on_item_id"
     t.index ["return_id"], name: "index_transactions_on_return_id"
+  end
+
+  create_table "type_tickets", force: :cascade do |t|
+    t.string "name"
+    t.bigint "language_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["language_id"], name: "index_type_tickets_on_language_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -328,7 +343,6 @@ ActiveRecord::Schema.define(version: 2021_11_22_210412) do
   add_foreign_key "invoices", "tax_code_operation_locations"
   add_foreign_key "invoices", "tax_code_operation_sides"
   add_foreign_key "items", "entities"
-  add_foreign_key "items", "entity_tax_codes"
   add_foreign_key "items", "tax_code_operation_rates"
   add_foreign_key "items", "tax_code_operation_types"
   add_foreign_key "language_countries", "languages"
@@ -341,8 +355,10 @@ ActiveRecord::Schema.define(version: 2021_11_22_210412) do
   add_foreign_key "returns", "due_dates"
   add_foreign_key "returns", "entities"
   add_foreign_key "returns", "periodicity_to_project_types"
+  add_foreign_key "ticket_to_tax_codes", "tax_code_operation_types"
   add_foreign_key "transactions", "invoices"
   add_foreign_key "transactions", "items"
   add_foreign_key "transactions", "returns"
+  add_foreign_key "type_tickets", "languages"
   add_foreign_key "users", "languages"
 end

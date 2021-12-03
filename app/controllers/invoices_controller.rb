@@ -33,6 +33,7 @@ class InvoicesController < ApplicationController
     end
 
     def new
+
         @invoice = Invoice.new
         @company = current_user.company
         @entities = current_user.company.entities
@@ -52,11 +53,14 @@ class InvoicesController < ApplicationController
         else
             @location = TaxCodeOperationLocation.where(name: "Outside-EU")[0]
         end
+        
 
         @invoice = Invoice.new(invoice_date: params[:invoice][:invoice_date], invoice_name: params[:invoice][:invoice_name], payment_date: params[:invoice][:payment_date], invoice_number: params[:invoice][:invoice_number], customer_id: @customer.id, entity_id: @entity.id, tax_code_operation_side_id: @side.id, tax_code_operation_location_id: @location.id )
         transactions = params[:comment]
         
         i = 0
+
+
 
         # if you don't have a new transaction, don't need to do an update
         if !params[:comment].nil?
@@ -64,27 +68,56 @@ class InvoicesController < ApplicationController
                 @item = Item.find(params[:item][key].to_i)
                 i += 1
                 @return = Return.where(["begin_date <= ? and end_date >= ? and entity_id = ? and country_id = ?",   params[:invoice][:invoice_date],  params[:invoice][:invoice_date], @entity.id, 2])[0]
-                # If return doesn't exist, need to create it
-                if @return.nil?
-                    
-                    last_day_month = Time.days_in_month(params[:invoice][:invoice_date][5..6].to_i, params[:invoice][:invoice_date][0..3].to_i) 
-                    from_date = Date.parse(params[:invoice][:invoice_date][0..7] + "01")
-                    to_date = Date.parse(params[:invoice][:invoice_date][0..7] + last_day_month.to_s)
-                    # Set up Periodicity To Project Type as VAT Monthly
-                    @periodicity_to_project_type = PeriodicityToProjectType.where(project_type_id: 1, periodicity_id: 1)[0]
-                    # Set up country as Belgium = 2
-                    @return = Return.new(begin_date: from_date, end_date: to_date ,  periodicity_to_project_type_id: @periodicity_to_project_type.id, country_id: 2, entity_id: @entity.id, due_date_id: @periodicity_to_project_type.due_date.id)
-                    @return_boxes = []
                 
-                    #language_id is hardcoded as not yet defined
-                    box_names = BoxName.where(periodicity_to_project_type_id: @periodicity_to_project_type.id, language_id: 2)
-                    
-                    @return.save!
-                    # Can only put the box an amount if it is indeed created to get the id
-                    box_names.each do |box_name|
-                        return_box = ReturnBox.new(return_id: @return.id, box_name_id: box_name.id, amount: 0)
-                        return_box.save!
+                @periodicity = @entity.periodicity
+        
+                # if you don't have a return, you'll need to create it
+                if @return.nil?
+                    if @periodicity.name == "Monthly"
+                        from_date = Date.parse(@invoice.invoice_date.to_s[0..6] + "-01")
+                        last_day_month = Time.days_in_month(@invoice.invoice_date.to_s[5..6].to_i, @invoice.invoice_date.to_s[2..3].to_i)
+                        to_date = Date.parse(@invoice.invoice_date.to_s[0..7] + last_day_month.to_s)
+                    elsif @periodicity.name == "Quarterly"
+                        if @invoice.invoice_date.month < 4
+                            last_day_month = Time.days_in_month(3, @invoice.invoice_date.to_s[2..3].to_i)
+                            from_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-01" + "-01")
+                            to_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-03-" + last_day_month.to_s)
+                        elsif @invoice.invoice_date.month < 7
+                            last_day_month = Time.days_in_month(6, @invoice.invoice_date.to_s[2..3].to_i)
+                            from_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-04" + "-01")
+                            to_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-06-" + last_day_month.to_s)
+                        elsif @invoice.invoice_date.month < 10
+                            last_day_month = Time.days_in_month(9, @invoice.invoice_date.to_s[2..3].to_i)
+                            from_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-07" + "-01")
+                            to_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-09-" + last_day_month.to_s)
+                        else
+                            last_day_month = Time.days_in_month(12, @invoice.invoice_date.to_s[2..3].to_i)
+                            from_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-09" + "-01")
+                            to_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-12-" + last_day_month.to_s)
+                        end
+
+                        # Project by default is VAT
+                        @periodicity_to_project_type = PeriodicityToProjectType.where(project_type_id: 1, periodicity_id: @periodicity.id, country_id: @entity.country.id)[0]
+
+                        @return = Return.new(begin_date: from_date, end_date: to_date ,  periodicity_to_project_type_id: @periodicity_to_project_type.id, country_id: @entity.country.id, entity_id: @entity.id, due_date_id: @periodicity_to_project_type.due_date.id)
+                        
+                        @return.save
+
+                        box_names = BoxName.where(periodicity_to_project_type_id: @periodicity_to_project_type.id, language_id: 2)
+
+                        box_names.each do |box_name|
+                            return_box = ReturnBox.new(return_id: @return.id, box_name_id: box_name.id, amount: 0)
+                            return_box.save!
+                        end
+
+                    elsif @periodicity.name == "Yearly"
+                        from_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-01" + "-01")
+                        last_day_month = Time.days_in_month(@invoice.invoice_date.to_s[5..6].to_i, @invoice.invoice_date.to_s[2..3].to_i)
+                        to_date = Date.parse(@invoice.invoice_date.to_s[0..7] + last_day_month.to_s)
+                    else
+                        # problem
                     end
+
                 end
 
                 if @invoice.save!
@@ -94,7 +127,56 @@ class InvoicesController < ApplicationController
                     total_amount = vat_amount + net_amount
 
                     # will have to multiply quantity with what is specified
-                    @transaction = Transaction.new(vat_amount: vat_amount, net_amount: net_amount ,  comment: params[:comment][key], invoice_id: @invoice.id, item_id: @item.id, return_id: @return.id, :quantity => quantity)
+                    quantity = params[:quantity][key].to_f
+                    net_amount = quantity * @item.net_amount
+                    vat_amount = quantity * @item.vat_amount
+    
+    
+                    # will have to multiply quantity with what is specified
+                    @transaction = Transaction.new(vat_amount: vat_amount, net_amount: net_amount, comment: params[:comment][key], invoice_id: @invoice.id, return_id: @return.id, :item_id => @item.id, :quantity => quantity)
+    
+                    @country_tax_code = CountryTaxCode.where(country_id: @entity.country.id, tax_code_operation_location_id: @transaction.invoice.tax_code_operation_location.id, tax_code_operation_side_id: @transaction.invoice.tax_code_operation_side.id, tax_code_operation_rate_id: @transaction.item.tax_code_operation_rate.id, tax_code_operation_type_id: @transaction.item.tax_code_operation_type.id)[0]
+    
+                    @entity_tax_code = EntityTaxCode.where(entity_id: @entity.id, country_tax_code_id: @country_tax_code.id)
+    
+                    # if you don't have a tax code, you'll need to create one
+                    if @entity_tax_code.empty?
+                        name_tax_code = @transaction.invoice.tax_code_operation_location.name + " | " + @transaction.invoice.tax_code_operation_side.name + " | " + @transaction.item.tax_code_operation_type.name + " | " + @transaction.item.tax_code_operation_rate.name
+                        @entity_tax_code = EntityTaxCode.new(name: name_tax_code, entity_id: @entity.id, country_tax_code_id: @country_tax_code.id)
+                        @entity_tax_code.save
+    
+    
+    
+    
+                    end
+    
+                    @entity_tax_code = EntityTaxCode.where(entity_id: @entity.id, country_tax_code_id: @country_tax_code.id)[0]
+    
+                    box_informations = BoxInformation.where(tax_code_operation_location_id: @entity_tax_code.country_tax_code.tax_code_operation_location_id, tax_code_operation_rate_id: @entity_tax_code.country_tax_code.tax_code_operation_rate_id, tax_code_operation_side_id: @entity_tax_code.country_tax_code.tax_code_operation_side_id, tax_code_operation_type_id: @entity_tax_code.country_tax_code.tax_code_operation_type_id )
+                    
+    
+                    box_informations.each do |box_information|
+    
+                        # Check if box_name is the one from this periodicity
+                        if box_information.box_name.periodicity_to_project_type_id == @periodicity_to_project_type.id
+                            return_box = ReturnBox.where(box_name_id: box_information.box_name_id, return: @return.id)[0]
+                            amount = box_information.amount.name
+                            if amount == "Reporting Currency Taxable Basis"
+                                updated_amount = return_box.amount + net_amount
+                                return_box = return_box.update(amount: updated_amount)
+                            elsif amount == "Reporting Currency VAT Amount"
+                                updated_amount = return_box.amount + vat_amount
+                                return_box = return_box.update(amount: updated_amount)
+                            elsif amount == "Reporting Currency Gross Amount"
+                                updated_amount = return_box.amount + net_amount + vat_amount
+                                return_box = return_box.update(amount: updated_amount)
+                            end
+                        else
+    
+                        end
+                    end
+
+                    
                     @transaction.save!
                 end
             end
@@ -137,6 +219,7 @@ class InvoicesController < ApplicationController
         @company = current_user.company
         @entities = current_user.company.entities
         @customers = Customer.where(company_id: current_user.company)
+        
     end
 
 
@@ -156,17 +239,20 @@ class InvoicesController < ApplicationController
 
                 @item = Item.find(params[:item][key].to_i)
                 @rate = @item.tax_code_operation_rate
-                @entity = Entity.find(params[:entity])
+                @entity = @invoice.entity   
                 @country = Country.find(@entity.country.id)
 
                 @item = Item.find(params[:item][key].to_i)
                 @return = Return.where(["begin_date <= ? and end_date >= ? and entity_id = ? and country_id = ?",   @invoice.invoice_date,  @invoice.invoice_date, @item.entity.id, 2])[0]
 
                 @periodicity = @entity.periodicity
-
+                @periodicity_to_project_type = PeriodicityToProjectType.where(project_type_id: 1, periodicity_id: @periodicity.id, country_id: @entity.country.id)[0]
+                
                 # if you don't have a return, you'll need to create it
                 if @return.nil?
+
                     if @periodicity.name == "Monthly"
+
                         from_date = Date.parse(@invoice.invoice_date.to_s[0..6] + "-01")
                         last_day_month = Time.days_in_month(@invoice.invoice_date.to_s[5..6].to_i, @invoice.invoice_date.to_s[2..3].to_i)
                         to_date = Date.parse(@invoice.invoice_date.to_s[0..7] + last_day_month.to_s)
@@ -188,13 +274,6 @@ class InvoicesController < ApplicationController
                             from_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-09" + "-01")
                             to_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-12-" + last_day_month.to_s)
                         end
-
-                        # Project by default is VAT
-                        @periodicity_to_project_type = PeriodicityToProjectType.where(project_type_id: 1, periodicity_id: @periodicity.id, country_id: @entity.country.id)[0]
-
-                        @return = Return.new(begin_date: from_date, end_date: to_date ,  periodicity_to_project_type_id: @periodicity_to_project_type.id, country_id: @entity.country.id, entity_id: @entity.id, due_date_id: @periodicity_to_project_type.due_date.id)
-                        
-                        @return.save
                         
 
                     elsif @periodicity.name == "Yearly"
@@ -203,6 +282,22 @@ class InvoicesController < ApplicationController
                         to_date = Date.parse(@invoice.invoice_date.to_s[0..7] + last_day_month.to_s)
                     else
                         # problem
+                    end
+
+                    # Project by default is VAT
+                    @periodicity_to_project_type = PeriodicityToProjectType.where(project_type_id: 1, periodicity_id: @periodicity.id, country_id: @entity.country.id)[0]
+
+                    @return = Return.new(begin_date: from_date, end_date: to_date ,  periodicity_to_project_type_id: @periodicity_to_project_type.id, country_id: @entity.country.id, entity_id: @entity.id, due_date_id: @periodicity_to_project_type.due_date.id)
+                    
+                    @return.save
+
+                    box_names = BoxName.where(periodicity_to_project_type_id: @periodicity_to_project_type.id, language_id: 2)
+                    
+                    @return.save!
+                    # Can only put the box an amount if it is indeed created to get the id
+                    box_names.each do |box_name|
+                        return_box = ReturnBox.new(return_id: @return.id, box_name_id: box_name.id, amount: 0)
+                        return_box.save!
                     end
 
                 end
@@ -233,19 +328,26 @@ class InvoicesController < ApplicationController
                 @entity_tax_code = EntityTaxCode.where(entity_id: @entity.id, country_tax_code_id: @country_tax_code.id)[0]
 
                 box_informations = BoxInformation.where(tax_code_operation_location_id: @entity_tax_code.country_tax_code.tax_code_operation_location_id, tax_code_operation_rate_id: @entity_tax_code.country_tax_code.tax_code_operation_rate_id, tax_code_operation_side_id: @entity_tax_code.country_tax_code.tax_code_operation_side_id, tax_code_operation_type_id: @entity_tax_code.country_tax_code.tax_code_operation_type_id )
+                
 
                 box_informations.each do |box_information|
-                    return_box = ReturnBox.where(box_name_id: box_information.box_name_id)[0]
-                    amount = box_information.amount.name
-                    if amount == "Reporting Currency Taxable Basis"
-                        updated_amount = return_box.amount + net_amount
-                        return_box = return_box.update(amount: updated_amount)
-                    elsif amount == "Reporting Currency VAT Amount"
-                        updated_amount = return_box.amount + vat_amount
-                        return_box = return_box.update(amount: updated_amount)
-                    elsif amount == "Reporting Currency Gross Amount"
-                        updated_amount = return_box.amount + net_amount + vat_amount
-                        return_box = return_box.update(amount: updated_amount)
+
+                    # Check if box_name is the one from this periodicity
+                    if box_information.box_name.periodicity_to_project_type_id == @periodicity_to_project_type.id
+                        return_box = ReturnBox.where(box_name_id: box_information.box_name_id, return: @return.id)[0]
+                        amount = box_information.amount.name
+                        if amount == "Reporting Currency Taxable Basis"
+                            updated_amount = return_box.amount + net_amount
+                            return_box = return_box.update(amount: updated_amount)
+                        elsif amount == "Reporting Currency VAT Amount"
+                            updated_amount = return_box.amount + vat_amount
+                            return_box = return_box.update(amount: updated_amount)
+                        elsif amount == "Reporting Currency Gross Amount"
+                            updated_amount = return_box.amount + net_amount + vat_amount
+                            return_box = return_box.update(amount: updated_amount)
+                        end
+                    else
+
                     end
                 end
 
@@ -278,12 +380,138 @@ class InvoicesController < ApplicationController
         jhk
     end
 
+    def add_ticket
+
+        @invoice = Invoice.find(params[:invoice_id])
+        @entity = @invoice.entity
+        @countries = LanguageCountry.where(language_id: 2).order("name asc")
+        @type_of_ticket = TicketToTaxCode.all.order("name asc")
+    end 
+
+
+    def save_ticket
+
+        @invoice = Invoice.find(params[:invoice_id])
+        @entity = @invoice.entity
+        @rate = (params[:vat_amount].to_f / params[:net_amount].to_f).round(2)
+        @tax_code_operation_rate = TaxCodeOperationRate.where(rate: @rate)[0]
+        @ticket_to_tax_code = TicketToTaxCode.find(params[:ticket_type])
+        @item = Item.new(item_name: @ticket_to_tax_code.name, item_description: params[:comment], net_amount: params[:net_amount].to_f, vat_amount: params[:vat_amount], entity_id: @entity.id, tax_code_operation_rate_id: @tax_code_operation_rate.id, tax_code_operation_type_id: @ticket_to_tax_code.tax_code_operation_type_id, is_hidden: true)
+
+        @item.save!
+
+
+        @return = Return.where(["begin_date <= ? and end_date >= ? and entity_id = ? and country_id = ?",   @invoice.invoice_date,  @invoice.invoice_date, @item.entity.id, 2])[0]
+
+        @periodicity = @entity.periodicity
+
+        # if you don't have a return, you'll need to create it
+        if @return.nil?
+            if @periodicity.name == "Monthly"
+                from_date = Date.parse(@invoice.invoice_date.to_s[0..6] + "-01")
+                last_day_month = Time.days_in_month(@invoice.invoice_date.to_s[5..6].to_i, @invoice.invoice_date.to_s[2..3].to_i)
+                to_date = Date.parse(@invoice.invoice_date.to_s[0..7] + last_day_month.to_s)
+            elsif @periodicity.name == "Quarterly"
+                if @invoice.invoice_date.month < 4
+                    last_day_month = Time.days_in_month(3, @invoice.invoice_date.to_s[2..3].to_i)
+                    from_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-01" + "-01")
+                    to_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-03-" + last_day_month.to_s)
+                elsif @invoice.invoice_date.month < 7
+                    last_day_month = Time.days_in_month(6, @invoice.invoice_date.to_s[2..3].to_i)
+                    from_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-04" + "-01")
+                    to_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-06-" + last_day_month.to_s)
+                elsif @invoice.invoice_date.month < 10
+                    last_day_month = Time.days_in_month(9, @invoice.invoice_date.to_s[2..3].to_i)
+                    from_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-07" + "-01")
+                    to_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-09-" + last_day_month.to_s)
+                else
+                    last_day_month = Time.days_in_month(12, @invoice.invoice_date.to_s[2..3].to_i)
+                    from_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-09" + "-01")
+                    to_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-12-" + last_day_month.to_s)
+                end
+
+                # Project by default is VAT
+                @periodicity_to_project_type = PeriodicityToProjectType.where(project_type_id: 1, periodicity_id: @periodicity.id, country_id: @entity.country.id)[0]
+
+                @return = Return.new(begin_date: from_date, end_date: to_date ,  periodicity_to_project_type_id: @periodicity_to_project_type.id, country_id: @entity.country.id, entity_id: @entity.id, due_date_id: @periodicity_to_project_type.due_date.id)
+                
+                @return.save
+                
+
+            elsif @periodicity.name == "Yearly"
+                from_date = Date.parse(@invoice.invoice_date.to_s[0..3] + "-01" + "-01")
+                last_day_month = Time.days_in_month(@invoice.invoice_date.to_s[5..6].to_i, @invoice.invoice_date.to_s[2..3].to_i)
+                to_date = Date.parse(@invoice.invoice_date.to_s[0..7] + last_day_month.to_s)
+            else
+                # problem
+            end
+
+        end
+
+        quantity = params[:quantity].to_f
+        net_amount = quantity * @item.net_amount
+        vat_amount = quantity * @item.vat_amount
+
+
+        # will have to multiply quantity with what is specified
+        @transaction = Transaction.new(vat_amount: vat_amount, net_amount: net_amount, comment: params[:comment], invoice_id: @invoice.id, return_id: @return.id, :item_id => @item.id, :quantity => quantity)
+
+        @country_tax_code = CountryTaxCode.where(country_id: @entity.country.id, tax_code_operation_location_id: @transaction.invoice.tax_code_operation_location.id, tax_code_operation_side_id: @transaction.invoice.tax_code_operation_side.id, tax_code_operation_rate_id: @transaction.item.tax_code_operation_rate.id, tax_code_operation_type_id: @transaction.item.tax_code_operation_type.id)[0]
+
+        @entity_tax_code = EntityTaxCode.where(entity_id: @entity.id, country_tax_code_id: @country_tax_code.id)
+
+        # if you don't have a tax code, you'll need to create one
+        if @entity_tax_code.empty?
+            name_tax_code = @transaction.invoice.tax_code_operation_location.name + " | " + @transaction.invoice.tax_code_operation_side.name + " | " + @transaction.item.tax_code_operation_type.name + " | " + @transaction.item.tax_code_operation_rate.name
+            @entity_tax_code = EntityTaxCode.new(name: name_tax_code, entity_id: @entity.id, country_tax_code_id: @country_tax_code.id)
+            @entity_tax_code.save
+
+
+
+
+        end
+
+        @entity_tax_code = EntityTaxCode.where(entity_id: @entity.id, country_tax_code_id: @country_tax_code.id)[0]
+
+        box_informations = BoxInformation.where(tax_code_operation_location_id: @entity_tax_code.country_tax_code.tax_code_operation_location_id, tax_code_operation_rate_id: @entity_tax_code.country_tax_code.tax_code_operation_rate_id, tax_code_operation_side_id: @entity_tax_code.country_tax_code.tax_code_operation_side_id, tax_code_operation_type_id: @entity_tax_code.country_tax_code.tax_code_operation_type_id )
+
+        box_informations.each do |box_information|
+            return_box = ReturnBox.where(box_name_id: box_information.box_name_id)[0]
+            amount = box_information.amount.name
+            if amount == "Reporting Currency Taxable Basis"
+                updated_amount = return_box.amount + net_amount
+                return_box = return_box.update(amount: updated_amount)
+            elsif amount == "Reporting Currency VAT Amount"
+                updated_amount = return_box.amount + vat_amount
+                return_box = return_box.update(amount: updated_amount)
+            elsif amount == "Reporting Currency Gross Amount"
+                updated_amount = return_box.amount + net_amount + vat_amount
+                return_box = return_box.update(amount: updated_amount)
+            end
+        end
+
+
+
+        @transaction.save!
+
+        path = '/companies/' + @entity.company.id.to_s + '/invoices' 
+        redirect_to path
+    end
+
     def render_add_item
         test = request.original_url
         testo = test.split("#")[1]
-        @entity_tax_codes = EntityTaxCode.where(entity_id: params[:entity_id])
-        @entity = Entity.find(params[:entity_id])
-        @items = @entity.items
+        # if you don't know the invoice_id (invoice is not created)
+        if params[:invoice_id].nil?
+            @entity = Entity.find(params[:entity_id])
+            @entity_tax_codes = EntityTaxCode.where(entity_id: @entity.id)
+            @items = @entity.items
+        else
+            @invoice = Invoice.find(params[:invoice_id])
+            @entity = @invoice.entity
+            @entity_tax_codes = EntityTaxCode.where(entity_id: @entity.id)
+            @items = @entity.items
+        end
         html_string = render_to_string(partial: "add_item.html.erb", locals: {entity_tax_codes: @entity_tax_codes, items: @items})
         render json: {html_string: html_string}
     end
@@ -335,11 +563,12 @@ class InvoicesController < ApplicationController
               pdf.text ' '
               pdf.text ' '
               total_amount = 0
+              total_net_amount = 0
               total_vat = 0
 
               footer_line_1 = @invoice.entity.name
               footer_line_2 = 'Email:  ' +   @invoice.entity.email + '   Website:  ' + @invoice.entity.website + '   VAT:  ' + @invoice.entity.vat_number
-              footer_line_3 = 'IBAN:  ' + @invoice.entity.iban + '   BIC:  ' + @invoice.entity.bic
+              footer_line_3 = 'IBAN:  ' + @invoice.entity.iban + '       BIC:  ' + @invoice.entity.bic
 
               i = 0
               # pagingation
@@ -348,10 +577,11 @@ class InvoicesController < ApplicationController
         
               if @transactions.count < 10
                 @transactions.each do |transaction|
-                    total_amount += transaction.net_amount + transaction.vat_amount
-                    data += [[transaction.item.item_name, transaction.comment, transaction.quantity, transaction.net_amount, transaction.vat_amount, total_amount]]
-                    total_amount += transaction.net_amount + transaction.vat_amount
-                    total_vat += transaction.vat_amount 
+                    total_amount_transaction = transaction.net_amount.round(2)  + transaction.vat_amount.round(2) 
+                    data += [[transaction.item.item_name, transaction.comment, transaction.quantity, transaction.item.net_amount.round(2) , transaction.item.vat_amount.round(2) , total_amount_transaction.round(2) ]]
+                    total_amount += transaction.net_amount.round(2)  + transaction.vat_amount.round(2) 
+                    total_vat += transaction.vat_amount.round(2) 
+                    total_net_amount += transaction.net_amount.round(2)
                 end
               else
                 while i < @transactions.count - 1
@@ -362,17 +592,18 @@ class InvoicesController < ApplicationController
                         pdf.table data, :position => :left, :column_widths => {0 => 115,1 => 160,2 => 60,3 => 60,4 => 60,5 => 85}
                         
                         pdf.text_box footer_line_1, :at => [-02, 60], :size => size_text, :align => :center
-                        pdf.text_box footer_line_2, :at => [-02, 45], :size => size_text, :align => :center
-                        pdf.text_box footer_line_3, :at => [-02, 30], :align => :center, :size => size_text
+                        pdf.text_box footer_line_2, :at => [-02, 45], :size => size_text - 2, :align => :center
+                        pdf.text_box footer_line_3, :at => [-02, 30], :size => size_text - 2, :align => :center
                         pdf.text_box page_number, :at => [-02, 15], :align => :center, :size => size_text
 
                         pdf.start_new_page
                         data = [["Items", "Comments", "Quantity", "Net Amount / Unit", "VAT Amount / Unit", "Total Price"]]
                         u += 1
                     else
-                        total_amount += @transactions[i].net_amount + @transactions[i].vat_amount
-                        data += [[@transactions[i].item.item_name, @transactions[i].comment, @transactions[i].quantity, @transactions[i].net_amount, @transactions[i].vat_amount, total_amount]]
-                        total_vat += @transactions[i].vat_amount 
+                        total_amount_transaction = @transactions[i].net_amount.round(2)  + @transactions[i].vat_amount.round(2) 
+                        data += [[@transactions[i].item.item_name, @transactions[i].comment, @transactions[i].quantity, @transactions[i].item.net_amount.round(2) , @transactions[i].item.vat_amount, total_amount_transaction.round(2) ]]
+                        total_vat += @transactions[i].vat_amount.round(2)  
+                        total_net_amount += @transactions[i].net_amount.round(2)
                         page_number = u.to_s + " / " + ( @transactions.count / 10 + 1).to_i.to_s 
                         pdf.text_box page_number, :at => [-02, 15], :align => :center, :size => size_text
 
@@ -385,17 +616,19 @@ class InvoicesController < ApplicationController
                 end
               end
 
-              pdf.table data, :position => :left, :column_widths => {0 => 115,1 => 160,2 => 60,3 => 60,4 => 60,5 => 85}
+              pdf.table data, :position => :left, :column_widths => {0 => 175,1 => 100,2 => 60,3 => 60,4 => 60,5 => 85}
 
 
               pdf.text ' '
               pdf.text ' '
               pdf.text ' '
-              pdf.table [['Total Amount', total_amount], ['Total VAT', total_vat]]  
-
+              pdf.table [['Total Amount excl VAT ', total_net_amount.round(2) ], ['Total VAT', total_vat.round(2) ]]  
+              pdf.text ' '
+              pdf.text ' '
+              pdf.table [['Amount Due (EUR)', total_amount.round(2)]]
               pdf.text_box footer_line_1, :at => [-02, 60], :size => size_text, :align => :center
-              pdf.text_box footer_line_2, :at => [-02, 45], :size => size_text, :align => :center
-              pdf.text_box footer_line_3, :at => [-02, 30], :align => :center, :size => size_text
+              pdf.text_box footer_line_2, :at => [-02, 45], :size => size_text - 2, :align => :center
+              pdf.text_box footer_line_3, :at => [-02, 30], :size => size_text - 2, :align => :center
 
               send_data pdf.render,
                 filename: "export.pdf",
@@ -524,8 +757,9 @@ class InvoicesController < ApplicationController
     def render_add_item_french
         test = request.original_url
         testo = test.split("#")[1]
-        @entity_tax_codes = EntityTaxCode.where(entity_id: params[:entity_id])
-        @entity = Entity.find(params[:entity_id])
+        @invoice = Invoice.find(params[:invoice_id])
+        @entity = @invoice.entity
+        @entity_tax_codes = EntityTaxCode.where(entity_id: @entity.id)
         @items = @entity.items
         html_string = render_to_string(partial: "add_item_french.html.erb", locals: {entity_tax_codes: @entity_tax_codes, items: @items})
         render json: {html_string: html_string}

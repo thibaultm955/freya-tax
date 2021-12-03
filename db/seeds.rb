@@ -574,3 +574,376 @@ box_logics.each do |box_name_description, box_logics|
     end
 end
 
+
+
+# For quarterly returns
+
+
+
+
+
+
+
+
+
+box_names = {["Belgium", "VAT", "Quarterly", "French"] => [
+    "Box 00 - Opérations soumises à un régime particulier",
+    "Box 01 - Opérations pour lesquelles la TVA est due par le déclarant - 6%",
+    "Box 02 - Opérations pour lesquelles la TVA est due par le déclarant - 12%",
+    "Box 03 - Opérations pour lesquelles la TVA est due par le déclarant - 21%",
+    "Box 44 - Services pour lesquels la TVA étrangère est due par le cocontractant",
+    "Box 45 - Opérations pour lesquelles la TVA est due par le cocontractant",
+    "Box 46 - Livraisons intracommunautaires exemptées effectuées en Belgique et ventes ABC",
+    "Box 47 - Autres opérations exemptées et autres opérations effectuées à l’étranger",
+    "Box 48 - Montant des notes de crédit délivrées et des corrections négatives - relatif aux opérations inscrites en grilles 44 et 46",
+    "Box 49 - Montant des notes de crédit délivrées et des corrections négatives - relatif aux autres opérations du cadre II",
+    "Achats",
+    "Box 81 - Montant des opérations à l’entrée compte tenu des notes de crédit reçues et autres corrections - marchandises, matières premières et matières auxiliaires",
+    "Box 82 - Montant des opérations à l’entrée compte tenu des notes de crédit reçues et autres corrections - services et biens divers",
+    "Box 83 - Montant des opérations à l’entrée compte tenu des notes de crédit reçues et autres corrections - biens d’investissement",
+    "Box 84 - Montant des notes de crédit reçues et des corrections négatives - relatif aux opérations inscrites en grilles 86 et 88 ",
+    "Box 85 - Montant des notes de crédit reçues et des corrections négatives - relatif aux autres opérations du cadre III",
+    "Box 86 - Acquisitions intracommunautaires effectuées en Belgique et ventes ABC",
+    "Box 87 - Autres opérations à l’entrée pour lesquelles la TVA est due par le déclarant",
+    "Box 88 - Services intracommunautaires avec report de perception",
+    "TVA",
+    "Box 54 - TVA relative aux opérations déclarées en grilles 01, 02 et 03",
+    "Box 55-  TVA relative aux opérations déclarées en grilles 86 et 88",
+    "Box 56 - TVA relative aux opérations déclarées en grille 87, à l’exception des importations avec report de perception",
+    "Box 57 - TVA relative aux importations avec report de perception",
+    "Box 61 - Diverses régularisations TVA en faveur de l’Etat",
+    "Box 63 - TVA à reverser mentionnée sur les notes de crédit reçues",
+    "Box 65 - A ne pas compléter",
+    "Box XX - Total des grilles 54, 55, 56, 57, 61 et 63",
+    "Box 59 - TVA déductible",
+    "Box 62 - Diverses régularisations TVA en faveur du déclarant",
+    "Box 64 - TVA à récupérer mentionnée sur les notes de crédit délivrées",
+    "Box 66 - A ne pas compléter",
+    "Box YY - Total des grilles 59, 62 et 64",
+    "Sommes",
+    "Box 71 - Taxe due à l’Etat",
+    "Box 72 - Sommes dues par l’Etat",
+    "Box 91 - Concerne uniquement la déclaration mensuelle de décembre TVA réellement due pour la période du 1er au 20 décembre",
+    ]
+}
+
+box_names.each do |return_information, names|
+    puts return_information
+    names.each do |name|
+        country = Country.where(name: return_information[0])[0]
+        project_type = ProjectType.where(name: return_information[1])[0]
+        periodicity = Periodicity.where(name: return_information[2])[0]
+        language = Language.where(name: return_information[3])[0]
+        # puts language
+        # puts project_type
+
+        periodicty_to_project_type = PeriodicityToProjectType.where(country_id: country.id, project_type_id: project_type.id, periodicity_id: periodicity.id)[0]
+        # puts periodicty_to_project_type
+
+        if BoxName.where(name: name, language_id: language.id, periodicity_to_project_type_id: periodicty_to_project_type.id) == []
+            box_name = BoxName.new(name: name, language_id: language.id, periodicity_to_project_type_id: periodicty_to_project_type.id)
+            box_name.save!
+        end
+    end
+end
+
+
+
+
+
+        box_logics = {"Box 00 - Opérations soumises à un régime particulier" => 
+        [ 
+            ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Capital Goods", "Zero", "Reporting Currency Taxable Basis"] , 
+            ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Commodities & Raw Materials", "Zero", "Reporting Currency Taxable Basis"] , 
+            ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Services", "Zero", "Reporting Currency Taxable Basis"], 
+            ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Goods Sold Online", "Zero", "Reporting Currency Taxable Basis"],
+            ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Various Goods", "Zero", "Reporting Currency Taxable Basis"], 
+            ["Belgium", "French", "VAT", "Quarterly", "Sale", "Intra VAT Group", "Capital Goods", "Zero", "Reporting Currency Taxable Basis"], 
+            ["Belgium", "French", "VAT", "Quarterly", "Sale", "Intra VAT Group", "Commodities & Raw Materials", "Zero", "Reporting Currency Taxable Basis"], 
+            ["Belgium", "French", "VAT", "Quarterly", "Sale", "Intra VAT Group", "Services", "Zero", "Reporting Currency Taxable Basis"], 
+            ["Belgium", "French", "VAT", "Quarterly", "Sale", "Intra VAT Group", "Goods Sold Online", "Zero", "Reporting Currency Taxable Basis"], 
+            ["Belgium", "French", "VAT", "Quarterly", "Sale", "Intra VAT Group", "Various Goods", "Zero", "Reporting Currency Taxable Basis"], 
+            ["Belgium", "French", "VAT", "Quarterly", "Sale", "Intra VAT Group", "Capital Goods", "Exempt", "Reporting Currency Taxable Basis"], 
+            ["Belgium", "French", "VAT", "Quarterly", "Sale", "Intra VAT Group", "Commodities & Raw Materials", "Exempt", "Reporting Currency Taxable Basis"], 
+            ["Belgium", "French", "VAT", "Quarterly", "Sale", "Intra VAT Group", "Services", "Exempt", "Reporting Currency Taxable Basis"], 
+            ["Belgium", "French", "VAT", "Quarterly", "Sale", "Intra VAT Group", "Goods Sold Online", "Exempt", "Reporting Currency Taxable Basis"] ,
+            ["Belgium", "French", "VAT", "Quarterly", "Sale", "Intra VAT Group", "Various Goods", "Exempt", "Reporting Currency Taxable Basis"]
+        ], 
+    "Box 01 - Opérations pour lesquelles la TVA est due par le déclarant - 6%" => 
+    [  
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Capital Goods", "Reduced", "Reporting Currency Taxable Basis"] , 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Commodities & Raw Materials", "Reduced", "Reporting Currency Taxable Basis"] , 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Services", "Reduced", "Reporting Currency Taxable Basis"], 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Goods Sold Online", "Reduced", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Various Goods", "Reduced", "Reporting Currency Taxable Basis"]
+    ] ,
+    "Box 02 - Opérations pour lesquelles la TVA est due par le déclarant - 12%" => 
+    [
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Capital Goods", "Intermediate", "Reporting Currency Taxable Basis"] , 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Commodities & Raw Materials", "Intermediate", "Reporting Currency Taxable Basis"] , 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Services", "Intermediate", "Reporting Currency Taxable Basis"], 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Goods Sold Online", "Intermediate", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Various Goods", "Intermediate", "Reporting Currency Taxable Basis"]
+    ],
+    "Box 03 - Opérations pour lesquelles la TVA est due par le déclarant - 21%" =>
+    [
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Capital Goods", "Standard", "Reporting Currency Taxable Basis"] , 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Commodities & Raw Materials", "Standard", "Reporting Currency Taxable Basis"] , 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Services", "Standard", "Reporting Currency Taxable Basis"], 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Goods Sold Online", "Standard", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Various Goods", "Standard", "Reporting Currency Taxable Basis"]
+    ],
+    "Box 44 - Services pour lesquels la TVA étrangère est due par le cocontractant" =>
+    [
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Intra-EU", "Services", "Zero", "Reporting Currency Taxable Basis"]        
+    ],
+    # "Box 45 - Opérations pour lesquelles la TVA est due par le cocontractant" => [ [] ],
+    "Box 46 - Livraisons intracommunautaires exemptées effectuées en Belgique et ventes ABC" => 
+    [
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Intra-EU", "Capital Goods", "Zero", "Reporting Currency Taxable Basis"] ,    
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Intra-EU", "Commodities & Raw Materials", "Zero", "Reporting Currency Taxable Basis"] ,
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Intra-EU", "Various Goods", "Zero", "Reporting Currency Taxable Basis"]
+    ],
+    "Box 47 - Autres opérations exemptées et autres opérations effectuées à l’étranger" => 
+    [
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Intra-EU", "Goods Sold Online", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Outside-EU", "Capital Goods", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Outside-EU", "Commodities & Raw Materials", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Outside-EU", "Services", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Outside-EU", "Goods Sold Online", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Outside-EU", "Various Goods", "Zero", "Reporting Currency Taxable Basis"]
+    ],
+    # "Box 48 - Montant des notes de crédit délivrées et des corrections négatives - relatif aux opérations inscrites en grilles 44 et 46",
+    # "Box 49 - Montant des notes de crédit délivrées et des corrections négatives - relatif aux autres opérations du cadre II",
+    # <h2>Achats</h2>
+
+# sides_operation = ["Purchase", "Sale"]
+# locations_operation = ["Domestic", "Intra-EU", "Outside-EU", "Intra VAT Group"]
+# types_operation = ["Capital Goods", "Commodities & Raw Materials", "Services", "Goods Sold Online", "Various Goods"]
+# rates_operation = ["Standard", "Intermediate", "Reduced", "Zero", "Exempt"]
+
+    "Box 81 - Montant des opérations à l’entrée compte tenu des notes de crédit reçues et autres corrections - marchandises, matières premières et matières auxiliaires" => 
+    [
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Commodities & Raw Materials", "Standard", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Commodities & Raw Materials", "Intermediate", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Commodities & Raw Materials", "Reduced", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Commodities & Raw Materials", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Commodities & Raw Materials", "Exempt", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Commodities & Raw Materials", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Commodities & Raw Materials", "Exempt", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Outside-EU", "Commodities & Raw Materials", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Outside-EU", "Commodities & Raw Materials", "Exempt", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra VAT Group", "Commodities & Raw Materials", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra VAT Group", "Commodities & Raw Materials", "Exempt", "Reporting Currency Taxable Basis"]
+    ],
+    "Box 82 - Montant des opérations à l’entrée compte tenu des notes de crédit reçues et autres corrections - services et biens divers" =>
+    [
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Services", "Standard", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Services", "Intermediate", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Services", "Reduced", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Services", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Services", "Exempt", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Various Goods", "Standard", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Various Goods", "Intermediate", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Various Goods", "Reduced", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Various Goods", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Various Goods", "Exempt", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Services", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Services", "Exempt", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Various Goods", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Various Goods", "Exempt", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Outside-EU", "Services", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Outside-EU", "Various Goods", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Outside-EU", "Services", "Exempt", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Outside-EU", "Various Goods", "Exempt", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra VAT Group", "Services", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra VAT Group", "Various Goods", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra VAT Group", "Services", "Exempt", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra VAT Group", "Various Goods", "Exempt", "Reporting Currency Taxable Basis"]
+
+    ],
+    "Box 83 - Montant des opérations à l’entrée compte tenu des notes de crédit reçues et autres corrections - biens d’investissement" => 
+    [
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Capital Goods", "Standard", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Capital Goods", "Intermediate", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Capital Goods", "Reduced", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Capital Goods", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Capital Goods", "Exempt", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Capital Goods", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Capital Goods", "Exempt", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Outside-EU", "Capital Goods", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Outside-EU", "Capital Goods", "Exempt", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra VAT Group", "Capital Goods", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra VAT Group", "Capital Goods", "Exempt", "Reporting Currency Taxable Basis"]
+    ],
+    # "Box 84 - Montant des notes de crédit reçues et des corrections négatives - relatif aux opérations inscrites en grilles 86 et 88",
+    #"Box 85 - Montant des notes de crédit reçues et des corrections négatives - relatif aux autres opérations du cadre III",
+    "Box 86 - Acquisitions intracommunautaires effectuées en Belgique et ventes ABC" =>
+    [
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Commodities & Raw Materials", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Commodities & Raw Materials", "Exempt", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Services", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Various Goods", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Services", "Reduced", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Various Goods", "Exempt", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Capital Goods", "Zero", "Reporting Currency Taxable Basis"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Capital Goods", "Exempt", "Reporting Currency Taxable Basis"]
+    ],
+    # "Box 87 - Autres opérations à l’entrée pour lesquelles la TVA est due par le déclarant",
+    # "Box 88 - Services intracommunautaires avec report de perception",
+    # <h2>TVA</h2>
+    "Box 54 - TVA relative aux opérations déclarées en grilles 01, 02 et 03" =>
+    [
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Capital Goods", "Reduced", "Reporting Currency VAT Amount"] , 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Commodities & Raw Materials", "Reduced", "Reporting Currency VAT Amount"] , 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Services", "Reduced", "Reporting Currency VAT Amount"], 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Goods Sold Online", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Various Goods", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Capital Goods", "Intermediate", "Reporting Currency VAT Amount"] , 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Commodities & Raw Materials", "Intermediate", "Reporting Currency VAT Amount"] , 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Services", "Intermediate", "Reporting Currency VAT Amount"], 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Goods Sold Online", "Intermediate", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Various Goods", "Intermediate", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Capital Goods", "Standard", "Reporting Currency VAT Amount"] , 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Commodities & Raw Materials", "Standard", "Reporting Currency VAT Amount"] , 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Services", "Standard", "Reporting Currency VAT Amount"], 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Goods Sold Online", "Standard", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Various Goods", "Standard", "Reporting Currency VAT Amount"]
+    ],
+    # "Box 55-  TVA relative aux opérations déclarées en grilles 86 et 88",
+    # "Box 56 - TVA relative aux opérations déclarées en grille 87, à l’exception des importations avec report de perception",
+    # "Box 57 - TVA relative aux importations avec report de perception ",
+    # "Box 61 - Diverses régularisations TVA en faveur de l’Etat",
+    # "Box 63 - TVA à reverser mentionnée sur les notes de crédit reçues",
+    # "Box 65 - A ne pas compléter",
+    "Box XX - Total des grilles 54, 55, 56, 57, 61 et 63" => 
+    [
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Capital Goods", "Reduced", "Reporting Currency VAT Amount"] , 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Commodities & Raw Materials", "Reduced", "Reporting Currency VAT Amount"] , 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Services", "Reduced", "Reporting Currency VAT Amount"], 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Goods Sold Online", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Various Goods", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Capital Goods", "Intermediate", "Reporting Currency VAT Amount"] , 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Commodities & Raw Materials", "Intermediate", "Reporting Currency VAT Amount"] , 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Services", "Intermediate", "Reporting Currency VAT Amount"], 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Goods Sold Online", "Intermediate", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Various Goods", "Intermediate", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Capital Goods", "Standard", "Reporting Currency VAT Amount"] , 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Commodities & Raw Materials", "Standard", "Reporting Currency VAT Amount"] , 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Services", "Standard", "Reporting Currency VAT Amount"], 
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Goods Sold Online", "Standard", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Sale", "Domestic", "Various Goods", "Standard", "Reporting Currency VAT Amount"]
+    ],
+    "Box 59 - TVA déductible" => 
+    [
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Commodities & Raw Materials", "Standard", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Commodities & Raw Materials", "Intermediate", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Commodities & Raw Materials", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Services", "Standard", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Services", "Intermediate", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Services", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Various Goods", "Standard", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Various Goods", "Intermediate", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Various Goods", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Services", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Services", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Outside-EU", "Services", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Outside-EU", "Services", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra VAT Group", "Services", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra VAT Group", "Services", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Capital Goods", "Standard", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Capital Goods", "Intermediate", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Capital Goods", "Reduced", "Reporting Currency VAT Amount"]
+    ],
+    # "Box 62 - Diverses régularisations TVA en faveur du déclarant",
+    # "Box 64 - TVA à récupérer mentionnée sur les notes de crédit délivrées",
+    # "Box 66 - A ne pas compléter",
+    "Box YY - Total des grilles 59, 62 et 64" => 
+    [
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Commodities & Raw Materials", "Standard", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Commodities & Raw Materials", "Intermediate", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Commodities & Raw Materials", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Services", "Standard", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Services", "Intermediate", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Services", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Various Goods", "Standard", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Various Goods", "Intermediate", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Various Goods", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Services", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra-EU", "Services", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Outside-EU", "Services", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Outside-EU", "Services", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra VAT Group", "Services", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Intra VAT Group", "Services", "Reduced", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Capital Goods", "Standard", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Capital Goods", "Intermediate", "Reporting Currency VAT Amount"],
+        ["Belgium", "French", "VAT", "Quarterly", "Purchase", "Domestic", "Capital Goods", "Reduced", "Reporting Currency VAT Amount"]
+    ],
+    # <h2>Sommes</h2>
+    # "Box 71 - Taxe due à l’Etat",
+    # "Box 72 - Sommes dues par l’Etat",
+    # "Box 91 - Concerne uniquement la déclaration mensuelle de décembre TVA réellement due pour la période du 1er au 20 décembre",
+
+}
+
+
+box_logics.each do |box_name_description, box_logics|
+    
+    box_logics.each do |box_logic|
+        country = Country.where(name: box_logic[0])[0]
+        language = Language.where(name: box_logic[1])[0]
+        project_type = ProjectType.where(name: box_logic[2])[0]
+        periodicity = Periodicity.where(name: box_logic[3])[0]
+        periodicty_to_project_type = PeriodicityToProjectType.where(country_id: country.id, project_type_id: project_type.id, periodicity_id: periodicity.id)[0]
+        box_name = BoxName.where(name: box_name_description, language_id: language.id, periodicity_to_project_type_id: periodicty_to_project_type.id)[0]
+        tax_code_operation_side = TaxCodeOperationSide.where(name: box_logic[4])[0]
+        tax_code_operation_location = TaxCodeOperationLocation.where(name: box_logic[5])[0]
+        tax_code_operation_type = TaxCodeOperationType.where(name: box_logic[6])[0]
+        tax_code_operation_rate = TaxCodeOperationRate.where(name: box_logic[7])[0]
+        amount = Amount.where(name: box_logic[8])[0]
+
+        puts box_name.name
+        puts tax_code_operation_side.name
+        puts tax_code_operation_location.name
+        puts tax_code_operation_type.name
+        puts tax_code_operation_rate.name
+        puts amount.name
+
+
+        if BoxInformation.where(box_name_id: box_name.id, amount_id: amount.id, tax_code_operation_location_id: tax_code_operation_location.id, tax_code_operation_rate_id: tax_code_operation_rate.id, tax_code_operation_side_id: tax_code_operation_side.id, tax_code_operation_type_id: tax_code_operation_type.id) == []
+            box_information = BoxInformation.new(box_name_id: box_name.id, amount_id: amount.id, tax_code_operation_location_id: tax_code_operation_location.id, tax_code_operation_rate_id: tax_code_operation_rate.id, tax_code_operation_side_id: tax_code_operation_side.id, tax_code_operation_type_id: tax_code_operation_type.id)
+            puts box_information
+            box_information.save!
+        end
+    end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@type_of_ticket = {"Food & Drinks" => 5, "Restaurant" => 3, "Internet & Phone" => 3, "Raw Materials" => 2, "Multimedia" => 5, "Transport Services" => 3, "Transport Object" => 5}
+
+@type_of_ticket.each do |ticket, tax_code_operation_type_id|
+    @tax_code_operation_type = TaxCodeOperationType.find(tax_code_operation_type_id)
+    @ticket_to_tax_code_type = TicketToTaxCode.new(name: ticket, tax_code_operation_type_id: @tax_code_operation_type.id)
+    @ticket_to_tax_code_type.save
+
+end
+
+
+

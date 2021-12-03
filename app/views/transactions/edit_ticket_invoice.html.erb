@@ -1,0 +1,36 @@
+
+<div class="container mt-5">
+<div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 offset-sm-4">
+  <h1 style='font-size: 25px; text-align: center'> Update Transaction </h1>
+  <p id="double-spaced" style="line-height: 50%;">
+
+    <form  action="./save_ticket_invoice">
+    
+        <%= label_tag 'Item'%>
+        <%= select_tag :item_id, options_from_collection_for_select(@items, "id", "item_name", @transaction.item.id ),class: "form-control"%>
+
+        </br>
+
+        <%= label_tag 'comment'%>
+        <%= text_field_tag :comment, @transaction.comment, class:"form-control"%> 
+                    
+        </br>
+
+        <%= label_tag 'quantity'%>
+        <%= number_field_tag :quantity, @transaction.quantity, class:"form-control"%> 
+
+        <%= label_tag 'net_amount'%>
+        <%= number_field_tag :net_amount, @transaction.item.net_amount, class:"form-control"%> 
+
+        <%= label_tag 'vat_amount'%>
+        <%= number_field_tag :vat_amount, @transaction.item.vat_amount, class:"form-control"%> 
+
+                 </br>
+        
+      <input type="submit" value="Sauvegarder" class="btn btn-primary">
+    </form>
+    </p>
+  </div>  
+</div>
+</div>
