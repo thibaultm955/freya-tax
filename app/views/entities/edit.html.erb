@@ -5,6 +5,15 @@
                 required: true,
                 autofocus: true,
                 placeholder: "Entity A"%>
+    
+    <%= label_tag :periodicity, "Periodicity"%>
+    <%= select_tag :periodicity,
+    options_from_collection_for_select(@periodicity, "id", "name", @entity.periodicity.id),
+    required: true,
+    class:"form-control" %>
+
+    </br>
+
     <%= f.input :address,
                 required: true,
                 autofocus: true,

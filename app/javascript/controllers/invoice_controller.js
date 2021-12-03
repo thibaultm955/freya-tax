@@ -18,7 +18,7 @@ export default class extends Controller {
  add_item(event) {
     console.log("entity connected !");
     console.log(`./add_item`);
-    var entity_id = document.getElementById("entity").value;
+    var entity_id = document.getElementById("entity").value;      
 
     console.log(entity_id);
        //create Date object

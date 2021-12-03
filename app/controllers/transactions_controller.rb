@@ -54,7 +54,7 @@ class TransactionsController < ApplicationController
             @transaction.return = @return
             @tax_code = EntityTaxCode.find(params_tax_code[:tax_code_id])
             @transaction.entity_tax_code = @tax_code
-
+            
             box_informations = BoxInformation.where(tax_code_operation_location_id: @tax_code.country_tax_code.tax_code_operation_location_id, tax_code_operation_rate_id: @tax_code.country_tax_code.tax_code_operation_rate_id, tax_code_operation_side_id: @tax_code.country_tax_code.tax_code_operation_side_id, tax_code_operation_type_id: @tax_code.country_tax_code.tax_code_operation_type_id )
 
             box_informations.each do |box_information|
@@ -183,6 +183,7 @@ class TransactionsController < ApplicationController
     end
 
     def destroy
+        ddd
         @return = Return.find(params_transaction[:return_id])
         @transaction = Transaction.find(params_transaction[:id])
         @transaction.destroy
@@ -200,13 +201,88 @@ class TransactionsController < ApplicationController
 
     end
 
+    def edit_ticket_invoice
+        @transaction = Transaction.find(params[:transaction_id])
+        @company = current_user.company
+        @invoice = @transaction.invoice
+        @item = @transaction.item
+        @entity = @item.entity
+        @items = @entity.items
+
+    end
+
     def save_transaction_invoice
         @item = Item.find(params[:item_id])
         @invoice = Invoice.find(params[:invoice_id])
         @transaction = Transaction.find(params[:transaction_id])
+        @entity = Entity.find(@invoice.entity_id)
         quantity = params[:quantity].to_f
         net_amount = quantity * @item.net_amount
         vat_amount = quantity * @item.vat_amount
+
+        previous_net_amount = @transaction.net_amount 
+        previous_vat_amount = @transaction.vat_amount 
+
+        # substract old amount 
+
+        @country_tax_code = CountryTaxCode.where(country_id: @entity.country.id, tax_code_operation_location_id: @transaction.invoice.tax_code_operation_location.id, tax_code_operation_side_id: @transaction.invoice.tax_code_operation_side.id, tax_code_operation_rate_id: @transaction.item.tax_code_operation_rate.id, tax_code_operation_type_id: @transaction.item.tax_code_operation_type.id)[0]
+
+        @entity_tax_code = EntityTaxCode.where(entity_id: @entity.id, country_tax_code_id: @country_tax_code.id)[0]
+
+     
+        box_informations = BoxInformation.where(tax_code_operation_location_id: @entity_tax_code.country_tax_code.tax_code_operation_location_id, tax_code_operation_rate_id: @entity_tax_code.country_tax_code.tax_code_operation_rate_id, tax_code_operation_side_id: @entity_tax_code.country_tax_code.tax_code_operation_side_id, tax_code_operation_type_id: @entity_tax_code.country_tax_code.tax_code_operation_type_id )
+        
+        box_informations.each do |box_information|
+            return_box = ReturnBox.where(box_name_id: box_information.box_name_id)[0]
+            amount = box_information.amount.name
+            if amount == "Reporting Currency Taxable Basis"
+                updated_amount = return_box.amount - previous_net_amount
+                return_box = return_box.update(amount: updated_amount)
+            elsif amount == "Reporting Currency VAT Amount"
+                updated_amount = return_box.amount  - previous_vat_amount
+                return_box = return_box.update(amount: updated_amount)
+            elsif amount == "Reporting Currency Gross Amount"
+                updated_amount = return_box.amount  - previous_net_amount - previous_vat_amount
+                return_box = return_box.update(amount: updated_amount)
+            end
+        end
+
+
+        # Add new amount 
+
+        @new_country_tax_code = CountryTaxCode.where(country_id: @entity.country.id, tax_code_operation_location_id: @transaction.invoice.tax_code_operation_location.id, tax_code_operation_side_id: @transaction.invoice.tax_code_operation_side.id, tax_code_operation_rate_id: @item.tax_code_operation_rate.id, tax_code_operation_type_id: @item.tax_code_operation_type.id)[0]
+
+        @new_entity_tax_code = EntityTaxCode.where(entity_id: @entity.id, country_tax_code_id: @new_country_tax_code.id)
+
+        # if you don't have a tax code, you'll need to create one
+        if @new_entity_tax_code.empty?
+            name_tax_code = @transaction.invoice.tax_code_operation_location.name + " | " + @transaction.invoice.tax_code_operation_side.name + " | " + @transaction.item.tax_code_operation_type.name + " | " + @transaction.item.tax_code_operation_rate.name
+            @new_entity_tax_code = EntityTaxCode.new(name: name_tax_code, entity_id: @entity.id, country_tax_code_id: @new_country_tax_code.id)
+            @new_entity_tax_code.save
+
+        end
+
+        @new_entity_tax_code = EntityTaxCode.where(entity_id: @entity.id, country_tax_code_id: @new_country_tax_code.id)[0]
+
+        box_informations = BoxInformation.where(tax_code_operation_location_id: @new_entity_tax_code.country_tax_code.tax_code_operation_location_id, tax_code_operation_rate_id: @new_entity_tax_code.country_tax_code.tax_code_operation_rate_id, tax_code_operation_side_id: @new_entity_tax_code.country_tax_code.tax_code_operation_side_id, tax_code_operation_type_id: @new_entity_tax_code.country_tax_code.tax_code_operation_type_id )
+        
+
+        box_informations.each do |box_information|
+            return_box = ReturnBox.where(box_name_id: box_information.box_name_id)[0]
+            amount = box_information.amount.name
+            if amount == "Reporting Currency Taxable Basis"
+                updated_amount = return_box.amount + net_amount 
+                return_box = return_box.update(amount: updated_amount)
+            elsif amount == "Reporting Currency VAT Amount"
+                updated_amount = return_box.amount + vat_amount 
+                return_box = return_box.update(amount: updated_amount)
+            elsif amount == "Reporting Currency Gross Amount"
+                updated_amount = return_box.amount + net_amount + vat_amount 
+                return_box = return_box.update(amount: updated_amount)
+            end
+        end
+
+
         # will have to multiply quantity with what is specified
         @transaction.update!(vat_amount: vat_amount, net_amount: net_amount, comment: params[:comment], invoice_id: @invoice.id, :item_id => @item.id, :quantity => quantity)
     
@@ -214,9 +290,131 @@ class TransactionsController < ApplicationController
         
     end
 
+
+    def save_ticket_invoice
+
+        @item = Item.find(params[:item_id])
+        @item.update(item_description: params[:comment], net_amount: params[:net_amount], vat_amount: params[:vat_amount])
+        @invoice = Invoice.find(params[:invoice_id])
+        @transaction = Transaction.find(params[:transaction_id])
+        @entity = Entity.find(@invoice.entity_id)
+        quantity = params[:quantity].to_f
+        net_amount = quantity * @item.net_amount
+        vat_amount = quantity * @item.vat_amount
+
+        previous_net_amount = @transaction.net_amount 
+        previous_vat_amount = @transaction.vat_amount 
+
+        # substract old amount 
+
+        @country_tax_code = CountryTaxCode.where(country_id: @entity.country.id, tax_code_operation_location_id: @transaction.invoice.tax_code_operation_location.id, tax_code_operation_side_id: @transaction.invoice.tax_code_operation_side.id, tax_code_operation_rate_id: @transaction.item.tax_code_operation_rate.id, tax_code_operation_type_id: @transaction.item.tax_code_operation_type.id)[0]
+
+        @entity_tax_code = EntityTaxCode.where(entity_id: @entity.id, country_tax_code_id: @country_tax_code.id)[0]
+
+     
+        box_informations = BoxInformation.where(tax_code_operation_location_id: @entity_tax_code.country_tax_code.tax_code_operation_location_id, tax_code_operation_rate_id: @entity_tax_code.country_tax_code.tax_code_operation_rate_id, tax_code_operation_side_id: @entity_tax_code.country_tax_code.tax_code_operation_side_id, tax_code_operation_type_id: @entity_tax_code.country_tax_code.tax_code_operation_type_id )
+        
+        box_informations.each do |box_information|
+            return_box = ReturnBox.where(box_name_id: box_information.box_name_id)[0]
+            amount = box_information.amount.name
+            if amount == "Reporting Currency Taxable Basis"
+                updated_amount = return_box.amount - previous_net_amount
+                return_box = return_box.update(amount: updated_amount)
+            elsif amount == "Reporting Currency VAT Amount"
+                updated_amount = return_box.amount  - previous_vat_amount
+                return_box = return_box.update(amount: updated_amount)
+            elsif amount == "Reporting Currency Gross Amount"
+                updated_amount = return_box.amount  - previous_net_amount - previous_vat_amount
+                return_box = return_box.update(amount: updated_amount)
+            end
+        end
+
+
+        # Add new amount 
+
+        @new_country_tax_code = CountryTaxCode.where(country_id: @entity.country.id, tax_code_operation_location_id: @transaction.invoice.tax_code_operation_location.id, tax_code_operation_side_id: @transaction.invoice.tax_code_operation_side.id, tax_code_operation_rate_id: @item.tax_code_operation_rate.id, tax_code_operation_type_id: @item.tax_code_operation_type.id)[0]
+
+        @new_entity_tax_code = EntityTaxCode.where(entity_id: @entity.id, country_tax_code_id: @new_country_tax_code.id)
+
+        # if you don't have a tax code, you'll need to create one
+        if @new_entity_tax_code.empty?
+            name_tax_code = @transaction.invoice.tax_code_operation_location.name + " | " + @transaction.invoice.tax_code_operation_side.name + " | " + @transaction.item.tax_code_operation_type.name + " | " + @transaction.item.tax_code_operation_rate.name
+            @new_entity_tax_code = EntityTaxCode.new(name: name_tax_code, entity_id: @entity.id, country_tax_code_id: @new_country_tax_code.id)
+            @new_entity_tax_code.save
+
+        end
+
+        @new_entity_tax_code = EntityTaxCode.where(entity_id: @entity.id, country_tax_code_id: @new_country_tax_code.id)[0]
+
+        box_informations = BoxInformation.where(tax_code_operation_location_id: @new_entity_tax_code.country_tax_code.tax_code_operation_location_id, tax_code_operation_rate_id: @new_entity_tax_code.country_tax_code.tax_code_operation_rate_id, tax_code_operation_side_id: @new_entity_tax_code.country_tax_code.tax_code_operation_side_id, tax_code_operation_type_id: @new_entity_tax_code.country_tax_code.tax_code_operation_type_id )
+        
+
+        box_informations.each do |box_information|
+            return_box = ReturnBox.where(box_name_id: box_information.box_name_id)[0]
+            amount = box_information.amount.name
+            if amount == "Reporting Currency Taxable Basis"
+                updated_amount = return_box.amount + net_amount 
+                return_box = return_box.update(amount: updated_amount)
+            elsif amount == "Reporting Currency VAT Amount"
+                updated_amount = return_box.amount + vat_amount 
+                return_box = return_box.update(amount: updated_amount)
+            elsif amount == "Reporting Currency Gross Amount"
+                updated_amount = return_box.amount + net_amount + vat_amount 
+                return_box = return_box.update(amount: updated_amount)
+            end
+        end
+
+
+        # will have to multiply quantity with what is specified
+        @transaction.update!(vat_amount: vat_amount, net_amount: net_amount, comment: params[:comment], invoice_id: @invoice.id, :item_id => @item.id, :quantity => quantity)
+    
+        redirect_to company_invoice_path(current_user.company, @invoice.id)
+
+    end
+
+
     def delete_transaction
+     
         @transaction = Transaction.find(params[:transaction_id])
         @invoice = @transaction.invoice
+        @entity = @invoice.entity
+        @item = @transaction.item
+        @return = Return.where(["begin_date <= ? and end_date >= ? and entity_id = ? and country_id = ?",   @invoice.invoice_date,  @invoice.invoice_date, @item.entity.id, 2])[0]
+
+        # substract old amount 
+
+        @country_tax_code = CountryTaxCode.where(country_id: @entity.country.id, tax_code_operation_location_id: @transaction.invoice.tax_code_operation_location.id, tax_code_operation_side_id: @transaction.invoice.tax_code_operation_side.id, tax_code_operation_rate_id: @transaction.item.tax_code_operation_rate.id, tax_code_operation_type_id: @transaction.item.tax_code_operation_type.id)[0]
+
+        @entity_tax_code = EntityTaxCode.where(entity_id: @entity.id, country_tax_code_id: @country_tax_code.id)[0]
+      
+        @periodicity = @entity.periodicity
+        @periodicity_to_project_type = PeriodicityToProjectType.where(project_type_id: 1, periodicity_id: @periodicity.id, country_id: @entity.country.id)[0]
+     
+        box_informations = BoxInformation.where(tax_code_operation_location_id: @entity_tax_code.country_tax_code.tax_code_operation_location_id, tax_code_operation_rate_id: @entity_tax_code.country_tax_code.tax_code_operation_rate_id, tax_code_operation_side_id: @entity_tax_code.country_tax_code.tax_code_operation_side_id, tax_code_operation_type_id: @entity_tax_code.country_tax_code.tax_code_operation_type_id )
+                
+
+        box_informations.each do |box_information|
+
+            # Check if box_name is the one from this periodicity
+            if box_information.box_name.periodicity_to_project_type_id == @periodicity_to_project_type.id
+                return_box = ReturnBox.where(box_name_id: box_information.box_name_id, return: @return.id)[0]
+                amount = box_information.amount.name
+                if amount == "Reporting Currency Taxable Basis"
+                    updated_amount = return_box.amount - @transaction.net_amount
+                    return_box = return_box.update(amount: updated_amount)
+                elsif amount == "Reporting Currency VAT Amount"
+                    updated_amount = return_box.amount - @transaction.vat_amount
+                    return_box = return_box.update(amount: updated_amount)
+                elsif amount == "Reporting Currency Gross Amount"
+                    updated_amount = return_box.amount - @transaction.net_amount - @transaction.vat_amount
+                    return_box = return_box.update(amount: updated_amount)
+                end
+            else
+                # error
+            end
+        end
+
+
         @transaction.destroy
         redirect_to company_invoice_path(current_user.company, @invoice.id)
 
@@ -242,6 +440,11 @@ class TransactionsController < ApplicationController
         quantity = params[:quantity].to_f
         net_amount = quantity * @item.net_amount
         vat_amount = quantity * @item.vat_amount
+
+
+
+
+
         # will have to multiply quantity with what is specified
         @transaction.update!(vat_amount: vat_amount, net_amount: net_amount, comment: params[:comment], invoice_id: @invoice.id, :item_id => @item.id, :quantity => quantity)
     

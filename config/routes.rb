@@ -15,6 +15,8 @@ Rails.application.routes.draw do
   resources :companies do
     
     get '/invoices/add_item/:entity_id', to: "invoices#render_add_item"
+    get '/invoices/:invoice_id/add_ticket', to: "invoices#add_ticket"
+    get '/invoices/:invoice_id/save_ticket', to: "invoices#save_ticket"    
     get '/invoices/:invoice_id/paid', to: "invoices#paid"
     get '/invoices/:invoice_id.generate_pdf', to: "invoices#generate_pdf"
 
@@ -44,7 +46,9 @@ Rails.application.routes.draw do
     resources :invoices do
       # Update Transaction from Invoice Screen
       get '/transactions/:transaction_id/edit_transaction_invoice', to: "transactions#edit_transaction_invoice"
+      get '/transactions/:transaction_id/edit_ticket_invoice', to: "transactions#edit_ticket_invoice"
       get '/transactions/:transaction_id/save_transaction_invoice', to: "transactions#save_transaction_invoice"
+      get '/transactions/:transaction_id/save_ticket_invoice', to: "transactions#save_ticket_invoice"
 
       # Remove transaction from Invoice Screen
       get '/transactions/:transaction_id/delete_transaction', to: "transactions#delete_transaction"
@@ -85,6 +89,7 @@ Rails.application.routes.draw do
 
 # French
   #company
+  get '/entreprises/new', to: "companies#new_french"
   get '/entreprises/:company_id', to: "companies#show_french"
 
   #entity

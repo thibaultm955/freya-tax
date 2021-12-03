@@ -46,6 +46,11 @@ class CompaniesController < ApplicationController
         @entities = @company.entities.order('name ASC')
     end
 
+    def new_french
+        @company = Company.new
+        @countries = Country.order("name asc").all
+    end
+
 
     private
 

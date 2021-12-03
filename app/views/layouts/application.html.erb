@@ -11,7 +11,9 @@
   </head>
 
   <body>
-  <%iif current_user.language.name == 'English' %>
+  <%if current_user.nil? %>
+    <a href='/users/sign_in'>Please Sign In or Create a User</a>
+  <%elsif current_user.language.name == 'English' %>
     <%= render 'shared/navbar' %>
   <%elsif current_user.language.name == 'French' %>
     <%= render 'shared/navbar_french' %>

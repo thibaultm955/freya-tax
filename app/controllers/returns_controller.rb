@@ -52,6 +52,14 @@ class ReturnsController < ApplicationController
 
     def destroy
         @return = Return.find(params[:id])
+        # Need to remove the boxes of the return
+        return_boxes = ReturnBox.where(return_id: @return.id)
+        if !return_boxes.nil? 
+            return_boxes.each do |return_box|
+                return_box.destroy
+            end
+        end
+
         @return.destroy
         redirect_to company_returns_path(params[:company_id])
     end

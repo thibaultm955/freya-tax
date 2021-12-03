@@ -5,4 +5,5 @@ class Entity < ApplicationRecord
   has_many :entity_tax_codes
   has_many :invoices
   has_many :items
+  belongs_to :periodicity
 end

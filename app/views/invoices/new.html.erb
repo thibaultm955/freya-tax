@@ -6,6 +6,12 @@
           <%= simple_form_for([@company, @invoice]) do |f| %>
               <%= f.input :invoice_name %>
 
+              <%= label :side, "Side" %>
+              <%= select_tag :side,
+              options_from_collection_for_select(@sides, "id", "name"),
+              include_blank: true,
+              class: "form-control"%>
+
               <%= label :entity, "Entity" %>
               <%= select_tag :entity,
               options_from_collection_for_select(@entities, "id", "name"),
@@ -45,7 +51,7 @@
         </div>
 
                 
-            <input class="btn btn-primary" type="button" value="add_item" data-action="click->invoice#add_item">
+            <input class="btn btn-primary" type="button" value="Add Item" data-action="click->invoice#add_item">
 
 
               <%= f.submit "Save", class: "btn btn-primary" %>
