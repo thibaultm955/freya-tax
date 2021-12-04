@@ -2,7 +2,7 @@ class ReturnsController < ApplicationController
     def index
         @company = current_user.company
         @entities = @company.entities
-        @returns = Return.where(entity_id: @entities.ids).order("begin_date asc")[0..9]
+        @returns = Return.where(entity_id: @entities.ids).order("begin_date asc")[0..19]
 
     end
 
