@@ -95,6 +95,12 @@ class InvoicesController < ApplicationController
 
     def delete_invoice
         @invoice = Invoice.find(params[:invoice_id])
+        @transactions = @invoice.transactions
+        @transactions.each do |transaction|
+            amounts = Item.extract_amounts(transaction.quantity, transaction.item)
+            Transaction.remove_and_take_out_amounts(transaction, amounts)
+        end
+
         @invoice.destroy
         redirect_to company_invoices_path(current_user.company)
 
