@@ -414,10 +414,8 @@ class TransactionsController < ApplicationController
             end
         end
 
-
         @transaction.destroy
         redirect_to company_invoice_path(current_user.company, @invoice.id)
-
         
     end
 
@@ -440,10 +438,6 @@ class TransactionsController < ApplicationController
         quantity = params[:quantity].to_f
         net_amount = quantity * @item.net_amount
         vat_amount = quantity * @item.vat_amount
-
-
-
-
 
         # will have to multiply quantity with what is specified
         @transaction.update!(vat_amount: vat_amount, net_amount: net_amount, comment: params[:comment], invoice_id: @invoice.id, :item_id => @item.id, :quantity => quantity)
