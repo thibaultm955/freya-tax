@@ -1,0 +1,2 @@
+class CloudinaryPhoto < ApplicationRecord
+end

@@ -5,7 +5,7 @@ class Invoice < ApplicationRecord
     belongs_to :customer
     belongs_to :tax_code_operation_side
     belongs_to :tax_code_operation_location
-
+    has_many :cloudinary_photos
 =begin
     def author(new_name, invoice)
         invoice.update(invoice_name: new_name)

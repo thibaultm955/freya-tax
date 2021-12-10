@@ -10,10 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_26_134156) do
+ActiveRecord::Schema.define(version: 2021_12_10_143905) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.bigint "byte_size", null: false
+    t.string "checksum", null: false
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
 
   create_table "amounts", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
@@ -56,6 +77,16 @@ ActiveRecord::Schema.define(version: 2021_11_26_134156) do
     t.bigint "periodicity_to_project_type_id", null: false
     t.index ["language_id"], name: "index_box_names_on_language_id"
     t.index ["periodicity_to_project_type_id"], name: "index_box_names_on_periodicity_to_project_type_id"
+  end
+
+  create_table "cloudinary_photos", force: :cascade do |t|
+    t.string "api_key"
+    t.bigint "invoice_id", null: false
+    t.string "secure_url"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "name"
+    t.index ["invoice_id"], name: "index_cloudinary_photos_on_invoice_id"
   end
 
   create_table "companies", force: :cascade do |t|
@@ -315,6 +346,7 @@ ActiveRecord::Schema.define(version: 2021_11_26_134156) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "assignments", "companies"
   add_foreign_key "assignments", "users"
   add_foreign_key "box_informations", "amounts"
@@ -325,6 +357,7 @@ ActiveRecord::Schema.define(version: 2021_11_26_134156) do
   add_foreign_key "box_informations", "tax_code_operation_types"
   add_foreign_key "box_names", "languages"
   add_foreign_key "box_names", "periodicity_to_project_types"
+  add_foreign_key "cloudinary_photos", "invoices"
   add_foreign_key "companies", "countries"
   add_foreign_key "country_tax_codes", "countries"
   add_foreign_key "country_tax_codes", "tax_code_operation_locations"

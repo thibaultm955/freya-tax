@@ -25,7 +25,9 @@ Rails.application.routes.draw do
 
     # Add transaction to invoice
     get '/invoices/:invoice_id/add_transaction', to: "invoices#add_transaction"
+    get '/invoices/:invoice_id/add_photo', to: "invoices#add_photo"
     get '/invoices/:invoice_id/save_transaction', to: "invoices#save_transaction"
+    get '/invoices/:invoice_id/save_photo', to: "invoices#save_photo"
 
     # Delete invoice
     get '/invoices/:invoice_id/delete_transaction', to: "invoices#delete_transaction"

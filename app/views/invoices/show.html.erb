@@ -1,3 +1,6 @@
+<link href="/assets/css_sheets/image_hover.css" media="screen" rel="stylesheet" />
+
+
 <h1>Invoice Information</h1>
 
 <div class="container text-center">
@@ -9,7 +12,7 @@
       <p><b>Invoice Date</b>:  </br><%=@invoice.invoice_date%></p>
     </div>
     <div class="col">
-      <p><b>Payment Date</b>: <%=@invoice.payment_date%></p>
+      <p><b>Payment Date</b>: </br><%=@invoice.payment_date%></p>
     </div>
     <div class="col">
       <p><b>Invoice Number</b>: <%=@invoice.invoice_number%> </p>
@@ -39,6 +42,7 @@
 <a class="btn btn-primary" href="./<%=@invoice.id%>.generate_pdf.pdf" role="button">Generate PDF</a>
 <a class="btn btn-primary" href="./<%=@invoice.id%>/edit" role="button">Edit Information Invoice</a>
 <a class="btn btn-primary" href="./<%=@invoice.id%>/add_transaction" role="button">Add a Transaction</a>
+<a class="btn btn-primary" href="./<%=@invoice.id%>/add_photo" role="button">Add a Photo</a>
 
 <% total_amount = 0 %>
 <% total_vat = 0 %>
@@ -90,3 +94,35 @@
 </br>
 
 <p> <b>Amount Due (EUR)</b>: <%= total_amount.round(2) %> </p>
+<% i = 0%>
+<p> Photos </p>
+<div>
+  <div class="row">
+    <% @cloudinary_photos.each do |photo| %>
+      <% i += 1%>
+      <div class="container">
+        <% if (i % 5) == 0%>
+          <div class="row">
+            <div class="col">
+              <a href="<%=photo.secure_url%>">
+                <img src="<%=photo.secure_url%>" alt="Avatar" class="image" style="width:100%">
+                <div class="middle">
+                  <div class="text"><%=photo.name%></div>
+                </div>
+              </a>
+            </div>
+          </div>
+        <%else%>
+          <div class="col">
+            <a href="<%=photo.secure_url%>">
+              <img src="<%=photo.secure_url%>" alt="Avatar" class="image" style="width:100%">
+              <div class="middle">
+                <div class="text"><%=photo.name%></div>
+              </div>
+            </a>
+          </div>
+        <%end%>
+      </div>
+    <%end%>
+  </div>
+</div>
