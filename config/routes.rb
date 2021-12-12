@@ -55,6 +55,8 @@ Rails.application.routes.draw do
       # Remove transaction from Invoice Screen
       get '/transactions/:transaction_id/delete_transaction', to: "transactions#delete_transaction"
 
+      # Cloudinary Pictures
+      get '/cloudinary_photos/:photo_id/delete_photo', to: "cloudinary_photos#delete_photo"
 
 
       resources :transactions

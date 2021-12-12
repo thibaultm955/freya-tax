@@ -120,6 +120,9 @@
                 <div class="text"><%=photo.name%></div>
               </div>
             </a>
+            <div style="text-align: center">
+              <a class="btn btn-danger" href="./<%=@invoice.id%>/cloudinary_photos/<%=photo.id%>/delete_photo" onclick="return confirm('Are you sure?')"> Delete </a>
+            </div>
           </div>
         <%end%>
       </div>
