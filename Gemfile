@@ -72,3 +72,5 @@ gem 'prawn-rails'
 gem "chartkick"
 
 gem 'groupdate'
+
+gem 'cloudinary'

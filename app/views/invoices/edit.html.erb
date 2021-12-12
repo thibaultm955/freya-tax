@@ -26,6 +26,11 @@
                     options_from_collection_for_select(@customers, "id", "name", @invoice.customer.id),
                     class: "form-control" %>
                     </br>
+                    <%= label :name_photo, "Name Photo" %>
+                    </br>
+                    <input type="text" name="name_photo" class="form-control">
+
+                    <%= f.input :photo, as: :file %>
 
                     <%= f.submit "Save", class: "btn btn-primary" %>
                 <% end %>

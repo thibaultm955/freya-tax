@@ -25,7 +25,9 @@ Rails.application.routes.draw do
 
     # Add transaction to invoice
     get '/invoices/:invoice_id/add_transaction', to: "invoices#add_transaction"
+    get '/invoices/:invoice_id/add_photo', to: "invoices#add_photo"
     get '/invoices/:invoice_id/save_transaction', to: "invoices#save_transaction"
+    get '/invoices/:invoice_id/save_photo', to: "invoices#save_photo"
 
     # Delete invoice
     get '/invoices/:invoice_id/delete_transaction', to: "invoices#delete_transaction"
@@ -53,6 +55,8 @@ Rails.application.routes.draw do
       # Remove transaction from Invoice Screen
       get '/transactions/:transaction_id/delete_transaction', to: "transactions#delete_transaction"
 
+      # Cloudinary Pictures
+      get '/cloudinary_photos/:photo_id/delete_photo', to: "cloudinary_photos#delete_photo"
 
 
       resources :transactions

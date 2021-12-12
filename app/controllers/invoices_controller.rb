@@ -11,7 +11,7 @@ class InvoicesController < ApplicationController
         # test = @invoice.author("Invoice Test updated", @invoice)
         @invoice = Invoice.find(params[:id])
         @transactions = @invoice.transactions
-
+        @cloudinary_photos = @invoice.cloudinary_photos
     end
 
     def new
@@ -54,7 +54,6 @@ class InvoicesController < ApplicationController
                     from_date = @set_up_dates_return[1]
                     to_date = @set_up_dates_return[2]
 
-
                     # Project by default is VAT
                     @return = Return.new(begin_date: from_date, end_date: to_date ,  periodicity_to_project_type_id: @periodicity_to_project_type.id, country_id: @entity.country.id, entity_id: @entity.id, due_date_id: @periodicity_to_project_type.due_date.id)
 
@@ -64,8 +63,6 @@ class InvoicesController < ApplicationController
                     BoxName.create_box_names_for_return(@periodicity_to_project_type, @return)
                     
                 end
-
-
 
                 if @invoice.save!
                     # Based on the Item selected & the quantity specified, extract amounts
@@ -109,6 +106,9 @@ class InvoicesController < ApplicationController
 
     def update
         @invoice = Invoice.find(params[:id])
+        result_cloudinary = Cloudinary::Uploader.upload(params[:invoice][:photo].tempfile, :public_id => params[:name_photo])
+        @cloudinary_photo = CloudinaryPhoto.new(invoice_id: @invoice.id, api_key: result_cloudinary["api_key"], secure_url: result_cloudinary["secure_url"], name: result_cloudinary["public_id"])
+        @cloudinary_photo.save
         @invoice.update(:invoice_date => params[:invoice][:invoice_date], :payment_date => params[:invoice][:payment_date], :invoice_number => params[:invoice][:invoice_number], :invoice_name => params[:invoice][:invoice_name], :customer_id => params[:customer])
         
         redirect_to company_invoice_path(current_user.company, @invoice.id)
@@ -123,6 +123,12 @@ class InvoicesController < ApplicationController
         
     end
 
+    def add_photo
+        @invoice = Invoice.find(params[:invoice_id])
+        @company = current_user.company
+        # It will go to save when click in the form to save
+
+    end
 
     def save_transaction
 
