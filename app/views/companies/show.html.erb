@@ -13,6 +13,9 @@
   </div>
 </div>
 
+<a class="btn btn-primary" href='./<%=@company.id%>/accesses'> See Access Management </a>
+
+
 <% i = 1 %>
 <% if @entities != [] %>
     <h2 class="text-center"> My Entities </h2>
@@ -46,6 +49,6 @@
         </tbody>
     </table>
 <%end%>
-<a href="<%=new_company_entity_path(@company.id)%>">Create a new Entity</a>
+<a href="<%=new_company_entity_path(@company.id)%>">+ Create a new Entity</a>
     
 

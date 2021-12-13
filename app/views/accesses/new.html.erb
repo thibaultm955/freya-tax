@@ -1,0 +1,23 @@
+<h1 style='font-size: 30px; text-align: center'> Modifier Client </h1>
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 offset-sm-4">
+        <form action='./create'%>
+        <%= label_tag 'Email' %>
+        <%= text_field_tag :email, '', class:"form-control"%>
+
+        <%= label_tag "Access Type" %>
+        <%= select_tag :access_type,
+        options_from_collection_for_select(@accesses, "id", "name"),
+        include_blank: true,
+        class:"form-control" %>
+
+
+
+
+        <input type='submit' value='Sauvegarder' class='btn btn-primary'%>
+        </form>
+
+    </div>
+  </div>
+</div>

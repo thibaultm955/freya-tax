@@ -13,7 +13,12 @@ Rails.application.routes.draw do
 
 # english
   resources :companies do
-    
+
+    # Access
+    get '/accesses', to: "accesses#index"
+    get '/accesses/new', to: "accesses#new"
+
+    # Invoices
     get '/invoices/add_item/:entity_id', to: "invoices#render_add_item"
     get '/invoices/:invoice_id/add_ticket', to: "invoices#add_ticket"
     get '/invoices/:invoice_id/save_ticket', to: "invoices#save_ticket"    
