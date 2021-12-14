@@ -12,13 +12,13 @@
     <ul class="navbar-nav mr-auto">
       <% if user_signed_in? %>
         <%= link_to "Homepage", root_path , class: "dropdown-item"%>
-        <%if !current_user.company.nil? %>
-          <%= link_to "My Company", company_path(current_user.company), class: "dropdown-item" %>
-          <%= link_to "My Declarations", company_returns_path(current_user.company), class: "dropdown-item"%>
-          <%= link_to "My Tax Codes", company_entity_tax_codes_path(current_user.company), class: "dropdown-item"%>
-          <%= link_to "My Invoices", company_invoices_path(current_user.company), class: "dropdown-item"%>
-          <%= link_to "My Customers", company_customers_path(current_user.company), class: "dropdown-item"%>
-          <%= link_to "My Items", company_items_path(current_user.company), class: "dropdown-item"%>
+        <%if !current_user.user_access_companies.nil? %>
+          <%= link_to "My Company", companies_path, class: "dropdown-item" %>
+          <%= link_to "My Declarations", returns_path, class: "dropdown-item"%>
+          <%= link_to "My Tax Codes", entity_tax_codes_path, class: "dropdown-item"%>
+          <%= link_to "My Invoices", invoices_path, class: "dropdown-item"%>
+          <%= link_to "My Customers", customers_path, class: "dropdown-item"%>
+          <%= link_to "My Items", items_path, class: "dropdown-item"%>
 
           <%= link_to "My Dashboard", "#", class: "dropdown-item"%>
           
@@ -27,7 +27,7 @@
             <%= image_tag "https://kitt.lewagon.com/placeholder/users/ssaunier", class: "avatar dropdown-toggle", id: "navbarDropdown", data: { toggle: "dropdown" }, 'aria-haspopup': true, 'aria-expanded': false %>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
               <%= link_to "My Account", user_path(current_user.id), class: "dropdown-item" %>
-              <a class= "dropdown-item" href='../accesses'>Access Management </a>
+              <a class= "dropdown-item" href='/accesses'>Access Management </a>
               <%= link_to "Log out", destroy_user_session_path, method: :delete, class: "dropdown-item" %>
             </div>
           </li>

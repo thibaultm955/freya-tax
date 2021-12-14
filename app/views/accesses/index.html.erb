@@ -16,7 +16,7 @@
             </tr>
         </thead>
         <tbody>
-            <% @user_accesses.each do |access| %>
+            <% @all_user_accesses.each do |access| %>
                 <tr>
                 <th class="text-center" scope="row"><%=i%></th>
                 <td class="text-center"><%=access.user.email%></a></td>
@@ -24,8 +24,8 @@
                 <td class="text-center"><%=access.access.name%></td>
                  <td class="text-center">
                  <%#  Only if you are admin, you can update the access %> 
-                 <a class="btn btn-primary" href='../accesses/<%=access.id%>/edit'> Edit </a>
-                 <a class="btn btn-danger" href="../accesses/<%=access.id%>/delete_access" onclick="return confirm('Are you sure?')"> Delete </a>
+                 <a class="btn btn-primary" href='./accesses/<%=access.id%>/edit'> Edit </a>
+                 <a class="btn btn-danger" href="./accesses/<%=access.id%>/delete_access" onclick="return confirm('Are you sure?')"> Delete </a>
 
                     
                    </td> 

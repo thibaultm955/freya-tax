@@ -6,11 +6,19 @@
         <%= label_tag 'Email' %>
         <%= text_field_tag :email, '', class:"form-control"%>
 
+        <%= label_tag "Company" %>
+        <%= select_tag :company,
+        options_from_collection_for_select(@companies, "id", "name"),
+        include_blank: true,
+        class:"form-control" %>
+
         <%= label_tag "Access Type" %>
         <%= select_tag :access_type,
         options_from_collection_for_select(@accesses, "id", "name"),
         include_blank: true,
         class:"form-control" %>
+
+
 
 
 

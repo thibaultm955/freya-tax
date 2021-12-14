@@ -1,0 +1,54 @@
+
+
+</br>
+<div class="container text-center">
+  <div class="row">
+    <div class="col">
+      <p><b>Name of the company</b>: </br> <%=@company.name%> </p>
+    </div>
+    <div class="col">
+      <p><b>Jurisdiction of the company</b>:  </br><%=@company.country.name%></p>
+    </div>
+
+  </div>
+</div>
+
+<a class="btn btn-primary" href='./<%=@company.id%>/accesses'> See Access Management </a>
+
+
+<% i = 1 %>
+<% if @entities != [] %>
+    <h2 class="text-center"> My Entities </h2>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+            <th class="text-center" scope="col">#</th>
+            <th class="text-center" scope="col">Entity Name</th>
+            <th class="text-center" scope="col">Jurisdiction</th>
+            <th class="text-center" scope="col">VAT Number</th>
+            <th class="text-center" scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% @entities.each do |entity| %>
+                <tr>
+                <th class="text-center" scope="row"><%=i%></th>
+                <td class="text-center"><a href='../companies/<%=current_user.company.id%>/entities/<%=entity.id%>'> <%=entity.name%></a></td>
+                <td class="text-center"><%=entity.country.name%></td>
+                <td class="text-center"><%=entity.vat_number%></td>
+                 <td>
+                 <a class="btn btn-light" href='../companies/<%=current_user.company.id%>/entities/<%=entity.id%>'> Open </a>
+                 <a class="btn btn-primary" href='./<%=@company.id%>/entities/<%=entity.id%>/edit'> Edit </a>
+                <%#<a href="./<%=@company.id%><%#/entities/<%=entity.id%><%#/edit"> <i class="fas fa-edit"></i> </a>%>
+                
+                    
+                   </td> 
+                </tr>
+                <%i += 1%>
+            <%end%>
+        </tbody>
+    </table>
+<%end%>
+<a href="<%=new_company_entity_path(@company.id)%>">+ Create a new Entity</a>
+    
+

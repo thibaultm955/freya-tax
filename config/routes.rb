@@ -11,12 +11,33 @@ Rails.application.routes.draw do
     get "select_country", to: "entities#render_select_country"
   end
 
+  resources :returns
+
+  resources :entity_tax_codes
+
+  resources :invoices
+
+  resources :customers
+
+  resources :items
+
+  get '/accesses', to: "accesses#index"
+  get '/accesses/new', to: "accesses#new"
+  get '/accesses/create', to: "accesses#create"
+  get '/accesses/:access_id/delete_access', to: "accesses#delete_access"
+
 # english
   resources :companies do
 
     # Access
     get '/accesses', to: "accesses#index"
     get '/accesses/new', to: "accesses#new"
+    get '/accesses/create', to: "accesses#create"
+    get '/accesses/:access_id/delete_access', to: "accesses#delete_access"
+
+    # Entities
+    get '/entities', to: "entities#index"
+
 
     # Invoices
     get '/invoices/add_item/:entity_id', to: "invoices#render_add_item"
