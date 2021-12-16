@@ -33,12 +33,12 @@
             <% @entities.each do |entity| %>
                 <tr>
                 <th class="text-center" scope="row"><%=i%></th>
-                <td class="text-center"><a href='../companies/<%=current_user.company.id%>/entities/<%=entity.id%>'> <%=entity.name%></a></td>
+                <td class="text-center"><a href='/companies/<%=entity.company.id%>/entities/<%=entity.id%>'> <%=entity.name%></a></td>
                 <td class="text-center"><%=entity.country.name%></td>
                 <td class="text-center"><%=entity.vat_number%></td>
                  <td>
-                 <a class="btn btn-light" href='../companies/<%=current_user.company.id%>/entities/<%=entity.id%>'> Open </a>
-                 <a class="btn btn-primary" href='./<%=@company.id%>/entities/<%=entity.id%>/edit'> Edit </a>
+                 <a class="btn btn-light" href='/companies/<%=entity.company.id%>/entities/<%=entity.id%>'> Open </a>
+                 <a class="btn btn-primary" href='/companies/<%=@company.id%>/entities/<%=entity.id%>/edit'> Edit </a>
                 <%#<a href="./<%=@company.id%><%#/entities/<%=entity.id%><%#/edit"> <i class="fas fa-edit"></i> </a>%>
                 
                     

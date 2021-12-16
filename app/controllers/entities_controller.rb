@@ -41,7 +41,7 @@ class EntitiesController < ApplicationController
     end
 =begin
     def destroy
-        @company = Company.find(current_user.company_id)
+        @company = Company.find(params[:company_id])
         @entity = Entity.find(params[:id])
         redirect_to company_path(@company.id)
     end

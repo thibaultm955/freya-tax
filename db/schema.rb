@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_13_202829) do
+ActiveRecord::Schema.define(version: 2021_12_16_202551) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -180,6 +180,7 @@ ActiveRecord::Schema.define(version: 2021_12_13_202829) do
     t.boolean "is_reverse_charge"
     t.boolean "is_benefit_in_kind"
     t.boolean "is_exempt_supply_article_44"
+    t.boolean "is_hidden"
     t.index ["country_tax_code_id"], name: "index_entity_tax_codes_on_country_tax_code_id"
     t.index ["entity_id"], name: "index_entity_tax_codes_on_entity_id"
   end

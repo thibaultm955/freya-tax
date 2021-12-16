@@ -1,7 +1,7 @@
 class ItemsController < ApplicationController
     def new
         @item = Item.new
-        @company = current_user.company
+        @company = Company.find(params[:company_id])
         @entities = @company.entities
         @tax_code_rates = TaxCodeOperationRate.all
         @types = TaxCodeOperationType.all
@@ -16,25 +16,37 @@ class ItemsController < ApplicationController
         vat_amount = vat_amount.truncate(2)
         @item = Item.new(:item_name => params_items[:item_name], :item_description => params_items[:item_description], :net_amount => params_items[:net_amount].to_f, :entity_id => params_items_edit[:entity_id], :tax_code_operation_rate_id => params_items_edit[:rate_id], :vat_amount => vat_amount, tax_code_operation_type_id: params[:type])
         if @item.save!
-            redirect_to company_items_path(current_user.company)
+            redirect_to company_items_path(@company)
         else
             render :new
         end
     end
 
     def index
-        @entities = Entity.where(company_id: current_user.company.id)
-        @items = Item.order("item_name asc").where(entity_id: @entities)
+        if current_user.nil?
+            redirect_to root_path
+        else
+            @user = current_user
+            @user_accesses = UserAccessCompany.where(user_id: @user.id)
+            @entity_ids = []
+            @user_accesses.each do |user_access|
+
+                @entity_ids += user_access.company.entity_ids
+            end
+            @items = Item.order("item_name asc").where(entity_id: @entity_ids, is_hidden: [false, nil])
+        end
     end
 
     def edit
+        @company = Company.find(params[:company_id])
         @item = Item.find(params[:id])
-        @entities = Entity.where(company_id: current_user.company.id)
+        @entities = Entity.where(company_id: @company.id)
         @tax_code_rates = TaxCodeOperationRate.all
         @types = TaxCodeOperationType.all
     end
 
     def update_item
+        @company = Company.find(params[:company_id])
         @item = Item.find(params_items_edit[:item_id])
         @entity = Entity.find(params_items_edit[:entity_id])
         @rate = TaxCodeOperationRate.find(params_items_edit[:rate_id])
@@ -45,7 +57,7 @@ class ItemsController < ApplicationController
 
         @item.update(:item_name => params_items_edit[:item_name], :item_description => params_items_edit[:item_description], :net_amount => params_items_edit[:net_amount].to_f, :entity_id => params_items_edit[:entity_id], :tax_code_operation_rate_id => params_items_edit[:rate_id], :vat_amount => vat_amount, tax_code_operation_type_id: params[:type])
 
-        redirect_to company_items_path(current_user.company)
+        redirect_to company_items_path(@company)
 
     end
 

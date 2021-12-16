@@ -1,3 +1,4 @@
+
 <h2> Your Items </h2>
 <a class="btn btn-primary" href="./items/new"> Create Item </a>  
 
@@ -27,7 +28,7 @@
       <td><%=item.entity.name%></td>
       <td><%=item.tax_code_operation_rate.name%></td>
       <td>
-        <a class="btn btn-primary" href="./items/<%=item.id%>/edit"> Edit </a>  
+        <a class="btn btn-primary" href="/companies/<%=item.entity.company.id%>/items/<%=item.id%>/edit"> Edit </a>  
       </td> 
     </tr>
     <%i += 1%>

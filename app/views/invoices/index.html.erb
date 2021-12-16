@@ -1,6 +1,6 @@
 <h1> Your Invoices </h1>
 
-<%= link_to "Create Invoice", new_company_invoice_path(current_user.company) %>
+<%= link_to "Create Invoice", new_company_invoice_path(@invoices.first.entity.company) %>
 
 
 </br>
@@ -62,10 +62,10 @@
       <%invoice.is_paid ? paid = "Yes" : paid = "No"%>
       <td><%=paid%></td>
       <td>
-        <a class="btn btn-light" href="./invoices/<%=invoice.id%>"> Open </a>
-        <a class="btn btn-primary" href="<%= "/companies/" + current_user.company.id.to_s + "/invoices/" + invoice.id.to_s + "/paid"%>"> Pay </a>
-        <a class="btn btn-primary" href="./invoices/<%=invoice.id%>/edit"> Edit </a> 
-        <a class="btn btn-danger" href="./invoices/<%=invoice.id%>/delete_invoice" onclick="return confirm('Are you sure?')"> Delete </a>
+        <a class="btn btn-light" href="/companies/<%=invoice.entity.company.id%>/invoices/<%=invoice.id%>"> Open </a>
+        <a class="btn btn-primary" href="/companies/<%=invoice.entity.company.id%>/invoices/<%=invoice.id%>/paid"> Pay </a>
+        <a class="btn btn-primary" href="/companies/<%=invoice.entity.company.id%>/invoices/<%=invoice.id%>/edit"> Edit </a> 
+        <a class="btn btn-danger" href="/companies/<%=invoice.entity.company.id%>/invoices/<%=invoice.id%>/delete_invoice" onclick="return confirm('Are you sure?')"> Delete </a>
 
       </td> 
     </tr>

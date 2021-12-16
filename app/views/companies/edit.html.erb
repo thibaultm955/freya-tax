@@ -1,0 +1,11 @@
+<h1> Create a Company </h1>
+     <%= simple_form_for @company do |f| %>
+        <%= f.input :name,
+                    required: true,
+                    autofocus: true,
+                    placeholder: "Freya-Tax" %>
+        <%= select_tag :country,
+                    options_from_collection_for_select(@countries, "id", "name", @company.country.id),
+                    class: "form-control" %>
+        <%= f.submit "Save", class: "btn btn-primary" %>
+    <% end %>

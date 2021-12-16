@@ -28,9 +28,8 @@
       <td><%=company_return.due_date.due_date%></td>
       <td>
 
-        <a class="btn btn-light" href="./entities/<%=company_return.entity_id%>/returns/<%=company_return.id%>"> Open </a>
-        <a class="btn btn-primary" href="./returns/<%=company_return.id%>/edit"> Edit </a>  
-        <%= button_to "Delete the Declaration", { action: "destroy", id: company_return.id }, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger"  %>
+        <a class="btn btn-light" href="/companies/<%=company_return.entity.company.id %>/entities/<%=company_return.entity_id%>/returns/<%=company_return.id%>"> Open </a>
+        <%= button_to "Delete", { action: "destroy", id: company_return.id }, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger"  %>
       </td> 
     </tr>
     <%i += 1%>

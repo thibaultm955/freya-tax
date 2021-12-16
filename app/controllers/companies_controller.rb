@@ -36,6 +36,19 @@ class CompaniesController < ApplicationController
         @entities = @company.entities.order('name ASC')
     end
 
+    def edit
+        @company = Company.find(params[:id])
+        @countries = Country.order("name asc").all
+
+    end
+
+    def update
+        @company = Company.find(params[:id])
+        @company.update(name: params[:company][:name], country_id: params[:country])
+        
+        redirect_to '/companies'
+    end
+
     def render_select_periodicity
        
         @project_type = ProjectType.find(params[:countries_project_id])

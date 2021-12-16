@@ -1,5 +1,5 @@
 
-<%= select_tag "entity[entity_id]", options_from_collection_for_select(@entity_tax_codes, "id", 'name' ),
+<%= select_tag "entity[entity_id]", options_from_collection_for_select(@entities, "id", 'name' ),
                             include_blank: true,
                             data: { action: "taxCode#side" }, class: "form-control" %>
 

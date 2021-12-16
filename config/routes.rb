@@ -11,15 +11,15 @@ Rails.application.routes.draw do
     get "select_country", to: "entities#render_select_country"
   end
 
-  resources :returns
+  resources :returns, only: [:index]
 
-  resources :entity_tax_codes
+  resources :entity_tax_codes, only: [:index]
 
-  resources :invoices
+  resources :invoices, only: [:index]
 
-  resources :customers
+  resources :customers, only: [:index]
 
-  resources :items
+  resources :items, only: [:index]
 
   get '/accesses', to: "accesses#index"
   get '/accesses/new', to: "accesses#new"
@@ -69,6 +69,7 @@ Rails.application.routes.draw do
     resources :returns
     resources :entity_tax_codes do
       get "select_country", to: "entities#render_select_country"
+      get "destroy", to: "entity_tax_codes#destroy"
     end
 
     resources :invoices do

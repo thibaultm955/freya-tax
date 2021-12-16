@@ -6,26 +6,24 @@
 
         <%= label :side_operation, "Side Operation" %>
         <%= select_tag :side_operation,
-        options_from_collection_for_select(@tax_code_operation_sides, "id", "name"),
-        include_blank: true,
+        options_from_collection_for_select(@tax_code_operation_sides, "id", "name", @entity_tax_code.tax_code_operation_side.id),
         class: "from-control select2" %>
 
         <%= label :location_operation, "Location Operation" %>
         <%= select_tag :location_operation,
-        options_from_collection_for_select(@tax_code_operation_locations, "id", "name"),
-        include_blank: true,
+        options_from_collection_for_select(@tax_code_operation_locations, "id", "name", @entity_tax_code.tax_code_operation_location.id),
         class: "from-control select2" %>
         
         <%= label :type_operation, "Type Operation" %>
         <%= select_tag :type_operation,
-        options_from_collection_for_select(@tax_code_operation_types, "id", "name"),
-        include_blank: true,
+        options_from_collection_for_select(@tax_code_operation_types, "id", "name",
+        @entity_tax_code.tax_code_operation_type.id),
         class: "from-control select2" %>
 
         <%= label :rate_operation, "Rate Operation" %>
         <%= select_tag :rate_operation,
-        options_from_collection_for_select(@tax_code_operation_rates, "id", "name"),
-        include_blank: true,
+        options_from_collection_for_select(@tax_code_operation_rates, "id", "name",
+        @entity_tax_code.tax_code_operation_rate.id),
         class: "from-control select2" %>
 
         <%= f.submit "Save", class: "btn btn-primary" %>
