@@ -5,6 +5,16 @@ class CompaniesController < ApplicationController
         @countries = Country.order("name asc").all
     end
 
+    def index
+        @user = current_user
+        @user_accesses = UserAccessCompany.where(user_id: @user.id)
+        @companies = []
+        @user_accesses.each do |user_access|
+            @companies << user_access.company
+        end
+
+    end
+
     def create
         @company = Company.new(name: params_company[:name])
         @country = Country.find(params_company[:country])
@@ -22,8 +32,21 @@ class CompaniesController < ApplicationController
     end
 
     def show
-        @company = current_user.assignment.company
+        @company = Company.find(params[:company_id])
         @entities = @company.entities.order('name ASC')
+    end
+
+    def edit
+        @company = Company.find(params[:id])
+        @countries = Country.order("name asc").all
+
+    end
+
+    def update
+        @company = Company.find(params[:id])
+        @company.update(name: params[:company][:name], country_id: params[:country])
+        
+        redirect_to '/companies'
     end
 
     def render_select_periodicity

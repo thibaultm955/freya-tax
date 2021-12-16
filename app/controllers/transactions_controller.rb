@@ -3,11 +3,12 @@ class TransactionsController < ApplicationController
     def index
         @return = Return.find(params_transaction[:return_id])
         @transactions = @return.transactions
-        @company = current_user.company
+        @company = Company.find(params[:company_id])
         @entity = @return.entity
     end
 
     def show
+        @company = Company.find(params[:company_id])
 
         # if set to destroy, remove the amount from the return box
         if params[:format] == "destroy"
@@ -34,19 +35,21 @@ class TransactionsController < ApplicationController
             end
 
             @transaction.destroy
-            redirect_to company_entity_return_transactions_path(current_user.company.id, @return.entity.id, @return.id)
+            redirect_to company_entity_return_transactions_path(@company.id, @return.entity.id, @return.id)
         end
     end
 
     def new
         @return = Return.find(params[:return_id])
-        @company = current_user.company
+        @company = Company.find(params[:company_id])
         @entity = @return.entity
         @transaction = Transaction.new
         @tax_codes = @entity.entity_tax_codes
     end
 
     def create
+        @company = Company.find(params[:company_id])
+
         # if didn't upload a file
         if params[:transaction][:file].nil?
             @transaction = Transaction.new(invoice_number: params_new_transaction[:invoice_number], invoice_date: params_new_transaction[:invoice_date], vat_amount: params_new_transaction[:vat_amount], net_amount: params_new_transaction[:net_amount], total_amount: params_new_transaction[:total_amount], business_partner_name: params_new_transaction[:business_partner_name], business_partner_vat_number: params_new_transaction[:business_partner_vat_number])
@@ -73,7 +76,7 @@ class TransactionsController < ApplicationController
             end
             
             if @transaction.save!
-                redirect_to company_entity_return_transactions_path(current_user.company.id, @return.entity.id, @return.id)
+                redirect_to company_entity_return_transactions_path(@company.id, @return.entity.id, @return.id)
             else 
                 render :new
             end
@@ -108,7 +111,7 @@ class TransactionsController < ApplicationController
             end
 
             
-            redirect_to company_entity_return_transactions_path(current_user.company.id, @return.entity.id, @return.id)
+            redirect_to company_entity_return_transactions_path(@company.id, @return.entity.id, @return.id)
             
             
             
@@ -120,12 +123,14 @@ class TransactionsController < ApplicationController
     def edit
         @return = Return.find(params_transaction[:return_id])
         @transaction = Transaction.find(params_transaction[:id])
-        @company = current_user.company
+        @company = Company.find(params[:company_id])
         @entity = @return.entity
         @tax_codes = @entity.entity_tax_codes
     end
 
     def update
+        @company = Company.find(params[:company_id])
+
         @return = Return.find(params_transaction[:return_id])
         @transaction = Transaction.find(params_transaction[:id])
 
@@ -179,7 +184,7 @@ class TransactionsController < ApplicationController
             end
         end
 
-        redirect_to company_entity_return_transactions_path(current_user.company.id, @return.entity.id, @return.id)
+        redirect_to company_entity_return_transactions_path(@company.id, @return.entity.id, @return.id)
     end
 
     def destroy
@@ -193,7 +198,7 @@ class TransactionsController < ApplicationController
 
     def edit_transaction_invoice
         @transaction = Transaction.find(params[:transaction_id])
-        @company = current_user.company
+        @company = Company.find(params[:company_id])
         @invoice = @transaction.invoice
         @item = @transaction.item
         @entity = @item.entity
@@ -203,7 +208,7 @@ class TransactionsController < ApplicationController
 
     def edit_ticket_invoice
         @transaction = Transaction.find(params[:transaction_id])
-        @company = current_user.company
+        @company = Company.find(params[:company_id])
         @invoice = @transaction.invoice
         @item = @transaction.item
         @entity = @item.entity
@@ -212,6 +217,8 @@ class TransactionsController < ApplicationController
     end
 
     def save_transaction_invoice
+        @company = Company.find(params[:company_id])
+
         @item = Item.find(params[:item_id])
         @invoice = Invoice.find(params[:invoice_id])
         @transaction = Transaction.find(params[:transaction_id])
@@ -286,12 +293,13 @@ class TransactionsController < ApplicationController
         # will have to multiply quantity with what is specified
         @transaction.update!(vat_amount: vat_amount, net_amount: net_amount, comment: params[:comment], invoice_id: @invoice.id, :item_id => @item.id, :quantity => quantity)
     
-        redirect_to company_invoice_path(current_user.company, @invoice.id)
+        redirect_to company_invoice_path(@company, @invoice.id)
         
     end
 
 
     def save_ticket_invoice
+        @company = Company.find(params[:company_id])
 
         @item = Item.find(params[:item_id])
         @item.update(item_description: params[:comment], net_amount: params[:net_amount], vat_amount: params[:vat_amount])
@@ -368,13 +376,14 @@ class TransactionsController < ApplicationController
         # will have to multiply quantity with what is specified
         @transaction.update!(vat_amount: vat_amount, net_amount: net_amount, comment: params[:comment], invoice_id: @invoice.id, :item_id => @item.id, :quantity => quantity)
     
-        redirect_to company_invoice_path(current_user.company, @invoice.id)
+        redirect_to company_invoice_path(@company, @invoice.id)
 
     end
 
 
     def delete_transaction
-     
+        @company = Company.find(params[:company_id])
+
         @transaction = Transaction.find(params[:transaction_id])
         @invoice = @transaction.invoice
         @entity = @invoice.entity
@@ -415,7 +424,7 @@ class TransactionsController < ApplicationController
         end
 
         @transaction.destroy
-        redirect_to company_invoice_path(current_user.company, @invoice.id)
+        redirect_to company_invoice_path(@company, @invoice.id)
         
     end
 

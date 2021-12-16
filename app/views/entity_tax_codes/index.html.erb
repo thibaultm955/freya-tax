@@ -1,6 +1,6 @@
 <h1> Your Tax Codes </h1>
 
-<%= link_to "Create Tax Code", new_company_entity_tax_code_path(current_user.company) %>
+<%= link_to "Create Tax Code", new_company_entity_tax_code_path(@entity_tax_codes.first.entity.company) %>
 
 <%i=1%>
 
@@ -30,9 +30,9 @@
       <td><%=entity_tax_code.country_tax_code.tax_code_operation_type.name%></td>
       <td><%=entity_tax_code.country_tax_code.tax_code_operation_rate.name%></td>
       <td>
-        <a class="btn btn-light" href="./entity_tax_codes/<%=entity_tax_code.id%>"> Open </a>
-        <a class="btn btn-primary" href="./entity_tax_codes/<%=entity_tax_code.id%>/edit"> Edit </a>  
-        <%= button_to "Delete the Tax Code", { action: "destroy", id: entity_tax_code.id }, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger"  %>
+        <a class="btn btn-primary" href="/companies/<%=entity_tax_code.entity.company.id%>/entity_tax_codes/<%=entity_tax_code.id%>/edit"> Edit </a>  
+        <a class="btn btn-danger" href="/companies/<%=entity_tax_code.entity.company.id%>/entity_tax_codes/<%=entity_tax_code.id%>/destroy" onclick="return confirm('Are you sure?')"> Delete </a>
+
       </td> 
     </tr>
     <%i += 1%>

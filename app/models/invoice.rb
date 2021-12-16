@@ -16,6 +16,14 @@ class Invoice < ApplicationRecord
 
     # Based on the params chose in the Index - Invoice, you'll filter or not
     def self.get_all_invoices_with_filter(params_query, user)
+
+        user_accesses = UserAccessCompany.where(user_id: user.id)
+        entity_ids = []
+        user_accesses.each do |user_access|
+
+            entity_ids += user_access.company.entity_ids
+        end
+
         if params_query[:query_name].present? || params_query[:from_date].present? || params_query[:to_date].present?
             sql_query = "invoice_name ILIKE :query"
             if params_query[:query_name].present? & params_query[:from_date].present? & params_query[:to_date].present?
@@ -33,7 +41,7 @@ class Invoice < ApplicationRecord
             end
     
         else
-            invoices = Invoice.order("invoice_date asc").where(entity_id: user.company.entities)
+            invoices = Invoice.order("invoice_date asc").where(entity_id: entity_ids)
     
         end
         

@@ -60,8 +60,8 @@
       </div>
       <% submit_tag "Add address", :type =>  "button", :id => "addAddress",               :onclick => 'addAddressField()'%> 
 
-      <%= link_to "Create Customer", new_company_customer_path(current_user.company) %>
-      <%= link_to "Create Item", new_company_item_path(current_user.company) %>
+      <%= link_to "Create Customer", new_company_customer_path(@company) %>
+      <%= link_to "Create Item", new_company_item_path(@company) %>
     </div>  
   </div>
 </div>

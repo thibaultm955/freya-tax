@@ -1,0 +1,40 @@
+
+</br>
+
+
+<a class="btn btn-primary" href='/accesses'> See Access Management </a>
+
+
+<% i = 1 %>
+
+    <h2 class="text-center"> My Companies </h2>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+            <th class="text-center" scope="col">#</th>
+            <th class="text-center" scope="col">Company Name</th>
+            <th class="text-center" scope="col">Jurisdiction</th>
+            <th class="text-center" scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% @companies.each do |company| %>
+                <tr>
+                <th class="text-center" scope="row"><%=i%></th>
+                <td class="text-center"><a href='./companies/<%=company.id%>/entities'> <%=company.name%></a></td>
+                <td class="text-center"><%=company.country.name%></td>
+                 <td class="text-center">
+                 <a class="btn btn-light" href='./companies/<%=company.id%>/entities'> Open </a>
+                 <a class="btn btn-primary" href='./companies/<%=company.id%>/edit'> Edit </a>
+                <%#<a href="./<%=@company.id%><%#/entities/<%=entity.id%><%#/edit"> <i class="fas fa-edit"></i> </a>%>
+                
+                    
+                   </td> 
+                </tr>
+                <%i += 1%>
+            <%end%>
+        </tbody>
+    </table>
+
+    
+

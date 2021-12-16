@@ -1,8 +1,14 @@
 class InvoicesController < ApplicationController
 
     def index
-        @entities = current_user.company.entities
         @user = current_user
+        @user_accesses = UserAccessCompany.where(user_id: @user.id)
+        @entity_ids = []
+        @user_accesses.each do |user_access|
+
+            @entity_ids += user_access.company.entity_ids
+        end
+        @entities = Entity.where(entity_id: @entity_ids)
         @invoices = Invoice.get_all_invoices_with_filter(params_query, @user)
 
     end
@@ -16,13 +22,14 @@ class InvoicesController < ApplicationController
 
     def new
         @invoice = Invoice.new
-        @company = current_user.company
-        @entities = current_user.company.entities
-        @customers = Customer.where(company_id: current_user.company)
+        @company = Company.find(params[:company_id])
+        @entities = @company.entities
+        @customers = Customer.where(company_id: @company)
         @sides = TaxCodeOperationSide.all
     end
 
     def create  
+        @company = Company.find(params[:company_id])
         @entity = Entity.find(params[:entity])
         @side = TaxCodeOperationSide.find(params[:side])
         @customer = Customer.find(params[:customer])
@@ -77,7 +84,7 @@ class InvoicesController < ApplicationController
         end
         # A transaction is linked to an invoice, so need to first create the invoice
 
-        redirect_to company_invoices_path(current_user.company)
+        redirect_to company_invoices_path(@company)
 
         
     end
@@ -85,12 +92,13 @@ class InvoicesController < ApplicationController
     def edit
         @invoice = Invoice.find(params[:id])
         @transactions = @invoice.transactions
-        @company = current_user.company
-        @entities = current_user.company.entities
-        @customers = Customer.where(company_id: current_user.company)
+        @company = Company.find(params[:company_id])
+        @entities = @company.entities
+        @customers = Customer.where(company_id: @company.id)
     end
 
     def delete_invoice
+        @company = Company.find(params[:company_id])
         @invoice = Invoice.find(params[:invoice_id])
         @transactions = @invoice.transactions
         @transactions.each do |transaction|
@@ -99,33 +107,36 @@ class InvoicesController < ApplicationController
         end
 
         @invoice.destroy
-        redirect_to company_invoices_path(current_user.company)
+        redirect_to company_invoices_path(@company)
 
     end
 
 
     def update
+        @company = Company.find(params[:company_id])
         @invoice = Invoice.find(params[:id])
-        result_cloudinary = Cloudinary::Uploader.upload(params[:invoice][:photo].tempfile, :public_id => params[:name_photo])
-        @cloudinary_photo = CloudinaryPhoto.new(invoice_id: @invoice.id, api_key: result_cloudinary["api_key"], secure_url: result_cloudinary["secure_url"], name: result_cloudinary["public_id"])
-        @cloudinary_photo.save
+        if !params[:invoice][:photo].nil?
+            result_cloudinary = Cloudinary::Uploader.upload(params[:invoice][:photo].tempfile, :public_id => params[:name_photo])
+            @cloudinary_photo = CloudinaryPhoto.new(invoice_id: @invoice.id, api_key: result_cloudinary["api_key"], secure_url: result_cloudinary["secure_url"], name: result_cloudinary["public_id"])
+            @cloudinary_photo.save
+        end
         @invoice.update(:invoice_date => params[:invoice][:invoice_date], :payment_date => params[:invoice][:payment_date], :invoice_number => params[:invoice][:invoice_number], :invoice_name => params[:invoice][:invoice_name], :customer_id => params[:customer])
         
-        redirect_to company_invoice_path(current_user.company, @invoice.id)
+        redirect_to company_invoice_path(@company, @invoice.id)
     end
 
     def add_transaction
         @invoice = Invoice.find(params[:invoice_id])
         @transactions = @invoice.transactions
-        @company = current_user.company
-        @entities = current_user.company.entities
-        @customers = Customer.where(company_id: current_user.company)
+        @company = Company.find(params[:company_id])
+        @entities = @company.entities
+        @customers = Customer.where(company_id: @company.id)
         
     end
 
     def add_photo
         @invoice = Invoice.find(params[:invoice_id])
-        @company = current_user.company
+        @company = Company.find(params[:company_id])
         # It will go to save when click in the form to save
 
     end
@@ -181,11 +192,11 @@ class InvoicesController < ApplicationController
             end
         end
 
-        redirect_to company_invoice_path(current_user.company, @invoice.id)
+        redirect_to company_invoice_path(@company, @invoice.id)
     end
 
     def paid
-        @company = current_user.company
+        @company = Company.find(params[:company_id])
         @invoice = Invoice.find(params[:invoice_id])
 
         if @invoice.is_paid == true

@@ -1,15 +1,20 @@
 class ReturnsController < ApplicationController
     def index
-        @company = current_user.company
-        @entities = @company.entities
-        @returns = Return.where(entity_id: @entities.ids).order("begin_date asc")[0..19]
+        @user = current_user
+        @user_accesses = UserAccessCompany.where(user_id: @user.id)
+        @entity_ids = []
+        @user_accesses.each do |user_access|
+
+            @entity_ids += user_access.company.entity_ids
+        end
+        @returns = Return.where(entity_id: @entity_ids).order("begin_date asc")
 
     end
 
     def new
         @return = Return.new
-        @company = Company.find(current_user.company.id)
-        @entities = Company.find(current_user.company.id).entities.order("name asc")
+        @company = Company.find(params[:company_id])
+        @entities = Company.find(@company.id).entities.order("name asc")
         @jurisdictions = []
         @entities_name = []
         @entities.each do |entity|
@@ -61,21 +66,33 @@ class ReturnsController < ApplicationController
         end
 
         @return.destroy
-        redirect_to company_returns_path(params[:company_id])
+        redirect_to returns_path
     end
 
     def edit
-        @company = Company.find(current_user.id)
-        @declaration = Declaration.find(params[:id])
-        @entity = @declaration.entity
+        @user = current_user
+        @user_accesses = UserAccessCompany.where(user_id: @user.id)
+        @entity_ids = []
+        @user_accesses.each do |user_access|
+
+            @entity_ids += user_access.company.entity_ids
+        end
+        @entities = Entity.where(id: @entity_ids)
+
+
+
+        @company = Company.find(params[:company_id])
+        @return = Return.find(params[:id])
         
     end
 
     def update
-        @declaration = Declaration.find(params[:id])
+        @company = Company.find(params[:company_id])
+
+        @return = Return.find(params[:id])
         last_day_month = Time.days_in_month(params_declaration[:end_date][5..6].to_i, params_declaration[:end_date][0..3].to_i)
         @declaration = @declaration.update(start_date: (params_declaration[:start_date][0..6] + "-01"), end_date: (params_declaration[:end_date][0..6] + "-"+last_day_month.to_s), type_of_project: params_declaration[:type_of_project])
-        redirect_to company_declarations_path(current_user.company_id)
+        redirect_to company_declarations_path(@company_id)
     end
 
     def show

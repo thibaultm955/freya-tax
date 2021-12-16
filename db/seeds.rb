@@ -939,11 +939,22 @@ end
 @type_of_ticket = {"Food & Drinks" => 5, "Restaurant" => 3, "Internet & Phone" => 3, "Raw Materials" => 2, "Multimedia" => 5, "Transport Services" => 3, "Transport Object" => 5}
 
 @type_of_ticket.each do |ticket, tax_code_operation_type_id|
-    @tax_code_operation_type = TaxCodeOperationType.find(tax_code_operation_type_id)
-    @ticket_to_tax_code_type = TicketToTaxCode.new(name: ticket, tax_code_operation_type_id: @tax_code_operation_type.id)
-    @ticket_to_tax_code_type.save
+    if TicketToTaxCode.where(name: ticket) == []
+        @tax_code_operation_type = TaxCodeOperationType.find(tax_code_operation_type_id)
+        @ticket_to_tax_code_type = TicketToTaxCode.new(name: ticket, tax_code_operation_type_id: @tax_code_operation_type.id)
+        @ticket_to_tax_code_type.save
+    end
 
 end
 
 
+
+
+@name_accesses = ["Admin", "Employee", "Accountant"]
+@name_accesses.each do |name_access|
+    if Access.where(name: name_access) == []
+        access = Access.new(name: name_access)
+        access.save
+    end
+end
 

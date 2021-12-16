@@ -1,0 +1,39 @@
+<h2>Access Management</h2>
+
+<a href="./accesses/new">+ Add User </a>
+
+<% i = 1 %>
+<% if @user_accesses != [] %>
+    <h2 class="text-center"> Acceses </h2>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+            <th class="text-center" scope="col">#</th>
+            <th class="text-center" scope="col">User Email</th>
+            <th class="text-center" scope="col">Company Name</th>
+            <th class="text-center" scope="col">Access Type</th>
+            <th class="text-center" scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% @all_user_accesses.each do |access| %>
+                <tr>
+                <th class="text-center" scope="row"><%=i%></th>
+                <td class="text-center"><%=access.user.email%></a></td>
+                <td class="text-center"><%=access.company.name%></td>
+                <td class="text-center"><%=access.access.name%></td>
+                 <td class="text-center">
+                 <%#  Only if you are admin, you can update the access %> 
+                 <a class="btn btn-primary" href='./accesses/<%=access.id%>/edit'> Edit </a>
+                 <a class="btn btn-danger" href="./accesses/<%=access.id%>/delete_access" onclick="return confirm('Are you sure?')"> Delete </a>
+
+                    
+                   </td> 
+                </tr>
+                <%i += 1%>
+            <%end%>
+        </tbody>
+    </table>
+<% else %>
+    <p><%=@no_access%> </p>
+<%end%>

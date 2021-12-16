@@ -10,10 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_10_143905) do
+ActiveRecord::Schema.define(version: 2021_12_16_202551) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "accesses", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "name"
+  end
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -174,6 +180,7 @@ ActiveRecord::Schema.define(version: 2021_12_10_143905) do
     t.boolean "is_reverse_charge"
     t.boolean "is_benefit_in_kind"
     t.boolean "is_exempt_supply_article_44"
+    t.boolean "is_hidden"
     t.index ["country_tax_code_id"], name: "index_entity_tax_codes_on_country_tax_code_id"
     t.index ["entity_id"], name: "index_entity_tax_codes_on_entity_id"
   end
@@ -332,6 +339,17 @@ ActiveRecord::Schema.define(version: 2021_12_10_143905) do
     t.index ["language_id"], name: "index_type_tickets_on_language_id"
   end
 
+  create_table "user_access_companies", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "access_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["access_id"], name: "index_user_access_companies_on_access_id"
+    t.index ["company_id"], name: "index_user_access_companies_on_company_id"
+    t.index ["user_id"], name: "index_user_access_companies_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -393,5 +411,8 @@ ActiveRecord::Schema.define(version: 2021_12_10_143905) do
   add_foreign_key "transactions", "items"
   add_foreign_key "transactions", "returns"
   add_foreign_key "type_tickets", "languages"
+  add_foreign_key "user_access_companies", "accesses"
+  add_foreign_key "user_access_companies", "companies"
+  add_foreign_key "user_access_companies", "users"
   add_foreign_key "users", "languages"
 end

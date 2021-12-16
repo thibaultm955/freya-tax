@@ -11,9 +11,35 @@ Rails.application.routes.draw do
     get "select_country", to: "entities#render_select_country"
   end
 
+  resources :returns, only: [:index]
+
+  resources :entity_tax_codes, only: [:index]
+
+  resources :invoices, only: [:index]
+
+  resources :customers, only: [:index]
+
+  resources :items, only: [:index]
+
+  get '/accesses', to: "accesses#index"
+  get '/accesses/new', to: "accesses#new"
+  get '/accesses/create', to: "accesses#create"
+  get '/accesses/:access_id/delete_access', to: "accesses#delete_access"
+
 # english
   resources :companies do
-    
+
+    # Access
+    get '/accesses', to: "accesses#index"
+    get '/accesses/new', to: "accesses#new"
+    get '/accesses/create', to: "accesses#create"
+    get '/accesses/:access_id/delete_access', to: "accesses#delete_access"
+
+    # Entities
+    get '/entities', to: "entities#index"
+
+
+    # Invoices
     get '/invoices/add_item/:entity_id', to: "invoices#render_add_item"
     get '/invoices/:invoice_id/add_ticket', to: "invoices#add_ticket"
     get '/invoices/:invoice_id/save_ticket', to: "invoices#save_ticket"    
@@ -43,6 +69,7 @@ Rails.application.routes.draw do
     resources :returns
     resources :entity_tax_codes do
       get "select_country", to: "entities#render_select_country"
+      get "destroy", to: "entity_tax_codes#destroy"
     end
 
     resources :invoices do
