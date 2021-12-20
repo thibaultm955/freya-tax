@@ -6,7 +6,7 @@ class Country < ApplicationRecord
     def self.location_is_the_same(entity, customer, european_countries)
         if entity.id == customer.id
             location = TaxCodeOperationLocation.where(name: "Domestic")[0]
-        elsif european_countries.include?(@customer.country.id) 
+        elsif european_countries.include?(customer.id) 
             location = TaxCodeOperationLocation.where(name: "Intra-EU")[0]
         else
             location = TaxCodeOperationLocation.where(name: "Outside-EU")[0]

@@ -1,9 +1,9 @@
 
 
-<p> Factures non payées  - <a href="/entreprises/<%=current_user.company.id%>/factures"> Voir plus  </a></p>
+<p> Factures non payées  - <a href="/invoices"> Voir plus  </a></p>
 <ul>
     <% @invoices_top_5.each do |invoice| %>
-        <li><a href="/entreprises/<%=current_user.company.id%>/factures/<%=invoice.id%>"> <%= invoice.invoice_name%> </a> - Date de Paiement: <%= invoice.invoice_date%></li>
+        <li><a href="/invoices/<%=invoice.id%>"> <%= invoice.invoice_name%> </a> - Date de Paiement: <%= invoice.invoice_date%></li>
     <%end%>
 </ul>
 

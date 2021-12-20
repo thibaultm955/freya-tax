@@ -1,7 +1,13 @@
 <h1> New Customer </h1>
 
 
-    <%= simple_form_for([@company, @customer]) do |f| %>
+    <%= simple_form_for([ @customer]) do |f| %>
+        <%= label_tag :Company%>
+        <%= select_tag :company,
+        options_from_collection_for_select(@companies, "id", "name"),
+        include_blank: true,
+        class:"form-control" %>
+        </br>
         <%= f.input :name %>
         <%= f.input :vat_number %>
         <%= f.input :street %>
@@ -12,8 +18,7 @@
         options_from_collection_for_select(@countries, "id", "name"),
         include_blank: true,
         class:"form-control" %>
-
- 
+        </br>
 
         <%= f.submit "Save", class: "btn btn-primary" %>
     <% end %>

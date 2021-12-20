@@ -76,7 +76,15 @@ class EntitiesController < ApplicationController
 
     def render_select_country
         @country = Country.find(params[:country_id])
-        @entities = Entity.where(country_id: @country.id)
+        @user = current_user
+        # extract user entities access
+        @user_accesses = UserAccessCompany.where(user_id: @user.id)
+        @entity_ids = []
+        @user_accesses.each do |user_access|
+            @entity_ids += user_access.company.entity_ids
+        end
+        @entities = Entity.where(id: @entity_ids, country_id: @country.id)
+
         html_string = render_to_string(partial: "select_country.html.erb", locals: {countries: @entities})
         render json: {html_string: html_string}
     end

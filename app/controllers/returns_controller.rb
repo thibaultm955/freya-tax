@@ -8,7 +8,7 @@ class ReturnsController < ApplicationController
             @entity_ids += user_access.company.entity_ids
         end
         @returns = Return.where(entity_id: @entity_ids).order("begin_date asc")
-
+        
     end
 
     def new
@@ -101,6 +101,8 @@ class ReturnsController < ApplicationController
         @return_boxes = ReturnBox.where(return_id: @return.id)
         @entity = @return.entity
         @transactions = @return.transactions
+        @company = Company.find(params[:company_id])
+
     end
 
     
