@@ -17,9 +17,12 @@ Rails.application.routes.draw do
 
   resources :invoices, only: [:index]
 
-  resources :customers, only: [:index]
+  resources :customers, only: [:index, :new, :create]
 
-  resources :items, only: [:index]
+  resources :items, only: [:index, :new]
+
+  # dashboard
+  get '/dashboard', to: "dashboard#index"
 
   get '/accesses', to: "accesses#index"
   get '/accesses/new', to: "accesses#new"

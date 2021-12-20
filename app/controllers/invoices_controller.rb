@@ -8,7 +8,7 @@ class InvoicesController < ApplicationController
 
             @entity_ids += user_access.company.entity_ids
         end
-        @entities = Entity.where(entity_id: @entity_ids)
+        @entities = Entity.where(id: @entity_ids)
         @invoices = Invoice.get_all_invoices_with_filter(params_query, @user)
 
     end
@@ -21,15 +21,24 @@ class InvoicesController < ApplicationController
     end
 
     def new
+        @user = current_user
         @invoice = Invoice.new
+
         @company = Company.find(params[:company_id])
-        @entities = @company.entities
-        @customers = Customer.where(company_id: @company)
+        @user_accesses = UserAccessCompany.where(user_id: @user.id)
+        @entity_ids = []
+        @company_ids = []
+
+        @user_accesses.each do |user_access|
+            @company_ids << user_access.company_id
+            @entity_ids += user_access.company.entity_ids
+        end
+        @entities = Entity.where(id: @entity_ids)
+        @customers = Customer.where(company_id: @company_ids)
         @sides = TaxCodeOperationSide.all
     end
 
     def create  
-        @company = Company.find(params[:company_id])
         @entity = Entity.find(params[:entity])
         @side = TaxCodeOperationSide.find(params[:side])
         @customer = Customer.find(params[:customer])
@@ -84,7 +93,7 @@ class InvoicesController < ApplicationController
         end
         # A transaction is linked to an invoice, so need to first create the invoice
 
-        redirect_to company_invoices_path(@company)
+        redirect_to invoices_path
 
         
     end
@@ -122,7 +131,7 @@ class InvoicesController < ApplicationController
         end
         @invoice.update(:invoice_date => params[:invoice][:invoice_date], :payment_date => params[:invoice][:payment_date], :invoice_number => params[:invoice][:invoice_number], :invoice_name => params[:invoice][:invoice_name], :customer_id => params[:customer])
         
-        redirect_to company_invoice_path(@company, @invoice.id)
+        redirect_to invoices_path
     end
 
     def add_transaction
@@ -192,7 +201,7 @@ class InvoicesController < ApplicationController
             end
         end
 
-        redirect_to company_invoice_path(@company, @invoice.id)
+        redirect_to invoices_path
     end
 
     def paid

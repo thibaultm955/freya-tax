@@ -57,18 +57,13 @@ class EntityTaxCodesController < ApplicationController
 
     def new
         @user = current_user
-        @company = Company.find(params[:company_id])
-        if @user.nil? || UserAccessCompany.where(user_id: @user.id, company_id: @company.id).empty?
-            redirect_to root_path
-        else
-            @entity_tax_code = EntityTaxCode.new
-            @company = Company.find(params[:company_id])
-            @countries = Country.all.order("name asc")
-            @tax_code_operation_sides = TaxCodeOperationSide.all
-            @tax_code_operation_locations = TaxCodeOperationLocation.all
-            @tax_code_operation_types = TaxCodeOperationType.all
-            @tax_code_operation_rates = TaxCodeOperationRate.all
-        end
+        @entity_tax_code = EntityTaxCode.new
+        @countries = Country.all.order("name asc")
+        @tax_code_operation_sides = TaxCodeOperationSide.all
+        @tax_code_operation_locations = TaxCodeOperationLocation.all
+        @tax_code_operation_types = TaxCodeOperationType.all
+        @tax_code_operation_rates = TaxCodeOperationRate.all
+
     end
 
     def create

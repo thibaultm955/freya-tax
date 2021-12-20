@@ -12,13 +12,19 @@ class CustomersController < ApplicationController
     end
 
     def new
-        @company = Company.find(params[:company_id])
+        @user = current_user
+
+        @user_accesses = UserAccessCompany.where(user_id: @user.id)
+        @companies = []
+        @user_accesses.each do |user_access|
+            @companies << user_access.company
+        end
         @customer = Customer.new
         @countries = Country.order("name asc").all
     end
 
     def create
-        @company = Company.find(params[:company_id])
+        @company = Company.find(params[:company])
         @customer = Customer.new(name: params_create[:name], vat_number: params_create[:vat_number], street: params_create[:street], city: params_create[:city], post_code: params_create[:post_code], country_id: params[:country].to_i, company_id: @company.id)
         if @customer.save
             redirect_to company_customers_path(@company.id)

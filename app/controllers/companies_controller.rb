@@ -6,6 +6,7 @@ class CompaniesController < ApplicationController
     end
 
     def index
+
         @user = current_user
         @user_accesses = UserAccessCompany.where(user_id: @user.id)
         @companies = []
@@ -20,19 +21,19 @@ class CompaniesController < ApplicationController
         @country = Country.find(params_company[:country])
         @user = current_user
         @company.country = @country
-        @assignment = Assignment.new(function: "Admin")
-        @assignment.user = @user
+        # As creator of a company, you'll be admin
+        @access = Access.find(1)
         if @company.save 
-            @assignment.company = @company
-            @assignment.save!
-            redirect_to company_path(@company.id)
+            @user_access = UserAccessCompany.new(user_id: current_user.id, company_id: @company.id, access_id: @access.id)    
+            @user_access.save
+            redirect_to companies_path
         else
             render :new
         end
     end
 
     def show
-        @company = Company.find(params[:company_id])
+        @company = Company.find(params[:id])
         @entities = @company.entities.order('name ASC')
     end
 

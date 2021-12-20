@@ -13,7 +13,8 @@ class AccessesController < ApplicationController
                     @all_user_accesses += UserAccessCompany.where(company_id: user_access.company.id)
                 # If you are normal user, you can see what access you have
                 else
-                    @all_user_accesses += UserAccessCompany.where(user_id: current_user.id)
+                    # we need to filter companies in which you are not admin, as it will be added in the first if part
+                    @all_user_accesses += UserAccessCompany.where(user_id: current_user.id, access_id: [2,3])
                 end
             end
         end
