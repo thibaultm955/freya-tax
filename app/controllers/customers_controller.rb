@@ -2,48 +2,53 @@ class CustomersController < ApplicationController
 
     def index
         @user = current_user
-        @user_accesses = UserAccessCompany.where(user_id: @user.id)
-        @company_ids = []
-        @user_accesses.each do |user_access|
 
-            @company_ids << user_access.company_id
+        @user_accesses = UserAccessCompany.where(user_id: @user.id)
+        @entity_ids = []
+        @user_accesses.each do |user_access|
+            @entity_ids += user_access.company.entity_ids
         end
-        @customers = Customer.where(company_id: @company_ids)
+        @entities = Entity.where(id: @entity_ids)
+
+        @customers = Customer.where(entity_id: @entities)
     end
 
     def new
         @user = current_user
 
         @user_accesses = UserAccessCompany.where(user_id: @user.id)
-        @companies = []
+        @entity_ids = []
         @user_accesses.each do |user_access|
-            @companies << user_access.company
+            @entity_ids += user_access.company.entity_ids
         end
+        @entities = Entity.where(id: @entity_ids)
         @customer = Customer.new
         @countries = Country.order("name asc").all
     end
 
     def create
-        @company = Company.find(params[:company])
-        @customer = Customer.new(name: params_create[:name], vat_number: params_create[:vat_number], street: params_create[:street], city: params_create[:city], post_code: params_create[:post_code], country_id: params[:country].to_i, company_id: @company.id)
+        @entity = Entity.find(params[:entity])
+        @customer = Customer.new(name: params_create[:name], vat_number: params_create[:vat_number], street: params_create[:street], city: params_create[:city], post_code: params_create[:post_code], country_id: params[:country].to_i, entity_id: @entity.id)
         if @customer.save
-            redirect_to company_customers_path(@company.id)
+            path = '/customers/'
+            redirect_to path
         else
             render :new
         end
     end
 
     def edit
-        @company = Company.find(params[:company_id])
-        @customer = Customer.find(params[:id])
+        @entity = Entity.find(params[:entity_id])
+        @customer = Customer.find(params[:customer_id])
         @countries = Country.order("name asc").all
     end
 
     def update
-        @company = Company.find(params[:company_id])
-        @customer = Customer.find(params[:id])
-        @customer.update!(name: params_create[:name], vat_number: params_create[:vat_number], street: params_create[:street], city: params_create[:city], post_code: params_create[:post_code], country_id: params[:country].to_i, company_id: @company.id)
-        redirect_to company_customers_path(@company.id)
+        @entity = Entity.find(params[:entity_id])
+        @customer = Customer.find(params[:customer_id])
+        @customer.update!(name: params_create[:name], vat_number: params_create[:vat_number], street: params_create[:street], city: params_create[:city], post_code: params_create[:post_code], country_id: params[:country].to_i, entity_id: @entity.id)
+        path = '/customers/'
+        redirect_to path
 
     end
 
@@ -101,7 +106,7 @@ class CustomersController < ApplicationController
     private
 
     def params_create
-        params.require(:customer).permit(:name, :vat_number, :street, :city, :post_code, :country)
+        params.permit(:name, :vat_number, :street, :city, :post_code, :country)
     end
 
     def params_french

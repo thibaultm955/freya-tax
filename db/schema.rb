@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_16_202551) do
+ActiveRecord::Schema.define(version: 2021_12_28_081913) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -134,10 +134,10 @@ ActiveRecord::Schema.define(version: 2021_12_16_202551) do
     t.string "post_code"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "company_id", null: false
     t.bigint "country_id", null: false
-    t.index ["company_id"], name: "index_customers_on_company_id"
+    t.bigint "entity_id", default: 2, null: false
     t.index ["country_id"], name: "index_customers_on_country_id"
+    t.index ["entity_id"], name: "index_customers_on_entity_id"
   end
 
   create_table "due_dates", force: :cascade do |t|
@@ -382,8 +382,8 @@ ActiveRecord::Schema.define(version: 2021_12_16_202551) do
   add_foreign_key "country_tax_codes", "tax_code_operation_rates"
   add_foreign_key "country_tax_codes", "tax_code_operation_sides"
   add_foreign_key "country_tax_codes", "tax_code_operation_types"
-  add_foreign_key "customers", "companies"
   add_foreign_key "customers", "countries"
+  add_foreign_key "customers", "entities"
   add_foreign_key "due_dates", "periodicity_to_project_types"
   add_foreign_key "entities", "companies"
   add_foreign_key "entities", "countries"

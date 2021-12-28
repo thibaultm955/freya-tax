@@ -19,6 +19,10 @@ Rails.application.routes.draw do
 
   resources :customers, only: [:index, :new, :create]
 
+  get '/entities/:entity_id/customers/:customer_id/edit', to: 'customers#edit'
+  get '/entities/:entity_id/customers/:customer_id/update', to: 'customers#update'
+
+
   resources :items, only: [:index, :new]
 
   # dashboard
