@@ -36,61 +36,20 @@ class InvoicesController < ApplicationController
         @entities = Entity.where(id: @entity_ids)
         @customers = Customer.where(company_id: @company_ids)
         @sides = TaxCodeOperationSide.all
+        @locations = TaxCodeOperationLocation.all
     end
 
     def create  
         @entity = Entity.find(params[:entity])
         @side = TaxCodeOperationSide.find(params[:side])
+        @location = TaxCodeOperationLocation.find(params[:location])
         @customer = Customer.find(params[:customer])
         @european_countries = Country.where(is_eu: 1).ids
-
-        # Seting up the location based on where the customer is located
-        @operation_location = Country.location_is_the_same(@entity.country, @customer.country, @european_countries)
         
-        @invoice = Invoice.new(invoice_date: params[:invoice][:invoice_date], invoice_name: params[:invoice][:invoice_name], payment_date: params[:invoice][:payment_date], invoice_number: params[:invoice][:invoice_number], customer_id: @customer.id, entity_id: @entity.id, tax_code_operation_side_id: @side.id, tax_code_operation_location_id: @operation_location.id )
+        @invoice = Invoice.new(invoice_date: params[:invoice][:invoice_date], invoice_name: params[:invoice][:invoice_name], payment_date: params[:invoice][:payment_date], invoice_number: params[:invoice][:invoice_number], customer_id: @customer.id, entity_id: @entity.id, tax_code_operation_side_id: @side.id, tax_code_operation_location_id: @location.id )
         transactions = params[:comment]
-
-        i = 0
-
-        # if you don't have a new transaction, don't need to do an update
-        if !params[:comment].nil?
-            transactions.each do |key, value| 
-                @item = Item.find(params[:item][key].to_i)
-                i += 1
-                @return = Return.where(["begin_date <= ? and end_date >= ? and entity_id = ? and country_id = ?",   params[:invoice][:invoice_date],  params[:invoice][:invoice_date], @entity.id, 2])[0]
-                
-                @periodicity = @entity.periodicity
-
-                @periodicity_to_project_type = PeriodicityToProjectType.where(project_type_id: 1, periodicity_id: @periodicity.id, country_id: @entity.country.id)[0]
         
-                # if you don't have a return, you'll need to create it
-                if @return.nil?
-                    @set_up_dates_return = Invoice.extract_dates_invoice(@periodicity, @invoice)
-                    last_day_month = @set_up_dates_return[0]
-                    from_date = @set_up_dates_return[1]
-                    to_date = @set_up_dates_return[2]
-
-                    # Project by default is VAT
-                    @return = Return.new(begin_date: from_date, end_date: to_date ,  periodicity_to_project_type_id: @periodicity_to_project_type.id, country_id: @entity.country.id, entity_id: @entity.id, due_date_id: @periodicity_to_project_type.due_date.id)
-
-                    @return.save
-
-                    # will create the boxnames for the return based on the periodicity_to_project_type
-                    BoxName.create_box_names_for_return(@periodicity_to_project_type, @return)
-                    
-                end
-
-                if @invoice.save!
-                    # Based on the Item selected & the quantity specified, extract amounts
-                    amounts = Item.extract_amounts(params[:quantity][key].to_f, @item)
-                    
-                    # Here we will create the transaction & update the corresponding boxes from the return
-                    Transaction.create_from_invoice(@return, @item, @entity, amounts, params[:comment][key], @invoice, @periodicity_to_project_type)
-                end
-            end
-        else
-            @invoice.save!  
-        end
+        @invoice.save!  
         # A transaction is linked to an invoice, so need to first create the invoice
 
         redirect_to invoices_path
@@ -131,14 +90,16 @@ class InvoicesController < ApplicationController
         end
         @invoice.update(:invoice_date => params[:invoice][:invoice_date], :payment_date => params[:invoice][:payment_date], :invoice_number => params[:invoice][:invoice_number], :invoice_name => params[:invoice][:invoice_name], :customer_id => params[:customer])
         
-        redirect_to invoices_path
+        redirect_to '/companies/' + @company.id.to_s + '/invoices/' + @invoice.id.to_s 
     end
 
     def add_transaction
         @invoice = Invoice.find(params[:invoice_id])
         @transactions = @invoice.transactions
         @company = Company.find(params[:company_id])
-        @entities = @company.entities
+        @entity = @invoice.entity
+        @entity_tax_codes = EntityTaxCode.where(entity_id: @entity.id)
+        @items = @entity.items
         @customers = Customer.where(company_id: @company.id)
         
     end
@@ -151,25 +112,18 @@ class InvoicesController < ApplicationController
     end
 
     def save_transaction
-
+        @company = Company.find(params[:company_id])
  
         @invoice = Invoice.find(params[:invoice_id])
 
-        # if you don't have a new transaction, don't need to do an update
-        if !params[:comment].nil?
-            transactions = params[:comment]
+ 
 
 
-            i = 0
-            transactions.each do |key, value| 
-                i += 1
-
-                @item = Item.find(params[:item][key].to_i)
+                @item = Item.find(params[:item])
                 @rate = @item.tax_code_operation_rate
                 @entity = @invoice.entity   
                 @country = Country.find(@entity.country.id)
 
-                @item = Item.find(params[:item][key].to_i)
                 @return = Return.where(["begin_date <= ? and end_date >= ? and entity_id = ? and country_id = ?",   @invoice.invoice_date,  @invoice.invoice_date, @item.entity.id, 2])[0]
 
                 @periodicity = @entity.periodicity
@@ -193,15 +147,13 @@ class InvoicesController < ApplicationController
 
                 end
                 # Based on the Item selected & the quantity specified, extract amounts
-                amounts = Item.extract_amounts(params[:quantity][key].to_f, @item)
+                amounts = Item.extract_amounts(params[:quantity].to_i, @item)
                 
                 # Here we will create the transaction & update the corresponding boxes from the return
-                Transaction.create_from_invoice(@return, @item, @entity, amounts, params[:comment][key], @invoice, @periodicity_to_project_type)
+                Transaction.create_from_invoice(@return, @item, @entity, amounts, params[:comment], @invoice, @periodicity_to_project_type)
 
-            end
-        end
 
-        redirect_to invoices_path
+        redirect_to '/companies/' + @company.id.to_s + '/invoices/' + @invoice.id.to_s 
     end
 
     def paid
@@ -223,7 +175,7 @@ class InvoicesController < ApplicationController
     end
 
     def add_ticket
-
+        @company = Company.find(params[:company_id])
         @invoice = Invoice.find(params[:invoice_id])
         @entity = @invoice.entity
         @countries = LanguageCountry.where(language_id: 2).order("name asc")

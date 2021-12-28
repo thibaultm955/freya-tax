@@ -1,4 +1,4 @@
-<h1> Create a new Invoice </h1>
+<h1> Create a new Item </h1>
 <div class="container mt-5">
   <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 offset-sm-4">
@@ -15,7 +15,7 @@
         include_blank: true,
         class: "form-control"%>
 
-        <%= label_tag 'Taux de TVA'%>
+        <%= label_tag 'VAT Rate'%>
         <%= select_tag :rate_id, 
         options_from_collection_for_select(@tax_code_rates, "id", "name" ),
         include_blank: true,
