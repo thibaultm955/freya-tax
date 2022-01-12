@@ -34,7 +34,7 @@ class InvoicesController < ApplicationController
             @entity_ids += user_access.company.entity_ids
         end
         @entities = Entity.where(id: @entity_ids)
-        @customers = Customer.where(company_id: @company_ids)
+        @customers = Customer.where(entity_id: @entity_ids)
         @sides = TaxCodeOperationSide.all
         @locations = TaxCodeOperationLocation.all
     end
@@ -48,7 +48,6 @@ class InvoicesController < ApplicationController
         
         @invoice = Invoice.new(invoice_date: params[:invoice][:invoice_date], invoice_name: params[:invoice][:invoice_name], payment_date: params[:invoice][:payment_date], invoice_number: params[:invoice][:invoice_number], customer_id: @customer.id, entity_id: @entity.id, tax_code_operation_side_id: @side.id, tax_code_operation_location_id: @location.id )
         transactions = params[:comment]
-        
         @invoice.save!  
         # A transaction is linked to an invoice, so need to first create the invoice
 
@@ -62,7 +61,7 @@ class InvoicesController < ApplicationController
         @transactions = @invoice.transactions
         @company = Company.find(params[:company_id])
         @entities = @company.entities
-        @customers = Customer.where(company_id: @company.id)
+        @customers = Customer.where(entity_id: @entities)
     end
 
     def delete_invoice
@@ -101,7 +100,8 @@ class InvoicesController < ApplicationController
         @entity_tax_codes = EntityTaxCode.where(entity_id: @entity.id)
         @items = @entity.items
         @customers = Customer.where(company_id: @company.id)
-        
+        @rates = TaxCodeOperationRate.all
+
     end
 
     def add_photo
@@ -118,39 +118,41 @@ class InvoicesController < ApplicationController
 
  
 
+        @item = Item.find(params[:item])
+        @rate = @item.tax_code_operation_rate
+        @entity = @invoice.entity   
+        @country = Country.find(@entity.country.id)
 
-                @item = Item.find(params[:item])
-                @rate = @item.tax_code_operation_rate
-                @entity = @invoice.entity   
-                @country = Country.find(@entity.country.id)
+        @return = Return.where(["begin_date <= ? and end_date >= ? and entity_id = ? and country_id = ?",   @invoice.invoice_date,  @invoice.invoice_date, @item.entity.id, 2])[0]
 
-                @return = Return.where(["begin_date <= ? and end_date >= ? and entity_id = ? and country_id = ?",   @invoice.invoice_date,  @invoice.invoice_date, @item.entity.id, 2])[0]
+        @periodicity = @entity.periodicity
+        @periodicity_to_project_type = PeriodicityToProjectType.where(project_type_id: 1, periodicity_id: @periodicity.id, country_id: @entity.country.id)[0]
+        
+        # if you don't have a return, you'll need to create it
+        if @return.nil?
 
-                @periodicity = @entity.periodicity
-                @periodicity_to_project_type = PeriodicityToProjectType.where(project_type_id: 1, periodicity_id: @periodicity.id, country_id: @entity.country.id)[0]
-                
-                # if you don't have a return, you'll need to create it
-                if @return.nil?
+            @set_up_dates_return = Invoice.extract_dates_invoice(@periodicity, @invoice)
+            last_day_month = @set_up_dates_return[0]
+            from_date = @set_up_dates_return[1]
+            to_date = @set_up_dates_return[2]
 
-                    @set_up_dates_return = Invoice.extract_dates_invoice(@periodicity, @invoice)
-                    last_day_month = @set_up_dates_return[0]
-                    from_date = @set_up_dates_return[1]
-                    to_date = @set_up_dates_return[2]
-
-                    @return = Return.new(begin_date: from_date, end_date: to_date ,  periodicity_to_project_type_id: @periodicity_to_project_type.id, country_id: @entity.country.id, entity_id: @entity.id, due_date_id: @periodicity_to_project_type.due_date.id)
-                                        
-                    @return.save
-                    # Can only put the box an amount if it is indeed created to get the id
-                    # will create the boxnames for the return based on the periodicity_to_project_type
-                    BoxName.create_box_names_for_return(@periodicity_to_project_type, @return)
+            @return = Return.new(begin_date: from_date, end_date: to_date ,  periodicity_to_project_type_id: @periodicity_to_project_type.id, country_id: @entity.country.id, entity_id: @entity.id, due_date_id: @periodicity_to_project_type.due_date.id)
+                                
+            @return.save
+            # Can only put the box an amount if it is indeed created to get the id
+            # will create the boxnames for the return based on the periodicity_to_project_type
+            BoxName.create_box_names_for_return(@periodicity_to_project_type, @return)
 
 
-                end
-                # Based on the Item selected & the quantity specified, extract amounts
-                amounts = Item.extract_amounts(params[:quantity].to_i, @item)
-                
-                # Here we will create the transaction & update the corresponding boxes from the return
-                Transaction.create_from_invoice(@return, @item, @entity, amounts, params[:comment], @invoice, @periodicity_to_project_type)
+        end
+
+        rate = TaxCodeOperationRate.find(params[:rate])
+
+        # Based on the Item selected & the quantity specified, extract amounts
+        amounts = Item.extract_amounts(params[:quantity].to_i, @item)
+
+        # Here we will create the transaction & update the corresponding boxes from the return
+        Transaction.create_from_invoice(@return, @item, @entity, amounts, params[:comment], @invoice, @periodicity_to_project_type, rate)
 
 
         redirect_to '/companies/' + @company.id.to_s + '/invoices/' + @invoice.id.to_s 
@@ -246,6 +248,18 @@ class InvoicesController < ApplicationController
         html_string = render_to_string(partial: "add_item.html.erb", locals: {entity_tax_codes: @entity_tax_codes, items: @items})
         render json: {html_string: html_string}
     end
+
+    def render_get_item
+        @rates = TaxCodeOperationRate.all
+        @item = Item.find(params[:item_id])
+        html_string = render_to_string(partial: "get_item.html.erb", locals: {item: @item, rates: @rates})
+        render json: {html_string: html_string}
+
+    end
+
+
+
+
 
     def generate_pdf
         @invoice = Invoice.find(params[:invoice_id])

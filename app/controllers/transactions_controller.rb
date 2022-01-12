@@ -203,6 +203,8 @@ class TransactionsController < ApplicationController
         @item = @transaction.item
         @entity = @item.entity
         @items = @entity.items
+        @rate = @transaction.tax_code_operation_rate
+        @rates = TaxCodeOperationRate.all
 
     end
 
@@ -218,7 +220,7 @@ class TransactionsController < ApplicationController
 
     def save_transaction_invoice
         @company = Company.find(params[:company_id])
-
+        @rate = TaxCodeOperationRate.find(params[:rate])
         @item = Item.find(params[:item_id])
         @invoice = Invoice.find(params[:invoice_id])
         @transaction = Transaction.find(params[:transaction_id])
@@ -232,11 +234,11 @@ class TransactionsController < ApplicationController
 
         # substract old amount 
 
-        @country_tax_code = CountryTaxCode.where(country_id: @entity.country.id, tax_code_operation_location_id: @transaction.invoice.tax_code_operation_location.id, tax_code_operation_side_id: @transaction.invoice.tax_code_operation_side.id, tax_code_operation_rate_id: @transaction.item.tax_code_operation_rate.id, tax_code_operation_type_id: @transaction.item.tax_code_operation_type.id)[0]
+        @country_tax_code = CountryTaxCode.where(country_id: @entity.country.id, tax_code_operation_location_id: @transaction.invoice.tax_code_operation_location.id, tax_code_operation_side_id: @transaction.invoice.tax_code_operation_side.id, tax_code_operation_rate_id: @rate.id, tax_code_operation_type_id: @transaction.item.tax_code_operation_type.id)[0]
 
+        
         @entity_tax_code = EntityTaxCode.where(entity_id: @entity.id, country_tax_code_id: @country_tax_code.id)[0]
 
-     
         box_informations = BoxInformation.where(tax_code_operation_location_id: @entity_tax_code.country_tax_code.tax_code_operation_location_id, tax_code_operation_rate_id: @entity_tax_code.country_tax_code.tax_code_operation_rate_id, tax_code_operation_side_id: @entity_tax_code.country_tax_code.tax_code_operation_side_id, tax_code_operation_type_id: @entity_tax_code.country_tax_code.tax_code_operation_type_id )
         
         box_informations.each do |box_information|
@@ -257,13 +259,13 @@ class TransactionsController < ApplicationController
 
         # Add new amount 
 
-        @new_country_tax_code = CountryTaxCode.where(country_id: @entity.country.id, tax_code_operation_location_id: @transaction.invoice.tax_code_operation_location.id, tax_code_operation_side_id: @transaction.invoice.tax_code_operation_side.id, tax_code_operation_rate_id: @item.tax_code_operation_rate.id, tax_code_operation_type_id: @item.tax_code_operation_type.id)[0]
+        @new_country_tax_code = CountryTaxCode.where(country_id: @entity.country.id, tax_code_operation_location_id: @transaction.invoice.tax_code_operation_location.id, tax_code_operation_side_id: @transaction.invoice.tax_code_operation_side.id, tax_code_operation_rate_id: @rate.id, tax_code_operation_type_id: @item.tax_code_operation_type.id)[0]
 
         @new_entity_tax_code = EntityTaxCode.where(entity_id: @entity.id, country_tax_code_id: @new_country_tax_code.id)
 
         # if you don't have a tax code, you'll need to create one
         if @new_entity_tax_code.empty?
-            name_tax_code = @transaction.invoice.tax_code_operation_location.name + " | " + @transaction.invoice.tax_code_operation_side.name + " | " + @transaction.item.tax_code_operation_type.name + " | " + @transaction.item.tax_code_operation_rate.name
+            name_tax_code = @transaction.invoice.tax_code_operation_location.name + " | " + @transaction.invoice.tax_code_operation_side.name + " | " + @transaction.item.tax_code_operation_type.name + " | " + @rate.name
             @new_entity_tax_code = EntityTaxCode.new(name: name_tax_code, entity_id: @entity.id, country_tax_code_id: @new_country_tax_code.id)
             @new_entity_tax_code.save
 
@@ -291,7 +293,7 @@ class TransactionsController < ApplicationController
 
 
         # will have to multiply quantity with what is specified
-        @transaction.update!(vat_amount: vat_amount, net_amount: net_amount, comment: params[:comment], invoice_id: @invoice.id, :item_id => @item.id, :quantity => quantity)
+        @transaction.update!(vat_amount: vat_amount, net_amount: net_amount, comment: params[:comment], invoice_id: @invoice.id, :item_id => @item.id, :quantity => quantity, tax_code_operation_rate_id: @rate.id)
     
         redirect_to company_invoice_path(@company, @invoice.id)
         

@@ -1,0 +1,7 @@
+
+
+<%= label_tag :rate %>
+<%= select_tag "rate", options_from_collection_for_select(@rates, "id", "name", @item.tax_code_operation_rate.id ),
+class: "form-control"%>
+
+

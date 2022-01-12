@@ -11,14 +11,23 @@
           <%= select_tag :entity,
                   options_from_collection_for_select(@company.entities, "id", "name", @invoice.id), style: "#{'display:none'}"%>
 
+
+  
+                  
+          <%= label_tag :item %>
+          <%= select_tag "item", options_from_collection_for_select(@items, "id", "item_name" ),
+          include_blank: true, class: "form-control", data:{action: "invoice#get_item_rate"} %>
+
+
           <div id="myList">
-            <div data-invoice-target="other" >
+            <div data-invoice-target="items" >
+              <%= label_tag :rate %>
+              <%= select_tag "rate", options_from_collection_for_select(@rates, "id", "name" ),
+              include_blank: true, class: "form-control"%>
+
             </div>
           </div>
 
-          <%= label_tag :item %>
-          <%= select_tag "item", options_from_collection_for_select(@items, "id", "item_name" ),
-          include_blank: true, class: "form-control"%>
 
           <%= label_tag 'comment'%>
           <input type="text" name="comment" class="form-control">

@@ -1,4 +1,8 @@
-class BoxName < ApplicationRecord
+class Box < ApplicationRecord
+
+    belongs_to :country
+    belongs_to :periodicity
+    belongs_to :project_type
 
     # Will take input periodicity to project type & a return
     # It will create the box_names for the return using the French names

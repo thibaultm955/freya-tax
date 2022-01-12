@@ -5,6 +5,199 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+
+
+document_types = ["Invoice", "Credit Note"]
+
+document_types.each do |document_type|
+    if DocumentType.where(:name => document_type) == []
+        document_type_new = DocumentType.new(name: document_type)
+        document_type_new.save!
+    end
+end
+
+operation_types = ["Add", "Minus"]
+
+operation_types.each do |operation_type|
+    if OperationType.where(:name => operation_type) == []
+        operation_type_new = OperationType.new(name: operation_type)
+        operation_type_new.save!
+    end
+end
+
+
+boxes = CSV.parse(File.read("./storage/Boxes.csv"), headers: true)
+
+# Country,Project,Periodicity,Official_Name
+# Belgium,VAT,6,Box 00 - Opérations soumises à un régime particulier
+
+
+# remove boxes that were there
+=begin
+all_box = Box.all
+all_box.each do |box|
+    box.destroy
+end
+=end
+
+
+print 'Create Box'
+print ' '
+
+boxes.each do |row|
+    country = Country.where(name: row['Country'])[0]
+    project = ProjectType.where(name: row['Project'])[0]
+    if row['Periodicity'] == '6'
+        # then project same for Monthly & Quarterly
+        periodicities = Periodicity.where(id: [1,2])
+        periodicities.each do |periodicity|
+            # Make sure the BoxNameLanguage doesn't already exist   
+            if box = Box.where(name: row["Official_Name"], country_id: country.id, project_type_id: project.id, periodicity_id: periodicity.id) == []
+                box = Box.new(name: row["Official_Name"], country_id: country.id, project_type_id: project.id, periodicity_id: periodicity.id)
+                box.save!
+            end
+        end
+    else
+        periodicity = Periodicity.where(id: row['Periodicity'])[0]
+        # Make sure the BoxNameLanguage doesn't already exist   
+        if box = Box.where(name: row["Official_Name"], country_id: country.id, project_type_id: project.id, periodicity_id: periodicity.id) == []
+            box = Box.new(name: row["Official_Name"], country_id: country.id, project_type_id: project.id, periodicity_id: periodicity.id)
+            box.save!
+        end
+    end
+
+end
+
+
+=begin
+Box,Country,Project,Periodicity,Language,Name
+Box 00 - Opérations soumises à un régime particulier,Belgium,VAT,6,French,Box 00 - Opérations soumises à un régime particulier
+
+=end
+
+
+
+print 'Create Box Name Language'
+print ' '
+
+box_name_languages = CSV.parse(File.read("./storage/BoxNameLanguage.csv"), headers: true)
+
+box_name_languages.each do |row|
+    country = Country.where(name: row['Country'])[0]
+    project = ProjectType.where(name: row['Project'])[0]
+    language = Language.where(name: row['Language'])[0]
+    
+    if row['Periodicity'] == '6'
+        # then project same for Monthly & Quarterly
+        periodicities = Periodicity.where(id: [1,2])
+        periodicities.each do |periodicity|
+            box = Box.where(name: row['Box'], country_id: country.id, project_type_id: project.id, periodicity_id: periodicity.id)[0]
+            # Make sure the BoxNameLanguage doesn't already exist
+            if BoxNameLanguage.where(box_id: box.id, language_id: language.id, name: row['Name']) == []
+                box_name_language = BoxNameLanguage.new(box_id: box.id, language_id: language.id, name: row['Name'])
+                box_name_language.save!
+            end
+        end
+    else 
+        periodicity = Periodicity.where(id: row['Periodicity'])[0]
+        box = Box.where(name: row["Box"], country_id: country.id, project_type_id: project.id, periodicity_id: periodicity.id)[0]
+        # Make sure the BoxNameLanguage doesn't already exist
+        if BoxNameLanguage.where(box_id: box.id, language_id: language.id, name: row['Name']) == []
+            box_name_language = BoxNameLanguage.new(language_id: language.id, name: row['Name'])
+            box_name_language.save!
+        end
+    end
+
+end
+
+
+
+
+=begin
+
+Box,Country,Project,Periodicity,Type Operation,Side Operation,Location,Standard,Intermediate,Reduced,Zero,Exempt,Document Type,Operation
+Box 83 - Montant des opérations à l’entrée compte tenu des notes de crédit reçues et autres corrections - biens d’investissement,Belgium,VAT,6,Capital Goods,Purchase,Domestic,1,1,1,1,1,Add,Invoice
+
+=end
+
+box_logic = CSV.parse(File.read("./storage/box_logic.csv"), headers: true)
+
+box_logic.each do |row|
+    country = Country.where(name: row['Country'])[0]
+    project = ProjectType.where(name: row['Project'])[0]
+    operation_type = TaxCodeOperationType.where(name: row["Type Operation"])[0]
+    operation_side = TaxCodeOperationSide.where(name: row["Side Operation"])[0]
+    operation_location = TaxCodeOperationLocation.where(name: row["Location"])[0]
+    document_type = DocumentType.where(name: row['Document Type'])[0]
+    operation = OperationType.where(name: row['Operation'])[0]
+    rates = []
+    row['Standard'] != '0' ? rates << "Standard" : ''
+    row['Intermediate'] != '0' ? rates << "Intermediate" : ''
+    row['Reduced'] != '0' ? rates << "Reduced" : ''
+    row['Zero'] != '0' ? rates << "Zero" : ''
+    row['Exempt'] != '0' ? rates << "Exempt" : ''
+
+    row['Standard'] == '1' || row['Intermediate'] == '1' || row['Reduced'] == '1' || row['Zero'] == '1' || row['Exempt'] == '1' ? amounts_type = "Reporting Currency Taxable Basis" : ''
+    row['Standard'] == '2' || row['Intermediate'] == '2' || row['Reduced'] == '2' || row['Zero'] == '2' || row['Exempt'] == '2' ? amounts_type = "Reporting Currency VAT Amount" : ''
+    row['Standard'] == '3' || row['Intermediate'] == '3' || row['Reduced'] == '3' || row['Zero'] == '3' || row['Exempt'] == '3' ? amounts_type = "Reporting Currency Gross Amount" : ''
+
+    amount = Amount.where(name: amounts_type)[0]
+
+    print amount.name
+    print ' '
+
+    
+
+    operation_rates = TaxCodeOperationRate.where(name: rates)
+    print operation_rates
+
+    if row['Periodicity'] == '6'
+        # then project same for Monthly & Quarterly
+        periodicities = Periodicity.where(id: [1,2])
+        periodicities.each do |periodicity|
+            box = Box.where(name: row["Box"], country_id: country.id, project_type_id: project.id, periodicity_id: periodicity.id)[0]
+            operation_rates.each do |operation_rate|
+                print operation_rate.name
+                print 'all'
+                print ' '
+                print box.name
+                print ' '
+                if box_logic_created = BoxLogic.where(box_id: box.id, tax_code_operation_type_id: operation_type.id, tax_code_operation_side_id: operation_side.id, tax_code_operation_location_id: operation_location.id, tax_code_operation_rate_id: operation_type.id, operation_type_id: operation.id, document_type_id: document_type.id, amount_id: amount.id) == []
+
+                    box_logic_created = BoxLogic.new(box_id: box.id, tax_code_operation_type_id: operation_type.id, tax_code_operation_side_id: operation_side.id, tax_code_operation_location_id: operation_location.id, tax_code_operation_rate_id: operation_type.id, operation_type_id: operation.id, document_type_id: document_type.id, amount_id: amount.id)
+                    print box_logic_created.box_id
+                    print ' '
+                    box_logic_created.save!
+                end
+            end
+        end
+
+    else
+        periodicity = Periodicity.where(id: row['Periodicity'])[0]
+        box = Box.where(name: row["Box"], country_id: country.id, project_type_id: project.id, periodicity_id: periodicity.id)[0]
+
+        operation_rates.each do |operation_rate|
+            tax_code_operation_rate = TaxCodeOperationRate.where(name: operation_rate)[0]
+            if box_logic_created = BoxLogic.where(box_id: box.id, tax_code_operation_type_id: operation_type.id, tax_code_operation_side_id: operation_side.id, tax_code_operation_location_id: operation_location.id, tax_code_operation_rate_id: operation_type.id, operation_type_id: operation.id, document_type_id: document_type.id, amount_id: amount.id) == []
+
+                box_logic_created = BoxLogic.new(box_id: box.id, tax_code_operation_type_id: operation_type.id, tax_code_operation_side_id: operation_side.id, tax_code_operation_location_id: operation_location.id, tax_code_operation_rate_id: tax_code_operation_rate.id, operation_type_id: operation.id, document_type_id: document_type.id)
+                box_logic_created.save!
+            end
+        end
+    end
+
+end
+
+
+
+
+sssssssssssssssssssss
+
+
+
+
+
 countries = [
     "Australia", "Belgium", "Czech Republic", "Finland", "France", "Germany", "Italy", "Luxembourg", "Netherlands", "Norway", "Portugal", "Spain", "Sweden", "Switzerland", "United Kingdom", "United States", "Russia", "Turkey", "Ukraine", "Poland", "Romania", "Kazakhstan", "Greece", "Azerbaijan", "Hungary", "Belarus", "Austria", "Bulgaria", "Serbia", "Denmark", "Slovakia", "Ireland", "Croatia", "Georgia", "Bosnia and Herzegovina", "Armenia", "Albania", "Lithuania", "Moldova", "North Macedonia", "Slovenia", "Latvia", "Kosovo", "Estonia", "Cyprus", "Canada", "Israel", "Brazil", "Mexico"
 ]
@@ -219,7 +412,7 @@ end
 
 
 # Languages
-languages = ["English", "French"]
+languages = ["English", "French", "Dutch", "German"]
 languages.each do |language|
     if Language.where(name:language) == []
         model_language = Language.new(name:language)
@@ -467,7 +660,7 @@ box_logics = {"Box 00 - Opérations soumises à un régime particulier" =>
                 ["Belgium", "French", "VAT", "Monthly", "Sale", "Domestic", "Goods Sold Online", "Standard", "Reporting Currency VAT Amount"],
                 ["Belgium", "French", "VAT", "Monthly", "Sale", "Domestic", "Various Goods", "Standard", "Reporting Currency VAT Amount"]
             ],
-            # "Box 55-  TVA relative aux opérations déclarées en grilles 86 et 88",
+            # "Box 55 -  TVA relative aux opérations déclarées en grilles 86 et 88",
             # "Box 56 - TVA relative aux opérations déclarées en grille 87, à l’exception des importations avec report de perception",
             # "Box 57 - TVA relative aux importations avec report de perception ",
             # "Box 61 - Diverses régularisations TVA en faveur de l’Etat",
@@ -601,14 +794,14 @@ box_names = {["Belgium", "VAT", "Quarterly", "French"] => [
     "Box 81 - Montant des opérations à l’entrée compte tenu des notes de crédit reçues et autres corrections - marchandises, matières premières et matières auxiliaires",
     "Box 82 - Montant des opérations à l’entrée compte tenu des notes de crédit reçues et autres corrections - services et biens divers",
     "Box 83 - Montant des opérations à l’entrée compte tenu des notes de crédit reçues et autres corrections - biens d’investissement",
-    "Box 84 - Montant des notes de crédit reçues et des corrections négatives - relatif aux opérations inscrites en grilles 86 et 88 ",
+    "Box 84 - Montant des notes de crédit reçues et des corrections négatives - relatif aux opérations inscrites en grilles 86 et 88",
     "Box 85 - Montant des notes de crédit reçues et des corrections négatives - relatif aux autres opérations du cadre III",
     "Box 86 - Acquisitions intracommunautaires effectuées en Belgique et ventes ABC",
     "Box 87 - Autres opérations à l’entrée pour lesquelles la TVA est due par le déclarant",
     "Box 88 - Services intracommunautaires avec report de perception",
     "TVA",
     "Box 54 - TVA relative aux opérations déclarées en grilles 01, 02 et 03",
-    "Box 55-  TVA relative aux opérations déclarées en grilles 86 et 88",
+    "Box 55 - TVA relative aux opérations déclarées en grilles 86 et 88",
     "Box 56 - TVA relative aux opérations déclarées en grille 87, à l’exception des importations avec report de perception",
     "Box 57 - TVA relative aux importations avec report de perception",
     "Box 61 - Diverses régularisations TVA en faveur de l’Etat",

@@ -2,15 +2,16 @@ class Transaction < ApplicationRecord
     belongs_to :return
     belongs_to :item
     belongs_to :invoice
+    belongs_to :tax_code_operation_rate
 
-    def self.create_from_invoice(return_specified, item, entity, amounts, comments, invoice, periodicity_to_project_type)
+    def self.create_from_invoice(return_specified, item, entity, amounts, comments, invoice, periodicity_to_project_type, rate)
 
         quantity = amounts[0]
         net_amount = amounts[1]
         vat_amount = amounts[2]
 
         # will have to multiply quantity with what is specified
-        transaction = Transaction.new(vat_amount: vat_amount, net_amount: net_amount, comment: comments, invoice_id: invoice.id, return_id: return_specified.id, :item_id => item.id, :quantity => quantity)
+        transaction = Transaction.new(vat_amount: vat_amount, net_amount: net_amount, comment: comments, invoice_id: invoice.id, return_id: return_specified.id, :item_id => item.id, :quantity => quantity, tax_code_operation_rate_id: rate.id)
 
         country_tax_code = CountryTaxCode.where(country_id: entity.country.id, tax_code_operation_location_id: transaction.invoice.tax_code_operation_location.id, tax_code_operation_side_id: transaction.invoice.tax_code_operation_side.id, tax_code_operation_rate_id: transaction.item.tax_code_operation_rate.id, tax_code_operation_type_id: transaction.item.tax_code_operation_type.id)[0]
 
