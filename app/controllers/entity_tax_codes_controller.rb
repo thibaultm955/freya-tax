@@ -68,7 +68,8 @@ class EntityTaxCodesController < ApplicationController
 
     def create
         @user = current_user
-        @company = Company.find(params[:company_id])
+        @entity = Entity.find(params[:entity][:entity_id])
+        @company = @entity.company
         if @user.nil? || UserAccessCompany.where(user_id: @user.id, company_id: @company.id).empty?
             redirect_to root_path
         else

@@ -18,25 +18,25 @@
         <%= select_tag :side_operation,
         options_from_collection_for_select(@tax_code_operation_sides, "id", "name"),
         include_blank: true,
-        class: "from-control select2" %>
+        class:"form-control" %>
 
         <%= label :location_operation, "Location Operation" %>
         <%= select_tag :location_operation,
         options_from_collection_for_select(@tax_code_operation_locations, "id", "name"),
         include_blank: true,
-        class: "from-control select2" %>
+        class:"form-control" %>
         
         <%= label :type_operation, "Type Operation" %>
         <%= select_tag :type_operation,
         options_from_collection_for_select(@tax_code_operation_types, "id", "name"),
         include_blank: true,
-        class: "from-control select2" %>
+        class:"form-control" %>
 
         <%= label :rate_operation, "Rate Operation" %>
         <%= select_tag :rate_operation,
         options_from_collection_for_select(@tax_code_operation_rates, "id", "name"),
         include_blank: true,
-        class: "from-control select2" %>
+        class:"form-control" %>
 
         <%= f.submit "Save", class: "btn btn-primary" %>
     <% end %>

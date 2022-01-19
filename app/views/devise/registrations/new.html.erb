@@ -18,10 +18,12 @@
 
 <% @languages = Language.all%>
 <%= label_tag "Language" %>
+<br/>
 <%= f.select :language_id,
 options_from_collection_for_select(@languages, "id", "name"),
 include_blank: true,
 class:"form-control" %>
+
   </div>
 
   <div class="form-actions">

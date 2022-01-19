@@ -45,13 +45,24 @@ class InvoicesController < ApplicationController
         @location = TaxCodeOperationLocation.find(params[:location])
         @customer = Customer.find(params[:customer])
         @european_countries = Country.where(is_eu: 1).ids
-        
-        @invoice = Invoice.new(invoice_date: params[:invoice][:invoice_date], invoice_name: params[:invoice][:invoice_name], payment_date: params[:invoice][:payment_date], invoice_number: params[:invoice][:invoice_number], customer_id: @customer.id, entity_id: @entity.id, tax_code_operation_side_id: @side.id, tax_code_operation_location_id: @location.id )
-        transactions = params[:comment]
-        @invoice.save!  
+        # Check if it is a credit note or not
+        if params[:credit_note].nil?
+            @document_type = DocumentType.where(name: "Invoice")[0]
+            @invoice = Invoice.new(invoice_date: params[:invoice][:invoice_date], invoice_name: params[:invoice][:invoice_name], payment_date: params[:invoice][:payment_date], invoice_number: params[:invoice][:invoice_number], customer_id: @customer.id, entity_id: @entity.id, tax_code_operation_side_id: @side.id, tax_code_operation_location_id: @location.id, document_type_id: @document_type.id )
+
+        else
+            @document_type = DocumentType.where(name: "Credit Note")[0]
+            @invoice = Invoice.new(invoice_date: params[:invoice][:invoice_date], invoice_name: params[:invoice][:invoice_name], payment_date: params[:invoice][:payment_date], invoice_number: params[:invoice][:invoice_number], customer_id: @customer.id, entity_id: @entity.id, tax_code_operation_side_id: @side.id, tax_code_operation_location_id: @location.id, document_type_id: @document_type.id )
+
+        end
+
+        if @invoice.save!  
         # A transaction is linked to an invoice, so need to first create the invoice
 
-        redirect_to invoices_path
+            redirect_to invoices_path
+        else
+            render :new
+        end
 
         
     end
@@ -123,10 +134,10 @@ class InvoicesController < ApplicationController
         @entity = @invoice.entity   
         @country = Country.find(@entity.country.id)
 
-        @return = Return.where(["begin_date <= ? and end_date >= ? and entity_id = ? and country_id = ?",   @invoice.invoice_date,  @invoice.invoice_date, @item.entity.id, 2])[0]
+        @return = Return.where(["begin_date <= ? and end_date >= ? and entity_id = ? and country_id = ?",   @invoice.invoice_date,  @invoice.invoice_date, @item.entity.id, @country.id])[0]
 
         @periodicity = @entity.periodicity
-        @periodicity_to_project_type = PeriodicityToProjectType.where(project_type_id: 1, periodicity_id: @periodicity.id, country_id: @entity.country.id)[0]
+        @project_type = ProjectType.where(name: "VAT")[0]
         
         # if you don't have a return, you'll need to create it
         if @return.nil?
@@ -135,13 +146,14 @@ class InvoicesController < ApplicationController
             last_day_month = @set_up_dates_return[0]
             from_date = @set_up_dates_return[1]
             to_date = @set_up_dates_return[2]
+            @due_date = DueDate.where(periodicity_id: @periodicity.id, project_type_id: @project_type.id, country_id: @country.id, begin_date: from_date, end_date: to_date )[0]
+            @return = Return.new(begin_date: from_date, end_date: to_date ,  periodicity_id: @periodicity.id, country_id: @entity.country.id, entity_id: @entity.id, due_date_id: @due_date.id, project_type_id: @project_type.id)
 
-            @return = Return.new(begin_date: from_date, end_date: to_date ,  periodicity_to_project_type_id: @periodicity_to_project_type.id, country_id: @entity.country.id, entity_id: @entity.id, due_date_id: @periodicity_to_project_type.due_date.id)
                                 
-            @return.save
+            @return.save!
             # Can only put the box an amount if it is indeed created to get the id
             # will create the boxnames for the return based on the periodicity_to_project_type
-            BoxName.create_box_names_for_return(@periodicity_to_project_type, @return)
+            Box.create_box_names_for_return(@periodicity, @project_type, @country, @return)
 
 
         end
@@ -152,7 +164,7 @@ class InvoicesController < ApplicationController
         amounts = Item.extract_amounts(params[:quantity].to_i, @item)
 
         # Here we will create the transaction & update the corresponding boxes from the return
-        Transaction.create_from_invoice(@return, @item, @entity, amounts, params[:comment], @invoice, @periodicity_to_project_type, rate)
+        Transaction.create_from_invoice(@return, @item, @entity, amounts, params[:comment], @invoice, @periodicity, @project_type, rate)
 
 
         redirect_to '/companies/' + @company.id.to_s + '/invoices/' + @invoice.id.to_s 

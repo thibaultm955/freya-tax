@@ -13,7 +13,7 @@ Rails.application.routes.draw do
 
   resources :returns, only: [:index]
 
-  resources :entity_tax_codes, only: [:index]
+  resources :entity_tax_codes, only: [:index, :new, :create]
 
   resources :invoices, only: [:index]
 

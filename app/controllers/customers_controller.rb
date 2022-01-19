@@ -28,7 +28,7 @@ class CustomersController < ApplicationController
 
     def create
         @entity = Entity.find(params[:entity])
-        @customer = Customer.new(name: params_create[:name], vat_number: params_create[:vat_number], street: params_create[:street], city: params_create[:city], post_code: params_create[:post_code], country_id: params[:country].to_i, entity_id: @entity.id)
+        @customer = Customer.new(name: params_create_customer[:name], vat_number: params_create_customer[:vat_number], street: params_create_customer[:street], city: params_create_customer[:city], post_code: params_create_customer[:post_code], country_id: params[:country].to_i, entity_id: @entity.id)
         if @customer.save
             path = '/customers/'
             redirect_to path
@@ -107,6 +107,10 @@ class CustomersController < ApplicationController
 
     def params_create
         params.permit(:name, :vat_number, :street, :city, :post_code, :country)
+    end
+
+    def params_create_customer
+        params.require(:customer).permit(:name, :vat_number, :street, :city, :post_code)
     end
 
     def params_french

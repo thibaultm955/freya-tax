@@ -45,8 +45,12 @@
               options_from_collection_for_select(@customers, "id", "name"),
               include_blank: true,
               class:"form-control" %>
+              
+                <br/>
 
-      <br/>
+              <%= label :credit_note, "Credit Note"%>
+              <input type="checkbox" id="credit_note" name="credit_note" value="Yes">
+                    <br/>
 
 
         <div id="myList">
