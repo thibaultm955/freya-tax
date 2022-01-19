@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_16_202551) do
+ActiveRecord::Schema.define(version: 2022_01_16_123440) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -58,31 +58,47 @@ ActiveRecord::Schema.define(version: 2021_12_16_202551) do
     t.index ["user_id"], name: "index_assignments_on_user_id"
   end
 
-  create_table "box_informations", force: :cascade do |t|
+  create_table "box_logics", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "box_name_id", null: false
     t.bigint "amount_id", null: false
     t.bigint "tax_code_operation_location_id", null: false
     t.bigint "tax_code_operation_rate_id", null: false
     t.bigint "tax_code_operation_side_id", null: false
     t.bigint "tax_code_operation_type_id", null: false
-    t.index ["amount_id"], name: "index_box_informations_on_amount_id"
-    t.index ["box_name_id"], name: "index_box_informations_on_box_name_id"
-    t.index ["tax_code_operation_location_id"], name: "index_box_informations_on_tax_code_operation_location_id"
-    t.index ["tax_code_operation_rate_id"], name: "index_box_informations_on_tax_code_operation_rate_id"
-    t.index ["tax_code_operation_side_id"], name: "index_box_informations_on_tax_code_operation_side_id"
-    t.index ["tax_code_operation_type_id"], name: "index_box_informations_on_tax_code_operation_type_id"
+    t.bigint "box_id"
+    t.bigint "operation_type_id"
+    t.bigint "document_type_id"
+    t.index ["amount_id"], name: "index_box_logics_on_amount_id"
+    t.index ["box_id"], name: "index_box_logics_on_box_id"
+    t.index ["document_type_id"], name: "index_box_logics_on_document_type_id"
+    t.index ["operation_type_id"], name: "index_box_logics_on_operation_type_id"
+    t.index ["tax_code_operation_location_id"], name: "index_box_logics_on_tax_code_operation_location_id"
+    t.index ["tax_code_operation_rate_id"], name: "index_box_logics_on_tax_code_operation_rate_id"
+    t.index ["tax_code_operation_side_id"], name: "index_box_logics_on_tax_code_operation_side_id"
+    t.index ["tax_code_operation_type_id"], name: "index_box_logics_on_tax_code_operation_type_id"
   end
 
-  create_table "box_names", force: :cascade do |t|
+  create_table "box_name_languages", force: :cascade do |t|
+    t.bigint "box_id", null: false
+    t.bigint "language_id", null: false
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "language_id", null: false
-    t.bigint "periodicity_to_project_type_id", null: false
-    t.index ["language_id"], name: "index_box_names_on_language_id"
-    t.index ["periodicity_to_project_type_id"], name: "index_box_names_on_periodicity_to_project_type_id"
+    t.index ["box_id"], name: "index_box_name_languages_on_box_id"
+    t.index ["language_id"], name: "index_box_name_languages_on_language_id"
+  end
+
+  create_table "boxes", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "periodicity_id"
+    t.bigint "country_id"
+    t.bigint "project_type_id"
+    t.index ["country_id"], name: "index_boxes_on_country_id"
+    t.index ["periodicity_id"], name: "index_boxes_on_periodicity_id"
+    t.index ["project_type_id"], name: "index_boxes_on_project_type_id"
   end
 
   create_table "cloudinary_photos", force: :cascade do |t|
@@ -110,6 +126,16 @@ ActiveRecord::Schema.define(version: 2021_12_16_202551) do
     t.integer "is_eu"
   end
 
+  create_table "country_rates", force: :cascade do |t|
+    t.bigint "country_id", null: false
+    t.bigint "tax_code_operation_rate_id", null: false
+    t.float "rate"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["country_id"], name: "index_country_rates_on_country_id"
+    t.index ["tax_code_operation_rate_id"], name: "index_country_rates_on_tax_code_operation_rate_id"
+  end
+
   create_table "country_tax_codes", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
@@ -134,10 +160,16 @@ ActiveRecord::Schema.define(version: 2021_12_16_202551) do
     t.string "post_code"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "company_id", null: false
     t.bigint "country_id", null: false
-    t.index ["company_id"], name: "index_customers_on_company_id"
+    t.bigint "entity_id", null: false
     t.index ["country_id"], name: "index_customers_on_country_id"
+    t.index ["entity_id"], name: "index_customers_on_entity_id"
+  end
+
+  create_table "document_types", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "due_dates", force: :cascade do |t|
@@ -146,8 +178,12 @@ ActiveRecord::Schema.define(version: 2021_12_16_202551) do
     t.date "due_date"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "periodicity_to_project_type_id", null: false
-    t.index ["periodicity_to_project_type_id"], name: "index_due_dates_on_periodicity_to_project_type_id"
+    t.bigint "periodicity_id"
+    t.bigint "project_type_id"
+    t.bigint "country_id", null: false
+    t.index ["country_id"], name: "index_due_dates_on_country_id"
+    t.index ["periodicity_id"], name: "index_due_dates_on_periodicity_id"
+    t.index ["project_type_id"], name: "index_due_dates_on_project_type_id"
   end
 
   create_table "entities", force: :cascade do |t|
@@ -197,7 +233,9 @@ ActiveRecord::Schema.define(version: 2021_12_16_202551) do
     t.boolean "is_paid"
     t.bigint "tax_code_operation_side_id"
     t.bigint "tax_code_operation_location_id"
+    t.bigint "document_type_id", null: false
     t.index ["customer_id"], name: "index_invoices_on_customer_id"
+    t.index ["document_type_id"], name: "index_invoices_on_document_type_id"
     t.index ["entity_id"], name: "index_invoices_on_entity_id"
     t.index ["tax_code_operation_location_id"], name: "index_invoices_on_tax_code_operation_location_id"
     t.index ["tax_code_operation_side_id"], name: "index_invoices_on_tax_code_operation_side_id"
@@ -235,21 +273,16 @@ ActiveRecord::Schema.define(version: 2021_12_16_202551) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "periodicities", force: :cascade do |t|
+  create_table "operation_types", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "periodicity_to_project_types", force: :cascade do |t|
-    t.bigint "project_type_id", null: false
-    t.bigint "periodicity_id", null: false
+  create_table "periodicities", force: :cascade do |t|
+    t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "country_id", null: false
-    t.index ["country_id"], name: "index_periodicity_to_project_types_on_country_id"
-    t.index ["periodicity_id"], name: "index_periodicity_to_project_types_on_periodicity_id"
-    t.index ["project_type_id"], name: "index_periodicity_to_project_types_on_project_type_id"
   end
 
   create_table "project_types", force: :cascade do |t|
@@ -262,9 +295,9 @@ ActiveRecord::Schema.define(version: 2021_12_16_202551) do
     t.float "amount"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "box_name_id", null: false
     t.bigint "return_id", null: false
-    t.index ["box_name_id"], name: "index_return_boxes_on_box_name_id"
+    t.bigint "box_id", null: false
+    t.index ["box_id"], name: "index_return_boxes_on_box_id"
     t.index ["return_id"], name: "index_return_boxes_on_return_id"
   end
 
@@ -276,11 +309,13 @@ ActiveRecord::Schema.define(version: 2021_12_16_202551) do
     t.bigint "due_date_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "periodicity_to_project_type_id", null: false
+    t.bigint "periodicity_id"
+    t.bigint "project_type_id"
     t.index ["country_id"], name: "index_returns_on_country_id"
     t.index ["due_date_id"], name: "index_returns_on_due_date_id"
     t.index ["entity_id"], name: "index_returns_on_entity_id"
-    t.index ["periodicity_to_project_type_id"], name: "index_returns_on_periodicity_to_project_type_id"
+    t.index ["periodicity_id"], name: "index_returns_on_periodicity_id"
+    t.index ["project_type_id"], name: "index_returns_on_project_type_id"
   end
 
   create_table "tax_code_operation_locations", force: :cascade do |t|
@@ -326,17 +361,11 @@ ActiveRecord::Schema.define(version: 2021_12_16_202551) do
     t.string "comment"
     t.float "quantity"
     t.bigint "item_id"
+    t.bigint "tax_code_operation_rate_id"
     t.index ["invoice_id"], name: "index_transactions_on_invoice_id"
     t.index ["item_id"], name: "index_transactions_on_item_id"
     t.index ["return_id"], name: "index_transactions_on_return_id"
-  end
-
-  create_table "type_tickets", force: :cascade do |t|
-    t.string "name"
-    t.bigint "language_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["language_id"], name: "index_type_tickets_on_language_id"
+    t.index ["tax_code_operation_rate_id"], name: "index_transactions_on_tax_code_operation_rate_id"
   end
 
   create_table "user_access_companies", force: :cascade do |t|
@@ -367,29 +396,39 @@ ActiveRecord::Schema.define(version: 2021_12_16_202551) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "assignments", "companies"
   add_foreign_key "assignments", "users"
-  add_foreign_key "box_informations", "amounts"
-  add_foreign_key "box_informations", "box_names"
-  add_foreign_key "box_informations", "tax_code_operation_locations"
-  add_foreign_key "box_informations", "tax_code_operation_rates"
-  add_foreign_key "box_informations", "tax_code_operation_sides"
-  add_foreign_key "box_informations", "tax_code_operation_types"
-  add_foreign_key "box_names", "languages"
-  add_foreign_key "box_names", "periodicity_to_project_types"
+  add_foreign_key "box_logics", "amounts"
+  add_foreign_key "box_logics", "boxes"
+  add_foreign_key "box_logics", "document_types"
+  add_foreign_key "box_logics", "operation_types"
+  add_foreign_key "box_logics", "tax_code_operation_locations"
+  add_foreign_key "box_logics", "tax_code_operation_rates"
+  add_foreign_key "box_logics", "tax_code_operation_sides"
+  add_foreign_key "box_logics", "tax_code_operation_types"
+  add_foreign_key "box_name_languages", "boxes"
+  add_foreign_key "box_name_languages", "languages"
+  add_foreign_key "boxes", "countries"
+  add_foreign_key "boxes", "periodicities"
+  add_foreign_key "boxes", "project_types"
   add_foreign_key "cloudinary_photos", "invoices"
   add_foreign_key "companies", "countries"
+  add_foreign_key "country_rates", "countries"
+  add_foreign_key "country_rates", "tax_code_operation_rates"
   add_foreign_key "country_tax_codes", "countries"
   add_foreign_key "country_tax_codes", "tax_code_operation_locations"
   add_foreign_key "country_tax_codes", "tax_code_operation_rates"
   add_foreign_key "country_tax_codes", "tax_code_operation_sides"
   add_foreign_key "country_tax_codes", "tax_code_operation_types"
-  add_foreign_key "customers", "companies"
   add_foreign_key "customers", "countries"
-  add_foreign_key "due_dates", "periodicity_to_project_types"
+  add_foreign_key "customers", "entities"
+  add_foreign_key "due_dates", "countries"
+  add_foreign_key "due_dates", "periodicities"
+  add_foreign_key "due_dates", "project_types"
   add_foreign_key "entities", "companies"
   add_foreign_key "entities", "countries"
   add_foreign_key "entities", "periodicities"
   add_foreign_key "entity_tax_codes", "country_tax_codes"
   add_foreign_key "entity_tax_codes", "entities"
+  add_foreign_key "invoices", "document_types"
   add_foreign_key "invoices", "entities"
   add_foreign_key "invoices", "tax_code_operation_locations"
   add_foreign_key "invoices", "tax_code_operation_sides"
@@ -397,20 +436,18 @@ ActiveRecord::Schema.define(version: 2021_12_16_202551) do
   add_foreign_key "items", "tax_code_operation_rates"
   add_foreign_key "items", "tax_code_operation_types"
   add_foreign_key "language_countries", "languages"
-  add_foreign_key "periodicity_to_project_types", "countries"
-  add_foreign_key "periodicity_to_project_types", "periodicities"
-  add_foreign_key "periodicity_to_project_types", "project_types"
-  add_foreign_key "return_boxes", "box_names"
+  add_foreign_key "return_boxes", "boxes"
   add_foreign_key "return_boxes", "returns"
   add_foreign_key "returns", "countries"
   add_foreign_key "returns", "due_dates"
   add_foreign_key "returns", "entities"
-  add_foreign_key "returns", "periodicity_to_project_types"
+  add_foreign_key "returns", "periodicities"
+  add_foreign_key "returns", "project_types"
   add_foreign_key "ticket_to_tax_codes", "tax_code_operation_types"
   add_foreign_key "transactions", "invoices"
   add_foreign_key "transactions", "items"
   add_foreign_key "transactions", "returns"
-  add_foreign_key "type_tickets", "languages"
+  add_foreign_key "transactions", "tax_code_operation_rates"
   add_foreign_key "user_access_companies", "accesses"
   add_foreign_key "user_access_companies", "companies"
   add_foreign_key "user_access_companies", "users"

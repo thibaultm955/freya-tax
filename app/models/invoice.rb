@@ -3,6 +3,7 @@ class Invoice < ApplicationRecord
     accepts_nested_attributes_for  :transactions
     belongs_to :entity
     belongs_to :customer
+    belongs_to :document_type
     belongs_to :tax_code_operation_side
     belongs_to :tax_code_operation_location
     has_many :cloudinary_photos
@@ -71,7 +72,7 @@ class Invoice < ApplicationRecord
                 to_date = Date.parse(invoice.invoice_date.to_s[0..3] + "-09-" + last_day_month.to_s)
             else
                 last_day_month = Time.days_in_month(12, invoice.invoice_date.to_s[2..3].to_i)
-                from_date = Date.parse(invoice.invoice_date.to_s[0..3] + "-09" + "-01")
+                from_date = Date.parse(invoice.invoice_date.to_s[0..3] + "-10" + "-01")
                 to_date = Date.parse(invoice.invoice_date.to_s[0..3] + "-12-" + last_day_month.to_s)
             end
             

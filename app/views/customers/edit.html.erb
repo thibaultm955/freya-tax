@@ -1,19 +1,34 @@
-<h1> Update Customer </h1>
+<h1 style='font-size: 30px; text-align: center'> Update Customer </h1>
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 offset-sm-4">
+        <form action='./update'%>
+        <%= label_tag 'Name' %>
+        <%= text_field_tag :name, @customer.name, class:"form-control"%>
 
+        <%= label_tag "VAT Number"%>
+        <%= text_field_tag :vat_number, @customer.vat_number, class:"form-control"%>
 
-    <%= simple_form_for([@company, @customer]) do |f| %>
-        <%= f.input :name %>
-        <%= f.input :vat_number %>
-        <%= f.input :street %>
-        <%= f.input :city %>
-        <%= f.input :post_code %>
-        <%= label_tag :Country %>
+        <%= label_tag "Street" %>
+        <%=text_field_tag :street, @customer.street, class:"form-control"%>
+
+        <%= label_tag 'City' %>
+        <%= text_field_tag :city, @customer.city, class:"form-control"%>
+
+        <%= label_tag "Postal Code"%>
+        <%= text_field_tag :post_code, @customer.post_code, class:"form-control"%>
+
+        <%= label_tag "Country" %>
         <%= select_tag :country,
         options_from_collection_for_select(@countries, "id", "name", @customer.country.id),
         include_blank: true,
         class:"form-control" %>
- 
 
-        <%= f.submit "Save", class: "btn btn-primary" %>
-    <% end %>
 
+
+        <input type='submit' value='Sauvegarder' class='btn btn-primary'%>
+        </form>
+
+    </div>
+  </div>
+</div>

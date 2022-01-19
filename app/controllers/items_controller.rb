@@ -1,18 +1,24 @@
 class ItemsController < ApplicationController
     def new
         @item = Item.new
-        @company = Company.find(params[:company_id])
-        @entities = @company.entities
+        @user = current_user
+        @user_accesses = UserAccessCompany.where(user_id: @user.id)
+        @entity_ids = []
+        @user_accesses.each do |user_access|
+
+            @entity_ids += user_access.company.entity_ids
+        end
+        @entities = Entity.where(id: @entity_ids)
         @tax_code_rates = TaxCodeOperationRate.all
         @types = TaxCodeOperationType.all
     end
 
     def create
         @entity = Entity.find(params_items_edit[:entity_id])
-        @rate = TaxCodeOperationRate.find(params_items_edit[:rate_id])
-        vat_amount = params_items[:net_amount].to_f * @rate.rate
-        
-        # make sure we only have 2 number
+        @tax_code_rate = TaxCodeOperationRate.find(params_items_edit[:rate_id])
+        @rate = CountryRate.where(country_id: @entity.country.id, tax_code_operation_rate_id: @tax_code_rate.id)[0]
+        vat_amount = params[:net_amount].to_f * (@rate.rate / 100)
+            # make sure we only have 2 number
         vat_amount = vat_amount.truncate(2)
         @item = Item.new(:item_name => params_items[:item_name], :item_description => params_items[:item_description], :net_amount => params_items[:net_amount].to_f, :entity_id => params_items_edit[:entity_id], :tax_code_operation_rate_id => params_items_edit[:rate_id], :vat_amount => vat_amount, tax_code_operation_type_id: params[:type])
         if @item.save!
@@ -49,10 +55,10 @@ class ItemsController < ApplicationController
         @company = Company.find(params[:company_id])
         @item = Item.find(params_items_edit[:item_id])
         @entity = Entity.find(params_items_edit[:entity_id])
-        @rate = TaxCodeOperationRate.find(params_items_edit[:rate_id])
-        vat_amount = params_items_edit[:net_amount].to_f * @rate.rate
-        
-        # make sure we only have 2 number
+        @tax_code_rate = TaxCodeOperationRate.find(params_items_edit[:rate_id])
+        @rate = CountryRate.where(country_id: @entity.country.id, tax_code_operation_rate_id: @tax_code_rate.id)[0]
+        vat_amount = params[:net_amount].to_f * (@rate.rate / 100)
+            # make sure we only have 2 number
         vat_amount = vat_amount.truncate(2)
 
         @item.update(:item_name => params_items_edit[:item_name], :item_description => params_items_edit[:item_description], :net_amount => params_items_edit[:net_amount].to_f, :entity_id => params_items_edit[:entity_id], :tax_code_operation_rate_id => params_items_edit[:rate_id], :vat_amount => vat_amount, tax_code_operation_type_id: params[:type])

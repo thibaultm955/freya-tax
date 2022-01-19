@@ -42,6 +42,9 @@
 <a class="btn btn-primary" href="./<%=@invoice.id%>.generate_pdf.pdf" role="button">Generate PDF</a>
 <a class="btn btn-primary" href="./<%=@invoice.id%>/edit" role="button">Edit Information Invoice</a>
 <a class="btn btn-primary" href="./<%=@invoice.id%>/add_transaction" role="button">Add a Transaction</a>
+<a href="./<%=@invoice.id%>/add_ticket">
+  <input class="btn btn-primary" type="button" value="Add Ticket">
+</a>
 <a class="btn btn-primary" href="./<%=@invoice.id%>/add_photo" role="button">Add a Photo</a>
 
 <% total_amount = 0 %>

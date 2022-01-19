@@ -9,17 +9,36 @@
         <form action="./save_transaction">
 
           <%= select_tag :entity,
-                  options_from_collection_for_select(@entities, "id", "name", @invoice.id), style: "#{'display:none'}"%>
+                  options_from_collection_for_select(@company.entities, "id", "name", @invoice.id), style: "#{'display:none'}"%>
+
+
+  
+                  
+          <%= label_tag :item %>
+          <%= select_tag "item", options_from_collection_for_select(@items, "id", "item_name" ),
+          include_blank: true, class: "form-control", data:{action: "invoice#get_item_rate"} %>
+
 
           <div id="myList">
-            <div data-invoice-target="other" >
+            <div data-invoice-target="items" >
+              <%= label_tag :rate %>
+              <%= select_tag "rate", options_from_collection_for_select(@rates, "id", "name" ),
+              include_blank: true, class: "form-control"%>
+
             </div>
           </div>
 
-            <input class="btn btn-primary" type="button" value="add_item" data-action="click->invoice#add_item">
+
+          <%= label_tag 'comment'%>
+          <input type="text" name="comment" class="form-control">
+
+          <%= label_tag 'quantity'%>
+          <input type="test" name="quantity" class="form-control">
+
+        </br>
+
             <input type="submit" value="Submit" class="btn btn-primary">
-            <a href="./add_ticket">
-            <input class="btn btn-primary" type="button" value="Add Ticket"> </a>
+            
 
         </form>
 

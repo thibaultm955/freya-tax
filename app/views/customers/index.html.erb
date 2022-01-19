@@ -1,5 +1,5 @@
 <h2> Your Customers </h2>
-<a class="btn btn-primary" href="./customers/new"> Create Customer </a>  
+<a class="btn btn-primary" href="/customers/new"> Create Customer </a>  
 
 <%i=1%>
 
@@ -27,7 +27,7 @@
       <td><%=customer.post_code%></td>
       <td><%=customer.country.name%></td>
       <td>
-        <a class="btn btn-primary" href="/companies/<%=customer.company.id%>/customers/<%=customer.id%>/edit"> Edit </a>  
+        <a class="btn btn-primary" href="/entities/<%=customer.entity_id%>/customers/<%=customer.id%>/edit"> Edit </a>  
       </td> 
     </tr>
     <%i += 1%>

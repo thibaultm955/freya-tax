@@ -2,29 +2,43 @@
 <div class="container mt-5">
   <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 offset-sm-4">
-    <h1 style='font-size: 25px; text-align: center'> Update Transaction </h1>
-    <p id="double-spaced" style="line-height: 50%;">
+      <h1 style='font-size: 25px; text-align: center'> Update Transaction </h1>
+      <p id="double-spaced" style="line-height: 50%;">
+      <div data-controller="transaction">
 
-      <form  action="./save_transaction_invoice">
-      
-          <%= label_tag 'Item'%>
-          <%= select_tag :item_id, options_from_collection_for_select(@items, "id", "item_name", @transaction.item.id ),class: "form-control"%>
+        <form  action="./save_transaction_invoice">
+        
+            <%= label_tag 'Item'%>
+            <%= select_tag :item_id, options_from_collection_for_select(@items, "id", "item_name", @transaction.item.id ),class: "form-control", data:{action: "transaction#get_item_rate"}%>
 
+            </br>
+
+            <div id="myList">
+            <div data-transaction-target="items" >
+              <%= label_tag :rate %>
+              <%= select_tag "rate", options_from_collection_for_select(@rates, "id", "name", @rate.id ),
+              include_blank: true, class: "form-control"%>
+
+            </div>
+          </div>          
           </br>
 
-          <%= label_tag 'comment'%>
-          <%= text_field_tag :comment, @transaction.comment, class:"form-control"%> 
-                      
-          </br>
+            <%= label_tag 'comment'%>
+            <%= text_field_tag :comment, @transaction.comment, class:"form-control"%> 
+                        
+            </br>
 
-          <%= label_tag 'quantity'%>
-          <%= number_field_tag :quantity, @transaction.quantity, class:"form-control"%> 
+            <%= label_tag 'quantity'%>
+            <%= number_field_tag :quantity, @transaction.quantity, class:"form-control"%> 
 
-                   </br>
-          
-        <input type="submit" value="Sauvegarder" class="btn btn-primary">
-      </form>
-      </p>
+                    </br>
+            
+          <input type="submit" value="Save" class="btn btn-primary">
+        </form>
+        </p>
+      </div>
     </div>  
   </div>
 </div>
+
+

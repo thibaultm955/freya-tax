@@ -2,9 +2,9 @@
 
 
     <%= simple_form_for([ @customer]) do |f| %>
-        <%= label_tag :Company%>
-        <%= select_tag :company,
-        options_from_collection_for_select(@companies, "id", "name"),
+        <%= label_tag :Entity%>
+        <%= select_tag :entity,
+        options_from_collection_for_select(@entities, "id", "name"),
         include_blank: true,
         class:"form-control" %>
         </br>

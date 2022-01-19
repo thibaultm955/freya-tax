@@ -1,6 +1,6 @@
 <h1>Declaration for <%=@entity.name%> </h1>
 <ul>
-    <li><%=@return.begin_date%> - <%=@return.end_date%> - <%=@return.periodicity_to_project_type.project_type.name%></a></li>
+    <li><%=@return.begin_date%> - <%=@return.end_date%> - <%=@return.project_type.name%></a></li>
 </ul>
 
 <a class="btn btn-primary" href="../returns/<%=@return.id%>/edit"> Edit </a>  
@@ -16,13 +16,13 @@
         <tr>
           <% if box_name.name[0..2] == "Box" %>
             <td><%=box_name.name%></td>
-            <td><%= ReturnBox.where(box_name_id: box_name.id, return_id: @return.id)[0].amount%></td>
+            <td><%= ReturnBox.where(box_id: box_name.id, return_id: @return.id)[0].amount%></td>
           <% else %>
             <td><%=box_name.name%></td>
             <td></td>
           <% end%>
             <td>
-                 <a class="btn btn-primary" href="./return_boxes/<%=ReturnBox.where(box_name_id: box_name.id, return_id: @return.id)[0].id%>/edit"> Manually Update the Amount </a>   
+                 <a class="btn btn-primary" href="./return_boxes/<%=ReturnBox.where(box_id: box_name.id, return_id: @return.id)[0].id%>/edit"> Manually Update the Amount </a>   
             </td> 
         </tr>
         <%i += 1%>

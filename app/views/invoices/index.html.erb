@@ -44,6 +44,7 @@
       <th scope="col">Invoice Number</th>
       <th scope="col">Payment Date</th>
       <th scope="col">Customer Name</th>
+      <th scope="col">Type</th>
       <th scope="col">Paid</th>
       <th scope="col">Action</th>
     </tr>
@@ -59,6 +60,7 @@
       <td><%=invoice.invoice_number%></td>
       <td><%=invoice.payment_date%></td>
       <td><%=invoice.customer.name%></td>
+      <td><%=invoice.document_type.name%></td>
       <%invoice.is_paid ? paid = "Yes" : paid = "No"%>
       <td><%=paid%></td>
       <td>

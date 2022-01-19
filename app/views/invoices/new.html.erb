@@ -12,6 +12,12 @@
               include_blank: true,
               class: "form-control"%>
 
+              <%= label :side, "Location" %>
+              <%= select_tag :location,
+              options_from_collection_for_select(@locations, "id", "name"),
+              include_blank: true,
+              class: "form-control"%>
+
               <%= label :entity, "Entity" %>
               <%= select_tag :entity,
               options_from_collection_for_select(@entities, "id", "name"),
@@ -39,8 +45,12 @@
               options_from_collection_for_select(@customers, "id", "name"),
               include_blank: true,
               class:"form-control" %>
+              
+                <br/>
 
-      <br/>
+              <%= label :credit_note, "Credit Note"%>
+              <input type="checkbox" id="credit_note" name="credit_note" value="Yes">
+                    <br/>
 
 
         <div id="myList">
@@ -51,14 +61,12 @@
         </div>
 
                 
-            <input class="btn btn-primary" type="button" value="Add Item" data-action="click->invoice#add_item">
 
 
               <%= f.submit "Save", class: "btn btn-primary" %>
           <% end %>
 
       </div>
-      <% submit_tag "Add address", :type =>  "button", :id => "addAddress",               :onclick => 'addAddressField()'%> 
 
       <%= link_to "Create Customer", new_company_customer_path(@company) %>
       <%= link_to "Create Item", new_company_item_path(@company) %>
