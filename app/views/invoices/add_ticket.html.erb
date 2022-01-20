@@ -5,38 +5,57 @@
       <h1 style='font-size: 25px'> Create a new Ticket </h1>
 
         <form action="./save_ticket">           
+          <%= label_tag :ticket_name %>
+          <%= text_field_tag :ticket_name,'', class: "form-control"%>
 
-            <%= label_tag :ticket_type %>
-            <%= select_tag :ticket_type,
-            options_from_collection_for_select(@type_of_ticket, "id", "name"),
-            include_blank: true, 
-            class:"form-control" %>
+          <%= label :side, "Side" %>
+          <%= select_tag :side,
+          options_from_collection_for_select(@sides, "id", "name"),
+          include_blank: true,
+          class: "form-control"%>
 
+          <%= label :side, "Location" %>
+          <%= select_tag :location,
+          options_from_collection_for_select(@locations, "id", "name"),
+          include_blank: true,
+          class: "form-control"%>
 
-            
-            <%= label_tag 'comment'%>
-            <input type="text" name="comment" class="form-control">
-            <%= label_tag 'quantity'%>
-            <input type="float" name="quantity" class="form-control">
-            
-            <%= label_tag 'total_amount'%>
-            <input type="float" name="total_amount" class="form-control">
+          <%= label_tag :entity %>
+          <%= select_tag :entity,
+          options_from_collection_for_select(@entities, "id", "name"),
+          include_blank: true, 
+          class:"form-control" %>
 
-            <%= label_tag 'net_amount'%>
-            <input type="float" name="net_amount" class="form-control">
+          <%= label_tag :ticket_date%>
+          <input type="text" id="ticket_date" name="input_date" class='datepicker_full form-control'>
 
-            <%= label_tag 'vat_amount'%>
-            <input type="float" name="vat_amount" class="form-control">
-                     
-            </br>
+          <%= label_tag :ticket_type %>
+          <%= select_tag :ticket_type,
+          options_from_collection_for_select(@type_of_ticket, "id", "name"),
+          include_blank: true, 
+          class:"form-control" %>
+        
+          <%= label_tag 'comment'%>
+          <input type="text" name="comment" class="form-control">
+          <%= label_tag 'quantity'%>
+          <input type="float" name="quantity" class="form-control">
+          
+          <%= label_tag 'total_amount'%>
+          <input type="float" name="total_amount" class="form-control">
 
-            <input type="submit" value="Submit" class="btn btn-primary">
+          <%= label_tag 'net_amount'%>
+          <input type="float" name="net_amount" class="form-control">
+
+          <%= label_tag 'vat_amount'%>
+          <input type="float" name="vat_amount" class="form-control">
+                    
+          </br>
+
+          <input type="submit" value="Submit" class="btn btn-primary">
 
         </form>
 
 
-      <%= link_to "Create Customer", new_company_customer_path(@company) %>
-      <%= link_to "Create Item", new_company_item_path(@company) %>
     </div>
   </div>
 </div>

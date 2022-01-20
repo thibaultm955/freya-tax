@@ -189,19 +189,50 @@ class InvoicesController < ApplicationController
     end
 
     def add_ticket
-        @company = Company.find(params[:company_id])
-        @invoice = Invoice.find(params[:invoice_id])
-        @entity = @invoice.entity
-        @countries = LanguageCountry.where(language_id: 2).order("name asc")
+        @user = current_user
+        @user_accesses = UserAccessCompany.where(user_id: @user.id)
+        @entity_ids = []
+        @user_accesses.each do |user_access|
+
+            @entity_ids += user_access.company.entity_ids
+        end
+        @entities = Entity.where(id: @entity_ids)
+        @countries = LanguageCountry.where(language_id: current_user.language_id).order("name asc")
         @type_of_ticket = TicketToTaxCode.all.order("name asc")
+        @sides = TaxCodeOperationSide.all
+        @locations = TaxCodeOperationLocation.all
+
     end 
 
 
     def save_ticket
+        @document_type = DocumentType.where(name: "Invoice")[0]
+        @entity = Entity.find(params_ticket[:entity].to_i)
+
+
+        @invoice = Invoice.new(invoice_date: params_ticket[:invoice_date], payment_date: params_ticket[:invoice_date],invoice_number: Date.today.to_time.to_i, invoice_name: params_ticket[:ticket_name], entity_id: @entity.id, tax_code_operation_side_id: params_ticket[:side], tax_code_operation_location_id: params_ticket[:location], document_type_id: @document_type.id)
+
+        @ticket_to_tax_code = TicketToTaxCode.find(params[:ticket_type])
+
+        if @ticket_to_tax_code.name == 'Food & Drinks'
+            # Set as reduced rate for food
+            @tax_code_operation_rate = TaxCodeOperationRate.where(name: "Reduced")[0]
+
+
+        else
+            # Set to standard rate as default
+            @tax_code_operation_rate = TaxCodeOperationRate.where(name: "Standard")[0]
+
+        end
+
+        @tax_code_operation_type = @ticket_to_tax_code.tax_code_operation_type
+
+        @ticket_to_tax_code = TicketToTaxCode.find(params[:ticket_type])
+
+
 
         @invoice = Invoice.find(params[:invoice_id])
         @entity = @invoice.entity
-        @rate = (params[:vat_amount].to_f / params[:net_amount].to_f).round(2)
         @tax_code_operation_rate = TaxCodeOperationRate.where(rate: @rate)[0]
         @ticket_to_tax_code = TicketToTaxCode.find(params[:ticket_type])
         @item = Item.new(item_name: @ticket_to_tax_code.name, item_description: params[:comment], net_amount: params[:net_amount].to_f, vat_amount: params[:vat_amount], entity_id: @entity.id, tax_code_operation_rate_id: @tax_code_operation_rate.id, tax_code_operation_type_id: @ticket_to_tax_code.tax_code_operation_type_id, is_hidden: true)
@@ -706,6 +737,8 @@ class InvoicesController < ApplicationController
         params.permit(:query_name, :from_date, :to_date)
     end
 
-   
+    def params_ticket
+        params.permit(:ticket_name, :side, :location, :entity, :input_date, :ticket_type, :comment, :quantity, :total_amount, :net_amount, :vat_amount)
+    end
 
 end

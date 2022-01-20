@@ -16,6 +16,8 @@ Rails.application.routes.draw do
   resources :entity_tax_codes, only: [:index, :new, :create]
 
   resources :invoices, only: [:index]
+  get '/invoices/add_ticket', to: "invoices#add_ticket"
+  get '/invoices/save_ticket', to: "invoices#save_ticket"
 
   resources :customers, only: [:index, :new, :create]
 
@@ -48,7 +50,7 @@ Rails.application.routes.draw do
 
     # Invoices
     get '/invoices/add_item/:entity_id', to: "invoices#render_add_item"
-    get '/invoices/:invoice_id/add_ticket', to: "invoices#add_ticket"
+    get '/invoices/add_ticket', to: "invoices#add_ticket"
     get '/invoices/:invoice_id/save_ticket', to: "invoices#save_ticket"    
     get '/invoices/:invoice_id/paid', to: "invoices#paid"
     get '/invoices/:invoice_id.generate_pdf', to: "invoices#generate_pdf"
