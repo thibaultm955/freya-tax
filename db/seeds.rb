@@ -16,6 +16,16 @@ countries.each do |country|
     end
 end
 
+
+# Languages
+languages = ["English", "French"]
+languages.each do |language|
+    if Language.where(name:language) == []
+        model_language = Language.new(name:language)
+        model_language.save!
+    end
+end
+
 language_country = {"Belgium": {'1': "Belgium", '2': "Belgique"}, "France": {"1": "France", "2": "France"},
                     "Australia": {'1': "Australia", '2': "Australie"}, "Czech Republic": {"1": "Czech Republic", "2": "République tchèque"},
                     "Finland": {'1': "Finland", '2': "Finlande"}, "Germany": {"1": "Germany", "2": "Allemagne"},
@@ -218,14 +228,7 @@ sides.each do |side|
 end
 
 
-# Languages
-languages = ["English", "French"]
-languages.each do |language|
-    if Language.where(name:language) == []
-        model_language = Language.new(name:language)
-        model_language.save!
-    end
-end
+
 
 # Amounts
 
