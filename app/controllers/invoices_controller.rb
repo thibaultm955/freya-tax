@@ -159,9 +159,10 @@ class InvoicesController < ApplicationController
         end
 
         rate = TaxCodeOperationRate.find(params[:rate])
+        country_rate = CountryRate.where(country_id: @country.id, tax_code_operation_rate_id: rate.id)[0]
 
         # Based on the Item selected & the quantity specified, extract amounts
-        amounts = Item.extract_amounts(params[:quantity].to_i, @item)
+        amounts = Item.extract_amounts(params[:quantity].to_i, @item, country_rate)
 
         # Here we will create the transaction & update the corresponding boxes from the return
         Transaction.create_from_invoice(@return, @item, @entity, amounts, params[:comment], @invoice, @periodicity, @project_type, rate)
@@ -335,7 +336,7 @@ class InvoicesController < ApplicationController
               if @transactions.count < 10
                 @transactions.each do |transaction|
                     total_amount_transaction = transaction.net_amount.round(2)  + transaction.vat_amount.round(2) 
-                    data += [[transaction.item.item_name, transaction.comment, transaction.quantity, transaction.item.net_amount.round(2) , transaction.item.vat_amount.round(2) , total_amount_transaction.round(2) ]]
+                    data += [[transaction.item.item_name, transaction.comment, transaction.quantity, transaction.item.net_amount.round(2) , transaction.vat_amount.round(2) / transaction.quantity , total_amount_transaction.round(2) ]]
                     total_amount += transaction.net_amount.round(2)  + transaction.vat_amount.round(2) 
                     total_vat += transaction.vat_amount.round(2) 
                     total_net_amount += transaction.net_amount.round(2)
@@ -358,7 +359,7 @@ class InvoicesController < ApplicationController
                         u += 1
                     else
                         total_amount_transaction = @transactions[i].net_amount.round(2)  + @transactions[i].vat_amount.round(2) 
-                        data += [[@transactions[i].item.item_name, @transactions[i].comment, @transactions[i].quantity, @transactions[i].item.net_amount.round(2) , @transactions[i].item.vat_amount, total_amount_transaction.round(2) ]]
+                        data += [[@transactions[i].item.item_name, @transactions[i].comment, @transactions[i].quantity, @transactions[i].item.net_amount.round(2) , @transactions[i].vat_amount.round(2) / @transactions[i].quantity, total_amount_transaction.round(2) ]]
                         total_vat += @transactions[i].vat_amount.round(2)  
                         total_net_amount += @transactions[i].net_amount.round(2)
                         page_number = u.to_s + " / " + ( @transactions.count / 10 + 1).to_i.to_s 
