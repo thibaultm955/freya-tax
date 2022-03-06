@@ -77,7 +77,7 @@
       <td><%=transaction.item.item_name%></td>
       <td><%=transaction.comment%></td>
       <td><%=transaction.quantity%></td>
-      <td><%=transaction.item.net_amount.round(2)%></td>
+      <td><%=transaction.net_amount.round(2) / transaction.quantity%></td>
       <td><%=transaction.vat_amount.round(2) / transaction.quantity%></td>
       <td><%=transaction.net_amount.round(2) + transaction.vat_amount.round(2)%></td>
       <td>

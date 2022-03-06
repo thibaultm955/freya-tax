@@ -6,12 +6,20 @@ class Item < ApplicationRecord
 
 
     def self.extract_amounts(quantity, item, country_rate)
-        net_amount = (quantity * item.net_amount).round(2)
+        total_net_amount = (quantity * item.net_amount).round(2)
         vat_amount = country_rate.rate / 100 * item.net_amount
 
         total_vat_amount = (quantity * vat_amount).round(2)
 
-        return [quantity, net_amount, total_vat_amount]
+        return [quantity, total_net_amount, total_vat_amount]
     end
 
+    def self.extract_amounts_credit_note(quantity, net_amount, country_rate)
+        total_net_amount = (quantity * net_amount).round(2)
+        vat_amount = country_rate.rate / 100 * net_amount
+
+        total_vat_amount = (quantity * vat_amount).round(2)
+
+        return [quantity, total_net_amount, total_vat_amount]
+    end
 end

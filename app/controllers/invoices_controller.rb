@@ -112,7 +112,7 @@ class InvoicesController < ApplicationController
         @items = @entity.items
         @customers = Customer.where(company_id: @company.id)
         @rates = TaxCodeOperationRate.all
-
+        
     end
 
     def add_photo
@@ -125,9 +125,7 @@ class InvoicesController < ApplicationController
     def save_transaction
         @company = Company.find(params[:company_id])
  
-        @invoice = Invoice.find(params[:invoice_id])
-
- 
+        @invoice = Invoice.find(params[:invoice_id]) 
 
         @item = Item.find(params[:item])
         @rate = @item.tax_code_operation_rate
@@ -161,11 +159,21 @@ class InvoicesController < ApplicationController
         rate = TaxCodeOperationRate.find(params[:rate])
         country_rate = CountryRate.where(country_id: @country.id, tax_code_operation_rate_id: rate.id)[0]
 
-        # Based on the Item selected & the quantity specified, extract amounts
-        amounts = Item.extract_amounts(params[:quantity].to_i, @item, country_rate)
+        
+        # if credit note, you'll need to take the amount into account
+        if @invoice.document_type.id == 2
+            # Based on the Item selected & the quantity specified, extract amounts
+            amounts = Item.extract_amounts_credit_note(params[:quantity].to_i, params[:price].to_f, country_rate)
 
-        # Here we will create the transaction & update the corresponding boxes from the return
-        Transaction.create_from_invoice(@return, @item, @entity, amounts, params[:comment], @invoice, @periodicity, @project_type, rate)
+            Transaction.create_from_invoice_credit_note(@return, @item, @entity, amounts, params[:comment], @invoice, @periodicity, @project_type, rate)
+        else
+            # Based on the Item selected & the quantity specified, extract amounts
+            amounts = Item.extract_amounts(params[:quantity].to_i, @item, country_rate)
+
+            # Here we will create the transaction & update the corresponding boxes from the return
+            Transaction.create_from_invoice(@return, @item, @entity, amounts, params[:comment], @invoice, @periodicity, @project_type, rate)
+        end
+        
 
 
         redirect_to '/companies/' + @company.id.to_s + '/invoices/' + @invoice.id.to_s 
