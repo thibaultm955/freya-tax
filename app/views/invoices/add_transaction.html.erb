@@ -35,6 +35,11 @@
           <%= label_tag 'quantity'%>
           <input type="test" name="quantity" class="form-control">
 
+          <% if @invoice.document_type.id == 2%>
+            <%= label_tag 'price'%>
+            <input type='float' name='price' class='form-control'%>
+          <%end%>
+
         </br>
 
             <input type="submit" value="Submit" class="btn btn-primary">

@@ -3,7 +3,7 @@
 <p> Factures non payées  - <a href="/invoices"> Voir plus  </a></p>
 <ul>
     <% @invoices_top_5.each do |invoice| %>
-        <li><a href="/invoices/<%=invoice.id%>"> <%= invoice.invoice_name%> </a> - Date de Paiement: <%= invoice.invoice_date%></li>
+        <li><a href="/companies/<%=invoice.entity.company.id%>/invoices/<%=invoice.id%>"> <%= invoice.invoice_name%> </a> - Date de Paiement: <%= invoice.invoice_date%></li>
     <%end%>
 </ul>
 

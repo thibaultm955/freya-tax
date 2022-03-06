@@ -77,8 +77,8 @@
       <td><%=transaction.item.item_name%></td>
       <td><%=transaction.comment%></td>
       <td><%=transaction.quantity%></td>
-      <td><%=transaction.item.net_amount.round(2)%></td>
-      <td><%=transaction.item.vat_amount.round(2)%></td>
+      <td><%=transaction.net_amount.round(2) / transaction.quantity%></td>
+      <td><%=transaction.vat_amount.round(2) / transaction.quantity%></td>
       <td><%=transaction.net_amount.round(2) + transaction.vat_amount.round(2)%></td>
       <td>
         <% transaction.item.is_hidden == true ? direction = "edit_ticket_invoice" : direction = "edit_transaction_invoice" %>
