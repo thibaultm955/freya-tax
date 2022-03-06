@@ -13,11 +13,19 @@
       <% if user_signed_in? %>
         <%= link_to "Homepage", root_path , class: "dropdown-item"%>
         <%if !current_user.user_access_companies.nil? %>
-          <a class="dropdown-item" href="/entreprises/<%=current_user.id%>"> Entreprise </a>  
+          <a class="dropdown-item" href="/entreprises/<%=current_user.id%>"> Entreprise </a> 
+          <a class="dropdown-item" href="/declarations"> Declarations </a> 
           <a class="dropdown-item" href="/entreprises/<%=current_user.id%>/factures"> Factures </a>  
           <a class="dropdown-item" href="/entreprises/<%=current_user.id%>/clients"> Clients </a>  
           <a class="dropdown-item" href="/entreprises/<%=current_user.id%>/articles"> Articles </a>  
+
           
+          <%= link_to "My Company", companies_path, class: "dropdown-item" %>
+          <%= link_to "My Declarations", returns_path, class: "dropdown-item"%>
+          <%= link_to "My Tax Codes", entity_tax_codes_path, class: "dropdown-item"%>
+          <%= link_to "My Invoices", invoices_path, class: "dropdown-item"%>
+          <%= link_to "My Customers", customers_path, class: "dropdown-item"%>
+          <%= link_to "My Items", items_path, class: "dropdown-item"%>
                 
           <li class="nav-item dropdown">
             <%= image_tag "https://kitt.lewagon.com/placeholder/users/ssaunier", class: "avatar dropdown-toggle", id: "navbarDropdown", data: { toggle: "dropdown" }, 'aria-haspopup': true, 'aria-expanded': false %>

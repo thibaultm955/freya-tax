@@ -368,11 +368,12 @@ box_logic.each do |row|
     document_type = DocumentType.where(name: row['Document Type'])[0]
     operation = OperationType.where(name: row['Operation'])[0]
     rates = []
-    row['Standard'] != '0' ? rates << "Standard" : ''
-    row['Intermediate'] != '0' ? rates << "Intermediate" : ''
-    row['Reduced'] != '0' ? rates << "Reduced" : ''
-    row['Zero'] != '0' ? rates << "Zero" : ''
-    row['Exempt'] != '0' ? rates << "Exempt" : ''
+    # If you have a number in it, the rate needs to be taken into account
+    !row['Standard'].nil? ? rates << "Standard" : ''
+    !row['Intermediate'].nil? ? rates << "Intermediate" : ''
+    !row['Reduced'].nil? ? rates << "Reduced" : ''
+    !row['Zero'].nil? ? rates << "Zero" : ''
+    !row['Exempt'].nil? ? rates << "Exempt" : ''
 
     row['Standard'] == '1' || row['Intermediate'] == '1' || row['Reduced'] == '1' || row['Zero'] == '1' || row['Exempt'] == '1' ? amounts_type = "Reporting Currency Taxable Basis" : ''
     row['Standard'] == '2' || row['Intermediate'] == '2' || row['Reduced'] == '2' || row['Zero'] == '2' || row['Exempt'] == '2' ? amounts_type = "Reporting Currency VAT Amount" : ''
