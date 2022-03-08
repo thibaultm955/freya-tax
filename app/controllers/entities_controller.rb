@@ -48,7 +48,7 @@ class EntitiesController < ApplicationController
 =end    
     def show
         @entity = Entity.find(params[:id])
-        @declarations = @entity.returns
+        @returns = @entity.returns
     end
 
     def render_select_entities
@@ -100,19 +100,20 @@ class EntitiesController < ApplicationController
     # French 
 
     def show_french
-        @entity = Entity.find(params[:entity_id])
-        @declarations = @entity.returns.order("begin_date asc")
+        @entity = Entity.find(params[:id])
+        @returns = @entity.returns
     end
 
     def edit_french
         @company = Company.find(params[:company_id])
-        @entity = Entity.find(params[:entity_id])
+        @entity = Entity.find(params[:id])
         @countries = Country.order("name asc").all
+        @periodicity = Periodicity.all
     end
 
     def udpate_french
         @company = Company.find(update_french_params[:company_id])
-        @entity = Entity.find(update_french_params[:entity_id])
+        @entity = Entity.find(update_french_params[:id])
         @entity.update(name: update_french_params[:name], address: update_french_params[:address], vat_number: update_french_params[:vat_number], postal_code: update_french_params[:postal_code], city: update_french_params[:city], phone_number: update_french_params[:phone_number], email: update_french_params[:email], website: update_french_params[:website], iban: update_french_params[:iban], bic: update_french_params[:bic])
         path = '/entreprises/' + @company.id.to_s + '/entites/' + @entity.id.to_s 
         redirect_to path
@@ -147,7 +148,7 @@ class EntitiesController < ApplicationController
     end
 
     def update_french_params
-        params.permit(:name, :address, :postal_code, :city, :vat_number, :phone_number, :iban, :bic, :company_id, :entity_id, :email)
+        params.permit(:name, :address, :postal_code, :city, :vat_number, :phone_number, :iban, :bic, :company_id, :id, :email)
     end
 
     def params_french

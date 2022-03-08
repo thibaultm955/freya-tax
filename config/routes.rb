@@ -130,7 +130,7 @@ Rails.application.routes.draw do
 # French
   #company
   get '/entreprises/new', to: "companies#new_french"
-  get '/entreprises/:company_id', to: "companies#show_french"
+  get '/entreprises/:id', to: "companies#show_french"
 
   # declaration
   get '/declarations', to: "returns#index_french"
@@ -138,9 +138,9 @@ Rails.application.routes.draw do
   #entity
   get '/entreprises/:company_id/entites/new', to: "entities#new_french"
   get '/entreprises/:company_id/entites/create', to: "entities#create_french"
-  get '/entreprises/:company_id/entites/:entity_id', to: "entities#show_french"
-  get '/entreprises/:company_id/entites/:entity_id/edit', to: "entities#edit_french"
-  get '/entreprises/:company_id/entites/:entity_id/update', to: "entities#udpate_french"
+  get '/entreprises/:company_id/entites/:id', to: "entities#show_french"
+  get '/entreprises/:company_id/entites/:id/edit', to: "entities#edit_french"
+  get '/entreprises/:company_id/entites/:id/update', to: "entities#udpate_french"
 
   # Declaration
   get '/entreprises/:company_id/entites/:entity_id/declarations/:id', to: "returns#show_french"
@@ -190,6 +190,9 @@ Rails.application.routes.draw do
 
   # Dashboard
   get '/entreprises/:company_id/dashboard', to: 'dashboard#index_french'
+
+  # Accesses
+  get '/entreprises/:company_id/accesses', to: 'accesses#index_french'
 end
 
 

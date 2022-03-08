@@ -1,54 +1,57 @@
-<h1 style="text-align: center; font-size: 30px"> <%=@entity.name%> </h1>
-</br>
-<div class="container text-center">
-  <div class="row">
-    <div class="col">
-        <% country = LanguageCountry.where( language_id: current_user.language.id, country_id: @entity.country.id)[0] %>
-      <p><b>Juridiction de l'entreprise</b>:  </br><%=country.name%></p>
-    </div>
-    <div class="col">
-        <p><b>Numéro de TVA</b>:  </br><%=@entity.vat_number%></p>
-    </div>
-    <div class="col">
-        <p><b>IBAN</b>:  </br><%=@entity.iban%></p>
-    </div>
-    <div class="col">
-        <p><b>BIC</b>:  </br><%=@entity.bic%></p>
-    </div>
-  </div>
-  <div class="row">
-    
-    <div class="col">
-        <p><b>Adresse</b>:  </br><%=@entity.address%></p>
-    </div>
-    <div class="col">
-        <p><b>Code Postal</b>:  </br><%=@entity.postal_code%></p>
-    </div>
-        <div class="col">
-        <p><b>Ville</b>:  </br><%=@entity.city%></p>
-    </div>
-    <div class="col">
-        <p><b>Numéro de Téléphone</b>:  </br><%=@entity.phone_number%></p>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col">
-        <p><b>Email</b>:  </br><%=@entity.email%></p>
-    </div>
-    <div class="col">
-        <p><b>Site Web</b>:  </br><%=@entity.website%></p>
-    </div>
-  </div>
-</div>
-</br>
-
-<h2> Declarations TVA </h2>
+<h1> <%=@entity.name%> </h1>
 
 <ul>
-    <%@declarations.each do |declaration|%>
-        <li><a href="./<%=declaration.entity.id%>/returns/<%=declaration.id%>"> <%=declaration.begin_date%> - <%=declaration.end_date%> - <%=declaration.periodicity_to_project_type.project_type.name%></a></li>
-    <%end%>
+    <li>Juridiction: <%=@entity.country.name%> </li>
+    <li>Adresse: <%=@entity.address%></li>
+    <li>Email: <%=@entity.email%></li>
+    <li>Site Web: <%=@entity.website%></li>
+    <li>Code Postal: <%=@entity.postal_code%></li>
+    <li>Ville: <%=@entity.city%></li>
+    <li>Numéro de Téléphone: <%=@entity.phone_number%></li>
+    <li>Numéro de TVA: <%=@entity.vat_number%></li>
+    <li>IBAN: <%=@entity.iban%></li>
+    <li>BIC: <%=@entity.bic%></li>
 </ul>
 
-<a class="btn btn-primary" href="./<%=@entity.id%>/edit"> Modifier </a>
+<h2> Declarations</h2>
+<%i=1%>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Nom de l'Entité</th>
+      <th scope="col">Juridiction</th>
+      <th scope="col">Type de Projet</th>
+      <th scope="col">Periodicité</th>
+      <th scope="col">Début</th>
+      <th scope="col">Fin</th>
+      <th scope="col">Date Due</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+  <%@returns.each do |company_return| %>
+    <tr>
+      <th scope="row"><%=i%></th>
+      <td><%=company_return.entity.name%></td>
+      <td><%=company_return.entity.country.name%></td>
+      <td><%=company_return.project_type.name%></td>
+      <td><%=company_return.periodicity.name%></td>
+      <td><%=company_return.begin_date%></td>
+      <td><%=company_return.end_date%></td>
+      <td><%=company_return.due_date.due_date%></td>
+      <td>
+
+        <a class="btn btn-light" href="/entreprises/<%=company_return.entity.company.id %>/entites/<%=company_return.entity_id%>/returns/<%=company_return.id%>"> Ouvrir </a>
+        <!--
+        <%= button_to "Supprimer", { action: "destroy", id: company_return.id }, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger"  %>
+        -->
+      </td> 
+    </tr>
+    <%i += 1%>
+    <%end%>
+  </tbody>
+</table>
+
+<a class="btn btn-primary" href="./<%=@entity.id%>/edit"> Edit </a>
 
