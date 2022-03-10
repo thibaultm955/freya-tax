@@ -3,27 +3,27 @@
   <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 offset-sm-4">
         <form action='./create'%>
-        <%= label_tag 'Email' %>
+        <%= label_tag 'Addresse Email' %>
         <%= text_field_tag :email, '', class:"form-control"%>
 
-        <%= label_tag "Company" %>
+        <%= label_tag "Entreprise" %>
         <%= select_tag :company,
         options_from_collection_for_select(@companies, "id", "name"),
         include_blank: true,
         class:"form-control" %>
 
-        <%= label_tag "Access Type" %>
+        <%= label_tag "Type d'Accès" %>
         <%= select_tag :access_type,
         options_from_collection_for_select(@accesses, "id", "name"),
         include_blank: true,
         class:"form-control" %>
 
 
+        </br>
 
 
 
-
-        <input type='submit' value='Save' class='btn btn-primary'%>
+        <input type='submit' value='Sauvegarder' class='btn btn-primary'%>
         </form>
 
     </div>

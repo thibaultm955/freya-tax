@@ -106,6 +106,32 @@ class ReturnsController < ApplicationController
     end
 
     
+
+
+    # FRENCH
+    def index_french
+        @user = current_user
+        @user_accesses = UserAccessCompany.where(user_id: @user.id)
+        @entity_ids = []
+        @user_accesses.each do |user_access|
+
+            @entity_ids += user_access.company.entity_ids
+        end
+        @returns = Return.where(entity_id: @entity_ids).order("begin_date asc")
+        
+    end
+
+
+    def show_french
+        @return = Return.find(params[:id])
+        @box_names = Box.where(periodicity_id: @return.periodicity_id, project_type_id: @return.project_type_id, country_id: @return.country.id  )
+        @return_boxes = ReturnBox.where(return_id: @return.id)
+        @entity = @return.entity
+        @transactions = @return.transactions
+        @company = Company.find(params[:company_id])
+    end
+
+
     private
     
     def params_declaration

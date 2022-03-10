@@ -1,18 +1,21 @@
+<link href="/assets/css_sheets/image_hover.css" media="screen" rel="stylesheet" />
+
+
 <h1>Information sur la Facture</h1>
 
 <div class="container text-center">
   <div class="row">
     <div class="col">
-      <p><b>Nom de la Facture</b>: <%=@invoice.invoice_name%> </p>
+      <p><b>Nom de la Facture</b>: </br><%=@invoice.invoice_name%> </p>
     </div>
     <div class="col">
       <p><b>Date de la Facture</b>:  </br><%=@invoice.invoice_date%></p>
     </div>
     <div class="col">
-      <p><b>Date de Paiement</b>: <%=@invoice.payment_date%></p>
+      <p><b>Date de Paiement</b>: </br><%=@invoice.payment_date%></p>
     </div>
     <div class="col">
-      <p><b>Numéro de Facture</b>: <%=@invoice.invoice_number%> </p>
+      <p><b>Numéro de la Facture</b>: <%=@invoice.invoice_number%> </p>
     </div>
     <div class="col">
       <p><b>Nom du Client</b>: <%=@invoice.customer.name%></p>
@@ -26,14 +29,23 @@
       <%@invoice.is_paid.nil? ? paid = "Non" : paid = "Oui"%>
       <p><b>Payé</b>: </br><%=paid%></p>
     </div>
+    <div class="col">
+      <p><b>Côté</b>: </br><%=@invoice.tax_code_operation_side.name%></p>
+    </div>
+    <div class="col">
+      <p><b>Lieu</b>: </br><%=@invoice.tax_code_operation_location.name%></p>
+    </div>
   </div>
 </div>
 </br>
 
-<a class="btn btn-primary" href="./<%=@invoice.id%>.generate_pdf.pdf" role="button">Générer un PDF</a>
-<a class="btn btn-primary" href="./<%=@invoice.id%>/edit" role="button">Modifier</a>
+<a class="btn btn-primary" href="./<%=@invoice.id%>.generate_pdf.pdf" role="button">Générer le PDF</a>
+<a class="btn btn-primary" href="./<%=@invoice.id%>/edit" role="button">Modifier la Facture</a>
 <a class="btn btn-primary" href="./<%=@invoice.id%>/add_transaction" role="button">Ajouter une Transaction</a>
-<a class="btn btn-primary" href="<%= "/entreprises/" + current_user.company.id.to_s + "/factures/" + @invoice.id.to_s + "/paid"%>"> Payer </a>
+<a href="./<%=@invoice.id%>/add_ticket_french">
+  <input class="btn btn-primary" type="button" value="Ajouter un Ticket">
+</a>
+<a class="btn btn-primary" href="./<%=@invoice.id%>/add_photo" role="button">Ajouter une Photo</a>
 
 <% total_amount = 0 %>
 <% total_vat = 0 %>
@@ -42,12 +54,12 @@
 </br>
 </br>
 
-<table class="table" style="text-align: center">
+<table class="table">
   <thead>
     <tr>
       <th scope="col">#</th>
-      <th scope="col">Article</th>
-      <th scope="col">Commentaire</th>
+      <th scope="col">Articles</th>
+      <th scope="col">Commentaires</th>
       <th scope="col">Quantité</th>
       <th scope="col">Montant Hors TVA / Unité</th>
       <th scope="col">Montant TVA / Unité</th>
@@ -65,12 +77,13 @@
       <td><%=transaction.item.item_name%></td>
       <td><%=transaction.comment%></td>
       <td><%=transaction.quantity%></td>
-      <td><%=transaction.net_amount%></td>
-      <td><%=transaction.vat_amount%></td>
-      <td><%=transaction.net_amount+ transaction.vat_amount%></td>
+      <td><%=transaction.net_amount.round(2) / transaction.quantity%></td>
+      <td><%=transaction.vat_amount.round(2) / transaction.quantity%></td>
+      <td><%=transaction.net_amount.round(2) + transaction.vat_amount.round(2)%></td>
       <td>
-        <a class="btn btn-primary" href="./<%=@invoice.id%>/transactions/<%=transaction.id%>/edit_transaction_invoice" role="button">Modifier Transaction</a>
-        <a class="btn btn-danger" href="./<%=@invoice.id%>/transactions/<%=transaction.id%>/delete_transaction" onclick="return confirm('Etes-vous sûr?')"> Supprimer </a>
+        <% transaction.item.is_hidden == true ? direction = "edit_ticket_invoice" : direction = "edit_transaction_invoice" %>
+        <a class="btn btn-primary" href="./<%=@invoice.id%>/transactions/<%=transaction.id%>/<%=direction%>" role="button">Modifier</a>
+        <a class="btn btn-danger" href="/entreprises/<%=params[:company_id]%>/factures/<%=@invoice.id%>/transactions/<%=transaction.id%>/delete_transaction" onclick="return confirm('Êtes-vous sûr?')"> Supprimer </a>
       </td>
     </tr>
     <%i +=1%>
@@ -78,5 +91,44 @@
   </tbody>
 </table>
 
-<p> <b>Montant Total</b>: <%= total_amount.round(2) %> </p>
-<p> <b>Montant Total TVA</b>: <%=total_vat.round(2) %></p>
+<p> <b>Montant Total Hors TVA</b>: <%= total_amount.round(2) - total_vat.round(2)%> </p>
+<p> <b>Montant Total de TVA</b>: <%= total_vat.round(2) %></p>
+
+</br>
+
+<p> <b>Montant Total (EUR)</b>: <%= total_amount.round(2) %> </p>
+<% i = 0%>
+<p> Photos </p>
+<div>
+  <div class="row">
+    <% @cloudinary_photos.each do |photo| %>
+      <% i += 1%>
+      <div class="container">
+        <% if (i % 5) == 0%>
+          <div class="row">
+            <div class="col">
+              <a href="<%=photo.secure_url%>">
+                <img src="<%=photo.secure_url%>" alt="Avatar" class="image" style="width:100%">
+                <div class="middle">
+                  <div class="text"><%=photo.name%></div>
+                </div>
+              </a>
+            </div>
+          </div>
+        <%else%>
+          <div class="col">
+            <a href="<%=photo.secure_url%>">
+              <img src="<%=photo.secure_url%>" alt="Avatar" class="image" style="width:100%">
+              <div class="middle">
+                <div class="text"><%=photo.name%></div>
+              </div>
+            </a>
+            <div style="text-align: center">
+              <a class="btn btn-danger" href="./<%=@invoice.id%>/cloudinary_photos/<%=photo.id%>/delete_photo" onclick="return confirm('Are you sure?')"> Delete </a>
+            </div>
+          </div>
+        <%end%>
+      </div>
+    <%end%>
+  </div>
+</div>

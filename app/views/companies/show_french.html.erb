@@ -1,8 +1,10 @@
+
+
 </br>
 <div class="container text-center">
   <div class="row">
     <div class="col">
-      <p><b>Nom de votre entreprise</b>: </br> <%=@company.name%> </p>
+      <p><b>Nom de l'entreprise</b>: </br> <%=@company.name%> </p>
     </div>
     <div class="col">
       <p><b>Juridiction de l'entreprise</b>:  </br><%=@company.country.name%></p>
@@ -10,12 +12,14 @@
 
   </div>
 </div>
-<a href="/entreprises/<%=current_user.company.id%>/entites/new">+ Créer une Entité</a>
-    
+
+<a class="btn btn-primary" href='./<%=@company.id%>/accesses'> Management des Accès </a>
+
+
 <% i = 1 %>
 <% if @entities != [] %>
-    <h2 class="text-center"> Entités </h2>
-    <table class="table table-hover" style="text-align: center">
+    <h2 class="text-center"> Mes Entités </h2>
+    <table class="table table-hover">
         <thead>
             <tr>
             <th class="text-center" scope="col">#</th>
@@ -29,14 +33,13 @@
             <% @entities.each do |entity| %>
                 <tr>
                 <th class="text-center" scope="row"><%=i%></th>
-                <td class="text-center"><a href='../entreprises/<%=current_user.company.id%>/entites/<%=entity.id%>'> <%=entity.name%></a></td>
-                <% country = LanguageCountry.where( language_id: current_user.language.id, country_id: entity.country.id)[0] %>
-                <td class="text-center"><%=country.name%></td>
+                <td class="text-center"><a href='/entreprises/<%=entity.company.id%>/entites/<%=entity.id%>'> <%=entity.name%></a></td>
+                <td class="text-center"><%=entity.country.name%></td>
                 <td class="text-center"><%=entity.vat_number%></td>
                  <td>
-                 <a class="btn btn-light" href='../entreprises/<%=current_user.company.id%>/entites/<%=entity.id%>'> Ouvrir </a>
-                 <a class="btn btn-primary" href='./<%=@company.id%>/entites/<%=entity.id%>/edit'> Modifier </a>
-
+                 <a class="btn btn-light" href='/entreprises/<%=entity.company.id%>/entites/<%=entity.id%>'> Ouvrir </a>
+                 <a class="btn btn-primary" href='/entreprises/<%=@company.id%>/entites/<%=entity.id%>/edit'> Mofifier </a>
+                
                     
                    </td> 
                 </tr>
@@ -45,5 +48,6 @@
         </tbody>
     </table>
 <%end%>
-
+<a href="/entreprises/<%=@company.id%>/entites/new">+ Créer une nouvelle Entité</a>
+    
 

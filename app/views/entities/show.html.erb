@@ -14,12 +14,42 @@
 </ul>
 
 <h2> Entities Returns </h2>
+<%i=1%>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Entity Name</th>
+      <th scope="col">Jurisdiction</th>
+      <th scope="col">Project Type</th>
+      <th scope="col">Periodicity</th>
+      <th scope="col">Start Date</th>
+      <th scope="col">End Date</th>
+      <th scope="col">Due Date</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+  <%@returns.each do |company_return| %>
+    <tr>
+      <th scope="row"><%=i%></th>
+      <td><%=company_return.entity.name%></td>
+      <td><%=company_return.entity.country.name%></td>
+      <td><%=company_return.project_type.name%></td>
+      <td><%=company_return.periodicity.name%></td>
+      <td><%=company_return.begin_date%></td>
+      <td><%=company_return.end_date%></td>
+      <td><%=company_return.due_date.due_date%></td>
+      <td>
 
-<ul>
-    <%@declarations.each do |declaration|%>
-        <li><a href="./<%=declaration.entity.id%>/returns/<%=declaration.id%>"> <%=declaration.begin_date%> - <%=declaration.end_date%> - <%=declaration.periodicity_to_project_type.project_type.name%></a></li>
+        <a class="btn btn-light" href="/companies/<%=company_return.entity.company.id %>/entities/<%=company_return.entity_id%>/returns/<%=company_return.id%>"> Open </a>
+        <%= button_to "Delete", { action: "destroy", id: company_return.id }, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger"  %>
+      </td> 
+    </tr>
+    <%i += 1%>
     <%end%>
-</ul>
+  </tbody>
+</table>
 
 <a class="btn btn-primary" href="./<%=@entity.id%>/edit"> Edit </a>
 

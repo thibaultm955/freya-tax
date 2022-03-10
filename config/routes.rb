@@ -130,35 +130,50 @@ Rails.application.routes.draw do
 # French
   #company
   get '/entreprises/new', to: "companies#new_french"
-  get '/entreprises/:company_id', to: "companies#show_french"
+  get '/entreprises/:id', to: "companies#show_french"
+
+  # declaration
+  get '/declarations', to: "returns#index_french"
 
   #entity
+  get '/entreprises/:company_id/entites', to: "entities#index_french"
   get '/entreprises/:company_id/entites/new', to: "entities#new_french"
   get '/entreprises/:company_id/entites/create', to: "entities#create_french"
-  get '/entreprises/:company_id/entites/:entity_id', to: "entities#show_french"
-  get '/entreprises/:company_id/entites/:entity_id/edit', to: "entities#edit_french"
-  get '/entreprises/:company_id/entites/:entity_id/update', to: "entities#udpate_french"
+  get '/entreprises/:company_id/entites/:id', to: "entities#show_french"
+  get '/entreprises/:company_id/entites/:id/edit', to: "entities#edit_french"
+  get '/entreprises/:company_id/entites/:id/update', to: "entities#udpate_french"
 
-  #Invoice
+  # Declaration
+  get '/entreprises/:company_id/entites/:entity_id/declarations/:id', to: "returns#show_french"
+
+  # Facture
   get '/entreprises/:company_id/factures', to: "invoices#index_french"
-  get '/entreprises/:company_id/factures/new', to: "invoices#new_french"
   get '/entreprises/:company_id/factures/create', to: "invoices#create_french"
+  get '/entreprises/:company_id/factures/new', to: "invoices#new_french"
+  get '/entreprises/:company_id/factures/:id', to: "invoices#show_french"
+  get '/entreprises/:company_id/factures/:id/paid', to: "invoices#paid_french"
+  get '/entreprises/:company_id/factures/:id/edit', to: "invoices#edit_french"
   get '/entreprises/:company_id/factures/:invoice_id', to: "invoices#show_french"
-  get '/entreprises/:company_id/factures/:invoice_id/edit', to: "invoices#edit_french"
   get '/entreprises/:company_id/factures/:invoice_id/update', to: "invoices#update_french"
-  get '/entreprises/:company_id/factures/:invoice_id/paid', to: "invoices#paid_french"
+  get '/entreprises/:company_id/factures/:invoice_id/add_photo', to: "invoices#add_photo_french"
   get '/entreprises/:company_id/factures/:invoice_id.generate_pdf', to: "invoices#generate_french_pdf"
-  get '/entreprises/:company_id/factures/:invoice_id/delete_invoice', to: "invoices#delete_invoice_french"
+  get '/entreprises/:company_id/factures/:invoice_id/delete_invoice_french', to: "invoices#delete_invoice_french"
+  get '/entreprises/:company_id/factures/:invoice_id/get_item/:item_id', to: "invoices#render_get_item"
+
+
   # create invoice with transaction
   get '/entreprises/:company_id/factures/add_item/:entity_id' , to: "invoices#render_add_item_french"
 
   # Transaction
   get '/entreprises/:company_id/factures/:invoice_id/add_transaction', to: "invoices#add_transaction_french"
   get '/entreprises/:company_id/factures/:invoice_id/add_item/:entity_id' , to: "invoices#render_add_item_french"
-  get '/entreprises/:company_id/factures/:invoice_id/save_transaction', to: "invoices#save_transaction_french"
+  get '/entreprises/:company_id/factures/:invoice_id/save_transaction_french', to: "invoices#save_transaction_french"
   get '/entreprises/:company_id/factures/:invoice_id/transactions/:transaction_id/edit_transaction_invoice', to: "transactions#edit_transaction_french_invoice"
   get '/entreprises/:company_id/factures/:invoice_id/transactions/:transaction_id/save_transaction_invoice', to: "transactions#save_transaction_french_invoice"
   get '/entreprises/:company_id/factures/:invoice_id/transactions/:transaction_id/delete_transaction', to: "transactions#delete_transaction_french"
+
+  get '/entreprises/:company_id/entites/:entity_id/declarations/:return_id/transactions', to: "transactions#index_french"
+
 
   # Customer
   get '/entreprises/:company_id/clients', to: 'customers#index_french'
@@ -166,6 +181,9 @@ Rails.application.routes.draw do
   get '/entreprises/:company_id/clients/create', to: 'customers#create_french'
   get '/entreprises/:company_id/clients/:customer_id/edit', to: 'customers#edit_french'
   get '/entreprises/:company_id/clients/:customer_id/update', to: 'customers#update_french'
+
+  get '/clients', to: 'customers#index_french'
+
   # too dangerous, can break all invoice & co
   get '/entreprises/:company_id/clients/:customer_id/delete', to: 'customers#delete_french'
 
@@ -179,6 +197,12 @@ Rails.application.routes.draw do
 
   # Dashboard
   get '/entreprises/:company_id/dashboard', to: 'dashboard#index_french'
+
+  # Accesses
+  get '/entreprises/:company_id/accesses', to: 'accesses#index_french'
+  get '/entreprises/:company_id/accesses/new', to: 'accesses#new_french'
+  get '/entreprises/:company_id/accesses/create', to: 'accesses#create_french'
+
 end
 
 

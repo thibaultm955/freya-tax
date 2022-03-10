@@ -1,0 +1,42 @@
+<h1> Vos declarations </h1>
+<%i=1%>
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Nom de l'Entité</th>
+      <th scope="col">Juridiction</th>
+      <th scope="col">Type de Projet</th>
+      <th scope="col">Periodicité</th>
+      <th scope="col">Date Début</th>
+      <th scope="col">Date Fin</th>
+      <th scope="col">Date Limite</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+  <%@returns.each do |company_return| %>
+    <tr>
+      <th scope="row"><%=i%></th>
+      <td><%=company_return.entity.name%></td>
+      <td><%=company_return.entity.country.name%></td>
+      <td><%=company_return.project_type.name%></td>
+      <td><%=company_return.periodicity.name%></td>
+      <td><%=company_return.begin_date%></td>
+      <td><%=company_return.end_date%></td>
+      <td><%=company_return.due_date.due_date%></td>
+      <td>
+
+        <a class="btn btn-light" href="/entreprises/<%=company_return.entity.company.id %>/entites/<%=company_return.entity_id%>/declarations/<%=company_return.id%>"> Ouvrir </a>
+      </td> 
+    </tr>
+    <%i += 1%>
+    <%end%>
+  </tbody>
+</table>
+
+
+
+
+

@@ -1,13 +1,13 @@
-<h1>Declaration for <%=@entity.name%> </h1>
+<h1>Declaration pour <%=@entity.name%> </h1>
 <ul>
     <li><%=@return.begin_date%> - <%=@return.end_date%> - <%=@return.project_type.name%></a></li>
 </ul>
 
-<a class="btn btn-primary" href="../returns/<%=@return.id%>/edit"> Edit </a>  
-<a class="btn btn-primary" href="<%=company_entity_return_transactions_path(@company.id, @return.entity.id, @return.id)%>"> See all transactions </a>  
+<a class="btn btn-primary" href="/entreprises/<%=@entity.company.id%>/entites/<%=@entity.id%>/declarations/<%=@return.id%>/transactions"> Voir toutes les transactions </a>  
+<!--
 <a class="btn btn-primary" href="<%=new_company_entity_return_transaction_path(@company.id, @return.entity.id, @return.id)%>"> Add a transaction </a>  
 <a class="btn btn-primary" href="./<%=@return.id%>/transactions/new.file_upload"> Upload a file </a>  
-
+-->
 <table class="table">
 
   <tbody>
@@ -15,8 +15,8 @@
     <% @box_names.each do |box_name| %>
         <tr>
           <% if box_name.name[0..2] == "Box" %>
-          <td><%=BoxNameLanguage.where(box_id: box_name.id, language_id: current_user.language.id)[0].name%></td>
-          <td><%= ReturnBox.where(box_id: box_name.id, return_id: @return.id)[0].amount%></td>
+            <td><%=BoxNameLanguage.where(box_id: box_name.id, language_id: current_user.language.id)[0].name%></td>
+            <td><%= ReturnBox.where(box_id: box_name.id, return_id: @return.id)[0].amount%></td>
           <% else %>
             <td><%=box_name.name%></td>
             <td></td>
@@ -33,20 +33,20 @@
 </br>
 </br>
 
-<h1>First 10 Transactions</h2>
+<h1>Top 10 Transactions</h2>
 </br>
 
 <table class="table">
   <thead>
     <tr>
       <th scope="col">#</th>
-      <th scope="col">Tax Code Name</th>
-      <th scope="col">Business Partner Name</th>
-      <th scope="col">Business Partner VAT Number</th>
-      <th scope="col">Gross Amount</th>
-      <th scope="col">Net Amount</th>
-      <th scope="col">VAT Amount</th>
-      <th scope="col">Action</th>
+      <th scope="col">Nom du Tax Code</th>
+      <th scope="col">Nom du Partenaire Commercial</th>
+      <th scope="col">Numéro de TVA du Partenaire Commercial</th>
+      <th scope="col">Montant Brut</th>
+      <th scope="col">Montant Net</th>
+      <th scope="col">Montant de TVA</th>
+      <th scope="col">Date de la Facture</th>
     </tr>
   </thead>
   <tbody>
@@ -60,13 +60,7 @@
             <td><%=transaction.net_amount + transaction.vat_amount%></td>
             <td><%=transaction.net_amount%></td>
             <td><%=transaction.vat_amount%></td>
-            <td>
-                 <a class="btn btn-primary" href="./<%= @return.id%>/transactions/<%=transaction.id%>/edit"> Edit </a>
-                 <%= button_to "Delete the Transaction", { action: "destroy", id: (transaction.id.to_s + @return.id.to_s).to_i}, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger"  %>
-                 <a class="btn btn-danger" href="./<%= @return.id%>/transactions/<%=transaction.id%>.destroy"> Delete </a>
-                
-                    
-                   </td> 
+            <td><%=transaction.invoice.invoice_date%></td>
         </tr>
         <%i += 1%>
    <%end%>

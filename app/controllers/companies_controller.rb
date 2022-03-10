@@ -66,7 +66,7 @@ class CompaniesController < ApplicationController
 
     # French
     def show_french
-        @company = current_user.assignment.company
+        @company = Company.find(params[:id])
         @entities = @company.entities.order('name ASC')
     end
 

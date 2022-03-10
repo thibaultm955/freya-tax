@@ -5,43 +5,56 @@
       <div data-controller="invoice">
         <form action="./create">
 
-            <%= label_tag "Nom de la Facture" %>
-            <%= text_field_tag :invoice_name, "", class:"form-control" %>
+          <%= label_tag 'Nom de la Facture' %>
+          <%= text_field_tag :invoice_name, '', class:"form-control"%>
 
-            <%= label_tag "Entité" %>
-            <%= select_tag :entity,
-            options_from_collection_for_select(@entities, "id", "name"),
-            include_blank: true, 
-            class:"form-control" %>
-                </br>
+          <%= label_tag "Side" %>
+          <%= select_tag :side,
+          options_from_collection_for_select(@sides, "id", "name"),
+          include_blank: true,
+          class: "form-control"%>
 
-            <%= label_tag "Date de la Facture"%>
-            <%= text_field_tag :invoice_date, @invoice.invoice_date, class:"form-control datepicker_full"%> 
+          <%= label :side, "Location" %>
+          <%= select_tag :location,
+          options_from_collection_for_select(@locations, "id", "name"),
+          include_blank: true,
+          class: "form-control"%>
 
-            <%= label_tag 'Date de Paiement'%>
-            <%= text_field_tag :payment_date, @invoice.payment_date, class:"form-control datepicker_full"%> 
+          <%= label :entity, "Entity" %>
+          <%= select_tag :entity,
+          options_from_collection_for_select(@entities, "id", "name"),
+          include_blank: true, 
+          class:"form-control" %>
+            </br>
 
-            <%= label_tag 'Numéro de Facture'%>
-            <%= text_field_tag :invoice_number, @invoice.invoice_number, class:"form-control"%> 
+          <%= label_tag 'Nom de la facture' %>
+          <%= text_field_tag :invoice_date, '', class:"datepicker_full"%>
 
-            <%= label_tag :client %>
-            <%= select_tag :customer,
-            options_from_collection_for_select(@customers, "id", "name"),
-            include_blank: true,
-            class: "form-control" %>
+          <%= label_tag 'Date du Paiement' %>
+          <%= text_field_tag :payment_date, '', class:"datepicker_full"%>
 
-      <br/>
+          <%= label_tag 'Numéro de Facture' %>
+          <%= text_field_tag :invoice_number, '', class:"form-control"%>
+
+          <%= label :customer, "Customer" %>
+          <%= select_tag :customer,
+          options_from_collection_for_select(@customers, "id", "name"),
+          include_blank: true,
+          class:"form-control" %>
+          
+            <br/>
+
+          <%= label :credit_note, "Credit Note"%>
+          <input type="checkbox" id="credit_note" name="credit_note" value="Yes">
+                <br/>
 
 
-        <div id="myList">
-        
-        <div data-invoice-target="other" >
-        </div>
-        
-        </div>
-
-                
-        <input class="btn btn-primary" type="button" value="Ajouter une Transaction" data-action="click->invoice#add_item">
+          <div id="myList">
+          
+          <div data-invoice-target="other" >
+          </div>
+          
+          </div>
 
 
               
