@@ -1,6 +1,6 @@
-<h1>Your Transactions</h1>
+<h1>Transactions</h1>
 
-<a class="btn btn-primary" href="<%=company_entity_return_path(@company, @entity, @return)%>"> Back to Return informations </a>  
+<a class="btn btn-primary" href="/entreprises/<%=@entity.company.id%>/entites/<%=@entity.id%>/declarations/<%=@return.id%>"> Retour à la Déclaration </a>  
 
 
     
@@ -16,12 +16,12 @@
   <thead>
     <tr>
       <th scope="col">#</th>
-      <th scope="col">Items</th>
-      <th scope="col">Comments</th>
-      <th scope="col">Quantity</th>
-      <th scope="col">Net Amount / Unit</th>
-      <th scope="col">VAT Amount / Unit</th>
-      <th scope="col">Total Price</th>
+      <th scope="col">Articles</th>
+      <th scope="col">Commentaires</th>
+      <th scope="col">Quantités</th>
+      <th scope="col">Montant Net / Unité</th>
+      <th scope="col">Montant TVA / Unité</th>
+      <th scope="col">Montant Total</th>
     </tr>
   </thead>
   <tbody>
@@ -47,9 +47,9 @@
   </tbody>
 </table>
 
-<p> <b>Total Amount</b>: <%= total_amount.round(2) - total_vat.round(2)%> </p>
-<p> <b>Total VAT Amount</b>: <%= total_vat.round(2) %></p>
+<p> <b>Montant Total Hors TVA</b>: <%= total_amount.round(2) - total_vat.round(2)%> </p>
+<p> <b>Montant Total de TVA</b>: <%= total_vat.round(2) %></p>
 
 </br>
 
-<p> <b>Amount Due (EUR)</b>: <%= total_amount.round(2) %> </p>
+<p> <b>Montant Total (EUR)</b>: <%= total_amount.round(2) %> </p>

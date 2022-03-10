@@ -80,19 +80,14 @@ class InvoicesController < ApplicationController
         @invoice = Invoice.find(params[:invoice_id])
         @transactions = @invoice.transactions
         # if you have transaction, you cannot remove the invoice
-        if !@transactions.nil?
-            redirect_to '/companies/' + @company.id.to_s + '/invoices'
+        if !@transactions.empty?
+            redirect_to '/entreprises/' + @company.id.to_s + '/factures'
             
         else
-            @transactions.each do |transaction|
-                amounts = Item.extract_amounts(transaction.quantity, transaction.item)
-                Transaction.remove_and_take_out_amounts(transaction, amounts)
-            end    
             @invoice.destroy
-            redirect_to company_invoices_path(@company)
+            redirect_to '/entreprises/' + @company.id.to_s + '/factures'
     
         end
-
 
     end
 
@@ -343,9 +338,9 @@ class InvoicesController < ApplicationController
               total_amount = 0
               total_net_amount = 0
               total_vat = 0
-
+                
               footer_line_1 = @invoice.entity.name
-              footer_line_2 = 'Email:  ' +   @invoice.entity.email + '   Website:  ' + @invoice.entity.website + '   VAT:  ' + @invoice.entity.vat_number
+              footer_line_2 = 'Email:  ' +   @invoice.entity.email + '   Website:  ' + ( @invoice.entity.website.nil? ? '' : @invoice.entity.website) + '   VAT:  ' + @invoice.entity.vat_number
               footer_line_3 = 'IBAN:  ' + @invoice.entity.iban + '       BIC:  ' + @invoice.entity.bic
 
               i = 0
@@ -421,72 +416,53 @@ class InvoicesController < ApplicationController
     # French
 
     def new_french
+        @user = current_user
         @invoice = Invoice.new
-        @company = current_user.company
-        @entities = current_user.company.entities
-        @customers = Customer.where(company_id: current_user.company)
+
+        @company = Company.find(params[:company_id])
+        @user_accesses = UserAccessCompany.where(user_id: @user.id)
+        @entity_ids = []
+        @company_ids = []
+
+        @user_accesses.each do |user_access|
+            @company_ids << user_access.company_id
+            @entity_ids += user_access.company.entity_ids
+        end
+        @entities = Entity.where(id: @entity_ids)
+        @customers = Customer.where(entity_id: @entity_ids)
+        @sides = TaxCodeOperationSide.all
+        @locations = TaxCodeOperationLocation.all
 
     end
 
     def create_french
         @entity = Entity.find(params[:entity])
         @side = TaxCodeOperationSide.find(params[:side])
+        @location = TaxCodeOperationLocation.find(params[:location])
         @customer = Customer.find(params[:customer])
         @european_countries = Country.where(is_eu: 1).ids
-        
-        # Seting up the location based on where the customer is located
-        @operation_location = Country.location_is_the_same(@entity.country, @customer.country, @european_countries)
+        # Check if it is a credit note or not
+        if params[:credit_note].nil?
+            @document_type = DocumentType.where(name: "Invoice")[0]
+            @invoice = Invoice.new(invoice_date: params[:invoice_date], invoice_name: params[:invoice_name], payment_date: params[:payment_date], invoice_number: params[:invoice_number], customer_id: @customer.id, entity_id: @entity.id, tax_code_operation_side_id: @side.id, tax_code_operation_location_id: @location.id, document_type_id: @document_type.id )
 
-        @invoice = Invoice.new(invoice_date: params[:invoice][:invoice_date], invoice_name: params[:invoice][:invoice_name], payment_date: params[:invoice][:payment_date], invoice_number: params[:invoice][:invoice_number], customer_id: @customer.id, entity_id: @entity.id, tax_code_operation_side_id: @side.id, tax_code_operation_location_id: @operation_location.id )
-
-        i = 0
-        # if you don't have a new transaction, don't need to do an update
-        if !params[:comment].nil?
-            transactions.each do |key, value| 
-                @item = Item.find(params[:item][key].to_i)
-                i += 1
-                @return = Return.where(["begin_date <= ? and end_date >= ? and entity_id = ? and country_id = ?",   params[:invoice_date],  params[:invoice_date], @entity.id, 2])[0]
-                # If return doesn't exist, need to create it
-                if @return.nil?
-                    
-                    last_day_month = Time.days_in_month(params[:invoice_date][5..6].to_i, params[:invoice_date][0..3].to_i) 
-                    from_date = Date.parse(params[:invoice_date][0..7] + "01")
-                    to_date = Date.parse(params[:invoice_date][0..7] + last_day_month.to_s)
-                    # Set up Periodicity To Project Type as VAT Monthly
-                    @periodicity_to_project_type = PeriodicityToProjectType.where(project_type_id: 1, periodicity_id: 1)[0]
-                    # Set up country as Belgium = 2
-                    @return = Return.new(begin_date: from_date, end_date: to_date ,  periodicity_to_project_type_id: @periodicity_to_project_type.id, country_id: 2, entity_id: @entity.id, due_date_id: @periodicity_to_project_type.due_date.id)
-                    @return_boxes = []
-                
-                    #language_id is hardcoded as not yet defined
-                    box_names = BoxName.where(periodicity_to_project_type_id: @periodicity_to_project_type.id, language_id: 2)
-                    
-                    @return.save!
-                    # Can only put the box an amount if it is indeed created to get the id
-                    box_names.each do |box_name|
-                        return_box = ReturnBox.new(return_id: @return.id, box_name_id: box_name.id, amount: 0)
-                        return_box.save!
-                    end
-                end
-
-                if @invoice.save!
-                    quantity = params[:quantity][key].to_f
-                    net_amount = quantity * @item.net_amount
-                    vat_amount = quantity * @item.vat_amount
-                    total_amount = vat_amount + net_amount
-
-                    # will have to multiply quantity with what is specified
-                    @transaction = Transaction.new(vat_amount: vat_amount, net_amount: net_amount ,  comment: params[:comment][key], invoice_id: @invoice.id, item_id: @item.id, return_id: @return.id, :quantity => quantity)
-                    @transaction.save!
-                end
-            end
         else
-            @invoice.save!  
-        end
-        # A transaction is linked to an invoice, so need to first create the invoice
-        path = '/entreprises/' + @company.id.to_s + '/factures/' + @invoice.id.to_s 
-        redirect_to path
+            @document_type = DocumentType.where(name: "Credit Note")[0]
+            @invoice = Invoice.new(invoice_date: params[:invoice_date], invoice_name: params[:invoice_name], payment_date: params[:payment_date], invoice_number: params[:invoice_number], customer_id: @customer.id, entity_id: @entity.id, tax_code_operation_side_id: @side.id, tax_code_operation_location_id: @location.id, document_type_id: @document_type.id )
 
+        end
+
+        if @invoice.save!  
+        # A transaction is linked to an invoice, so need to first create the invoice
+
+            path = '/entreprises/' + @invoice.entity.company.id.to_s + '/factures/' + @invoice.id.to_s 
+            redirect_to path
+
+        else
+            render :new
+        end
+
+        # A transaction is linked to an invoice, so need to first create the invoice
     end
 
     def index_french
@@ -630,18 +606,15 @@ class InvoicesController < ApplicationController
         @invoice = Invoice.find(params[:invoice_id])
         @transactions = @invoice.transactions
         # if you have transaction, you cannot remove the invoice
-        if !@transactions.nil?
+        if !@transactions.empty?
             redirect_to '/entreprises/' + @company.id.to_s + '/factures'
             
         else
-            @transactions.each do |transaction|
-                amounts = Item.extract_amounts(transaction.quantity, transaction.item)
-                Transaction.remove_and_take_out_amounts(transaction, amounts)
-            end    
             @invoice.destroy
-            redirect_to company_invoices_path(@company)
+            redirect_to '/entreprises/' + @company.id.to_s + '/factures'
     
         end
+
 
     end
 

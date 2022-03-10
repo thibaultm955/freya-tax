@@ -3,11 +3,11 @@
     <li><%=@return.begin_date%> - <%=@return.end_date%> - <%=@return.project_type.name%></a></li>
 </ul>
 
-<a class="btn btn-primary" href="../returns/<%=@return.id%>/edit"> Edit </a>  
-<a class="btn btn-primary" href="<%=company_entity_return_transactions_path(@company.id, @return.entity.id, @return.id)%>"> See all transactions </a>  
+<a class="btn btn-primary" href="/entreprises/<%=@entity.company.id%>/entites/<%=@entity.id%>/declarations/<%=@return.id%>/transactions"> Voir toutes les transactions </a>  
+<!--
 <a class="btn btn-primary" href="<%=new_company_entity_return_transaction_path(@company.id, @return.entity.id, @return.id)%>"> Add a transaction </a>  
 <a class="btn btn-primary" href="./<%=@return.id%>/transactions/new.file_upload"> Upload a file </a>  
-
+-->
 <table class="table">
 
   <tbody>

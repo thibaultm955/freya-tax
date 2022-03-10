@@ -549,6 +549,20 @@ class TransactionsController < ApplicationController
         redirect_to path
 
     end
+    
+
+    # French
+
+    def index_french
+
+        @return = Return.find(params_transaction[:return_id])
+        @transactions = @return.transactions
+        @company = Company.find(params[:company_id])
+        @entity = @return.entity
+    end
+
+
+
 
     private
 

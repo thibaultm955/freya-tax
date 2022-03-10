@@ -1,5 +1,5 @@
 <h2> Vos Clients </h2>
-<a class="btn btn-primary" href="./clients/new"> Créer un Client </a>  
+<a class="btn btn-primary" href="/entreprises/<%=@customers[0].entity.company.id%>/clients/new"> Créer un Client </a>  
 
 <%i=1%>
 
@@ -28,7 +28,8 @@
       <% country = LanguageCountry.where( language_id: current_user.language.id, country_id: customer.country.id)[0] %>
       <td><%=country.name%></td>
       <td>
-        <a class="btn btn-primary" href="./clients/<%=customer.id%>/edit"> Modifier </a>  
+        <a class="btn btn-primary" href="/entreprises/<%=customer.entity.company.id%>/clients/<%=customer.id%>/edit"> Modifier </a>  
+        
       </td> 
     </tr>
     <%i += 1%>

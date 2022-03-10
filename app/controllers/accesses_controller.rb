@@ -104,4 +104,51 @@ class AccessesController < ApplicationController
             end
         end
     end
+
+
+    def new_french
+        @accesses = Access.all
+        @user = current_user
+        @user_owner_accesses = UserAccessCompany.where(user_id: current_user.id, access_id: 1)
+        company_ids = []
+        # Only if you are admin you can add a user
+        if @user_owner_accesses.empty?
+            path = '/accesses'
+            redirect_to path
+        else
+            @user_owner_accesses.each do |access|
+                company_ids << access.company_id
+            end
+            @companies = Company.where(id: company_ids)
+
+        end
+
+    end
+
+    def create_french
+        @company = Company.find(params[:company])
+        @access_type = Access.find(params[:access_type])
+        @receiving_user = User.where(email: params[:email])[0]
+        @user = current_user
+        @user_access = UserAccessCompany.where(user_id: current_user.id, company_id: @company.id)[0]
+        
+        # Only if you are admin you can add a user
+        if @user_access.access_id == 1
+            # check if user has already access to the company
+            @receiving_user_access = UserAccessCompany.where(user_id: @receiving_user.id, company_id: @company.id)
+            if @receiving_user_access.empty?
+                @user_access = UserAccessCompany.new(user_id: @receiving_user.id, company_id: @company.id, access_id: @access_type.id)
+                @user_access.save
+            else
+                @user_access = @receiving_user_access.update(access_id: @access_type.id)
+
+            end
+
+        end
+
+        path = '/entreprises/' + @company.id.to_s + '/accesses'
+        redirect_to path
+
+
+    end
 end

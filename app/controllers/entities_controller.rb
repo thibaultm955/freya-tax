@@ -124,6 +124,7 @@ class EntitiesController < ApplicationController
         @company = Company.find(params[:company_id])
         @entity = Entity.new
         @countries = Country.order("name asc").all
+        @periodicity = Periodicity.all
 
     end
 

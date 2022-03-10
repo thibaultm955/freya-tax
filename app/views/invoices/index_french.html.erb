@@ -1,5 +1,5 @@
 <h1> Vos Factures </h1>
-<a href='/entreprise/<%=@entities[0].company.id%>/invoices/new'>Créer une Facture</a>
+<a href='/entreprises/<%=@entities[0].company.id%>/factures/new'>Créer une Facture</a>
 
 
 </br>
@@ -66,7 +66,7 @@
         <a class="btn btn-light" href="/entreprises/<%=invoice.entity.company.id%>/factures/<%=invoice.id%>"> Ouvrir </a>
         <a class="btn btn-primary" href="/entreprises/<%=invoice.entity.company.id%>/factures/<%=invoice.id%>/paid"> Payer </a>
         <a class="btn btn-primary" href="/entreprises/<%=invoice.entity.company.id%>/factures/<%=invoice.id%>/edit"> Modifier </a> 
-        <a class="btn btn-danger" href="/entreprises/<%=invoice.entity.company.id%>/factures/<%=invoice.id%>/delete_invoice" onclick="return confirm('Êtes-vous sûr?')"> Supprimer </a>
+        <a class="btn btn-danger" href="/entreprises/<%=invoice.entity.company.id%>/factures/<%=invoice.id%>/delete_invoice_french" onclick="return confirm('Êtes-vous sûr?')"> Supprimer </a>
 
       </td> 
     </tr>

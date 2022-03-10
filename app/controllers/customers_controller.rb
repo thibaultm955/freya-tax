@@ -76,27 +76,36 @@ class CustomersController < ApplicationController
         @company = Company.find(params[:company_id])
         @customer = Customer.find(params[:customer_id])
         @countries = Country.order("name asc").all
+        @entities = @company.entities
     end
 
     def update_french
         @company = Company.find(params[:company_id])
+        @entity = Entity.find(params[:entity])
         @customer = Customer.find(params[:customer_id])
-        @customer.update!(name: params_french[:name], vat_number: params_french[:vat_number], street: params_french[:street], city: params_french[:city], post_code: params_french[:post_code], country_id: params_french[:country].to_i, company_id: @company.id)
-        path = '/entreprises/' + @company.id.to_s + '/clients'
+        @customer.update!(name: params_create[:name], vat_number: params_create[:vat_number], street: params_create[:street], city: params_create[:city], post_code: params_create[:post_code], country_id: params[:country].to_i, entity_id: @entity.id)
+        path = '/clients/'
         redirect_to path
     end
 
     def new_french
-        @company = Company.find(params[:company_id])
+        @user = current_user
+
+        @user_accesses = UserAccessCompany.where(user_id: @user.id)
+        @entity_ids = []
+        @user_accesses.each do |user_access|
+            @entity_ids += user_access.company.entity_ids
+        end
+        @entities = Entity.where(id: @entity_ids)
         @customer = Customer.new
         @countries = Country.order("name asc").all
     end
 
     def create_french
-        @company = Company.find(params[:company_id])
-        @customer = Customer.new(name: params_french[:name], vat_number: params_french[:vat_number], street: params_french[:street], city: params_french[:city], post_code: params_french[:post_code], country_id: params_french[:country].to_i, company_id: @company.id)
-        path = '/entreprises/' + @company.id.to_s + '/clients'
+        @entity = Entity.find(params[:entity])
+        @customer = Customer.new(name: params_create_customer[:name], vat_number: params_create_customer[:vat_number], street: params_create_customer[:street], city: params_create_customer[:city], post_code: params_create_customer[:post_code], country_id: params[:country].to_i, entity_id: @entity.id)
         if @customer.save
+            path = '/clients/'
             redirect_to path
         else
             render :new
@@ -110,7 +119,7 @@ class CustomersController < ApplicationController
     end
 
     def params_create_customer
-        params.require(:customer).permit(:name, :vat_number, :street, :city, :post_code)
+        params.permit(:name, :vat_number, :street, :city, :post_code)
     end
 
     def params_french
