@@ -1,7 +1,6 @@
 class AccessesController < ApplicationController
 
     def index
-        @company = Company.find(params[:company_id])
         @user_accesses = UserAccessCompany.where(user_id: current_user.id)
         @all_user_accesses = []
         if @user_accesses.empty?
@@ -47,8 +46,11 @@ class AccessesController < ApplicationController
         @user = current_user
         @user_access = UserAccessCompany.where(user_id: current_user.id, company_id: @company.id)[0]
         
+        # If user doesn't exist, go back
+        if @receiving_user.nil?
+
         # Only if you are admin you can add a user
-        if @user_access.access_id == 1
+        elsif @user_access.access_id == 1
             # check if user has already access to the company
             @receiving_user_access = UserAccessCompany.where(user_id: @receiving_user.id, company_id: @company.id)
             if @receiving_user_access.empty?
@@ -85,7 +87,6 @@ class AccessesController < ApplicationController
 
 
     def index_french
-        @company = Company.find(params[:company_id])
         @user_accesses = UserAccessCompany.where(user_id: current_user.id)
         @all_user_accesses = []
         if @user_accesses.empty?
