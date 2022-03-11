@@ -34,7 +34,20 @@ class CompaniesController < ApplicationController
 
     def show
         @company = Company.find(params[:id])
-        @entities = @company.entities.order('name ASC')
+        @user = current_user
+        @user_accesses = UserAccessCompany.where(user_id: @user.id)
+        @company_ids = []
+        @user_accesses.each do |user_access|
+
+            @company_ids << user_access.company.id
+        end
+
+        if @company_ids.include? @company.id
+            @entities = @company.entities.order('name ASC')
+
+        else
+            redirect_to '/companies'
+        end
     end
 
     def edit
