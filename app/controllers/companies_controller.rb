@@ -26,7 +26,7 @@ class CompaniesController < ApplicationController
         if @company.save 
             @user_access = UserAccessCompany.new(user_id: current_user.id, company_id: @company.id, access_id: @access.id)    
             @user_access.save
-            redirect_to companies_path
+            redirect_to "/companies/" + @company.id.to_s
         else
             render :new
         end

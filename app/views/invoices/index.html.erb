@@ -1,7 +1,8 @@
 <h1> Your Invoices </h1>
-
+<!-- If you don't have a company / access, you cannot create an invoice-->
+<% if !@entities.empty?%>
 <%= link_to "Create Invoice", new_company_invoice_path(@entities[0].company) %>
-
+<%end%>
 
 </br>
 

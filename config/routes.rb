@@ -15,7 +15,8 @@ Rails.application.routes.draw do
 
   resources :entity_tax_codes, only: [:index, :new, :create]
 
-  resources :invoices, only: [:index]
+  resources :invoices, only: [:index,:show]
+  get "/invoices/:invoice_id/add_transaction", to: 'invoices#add_transaction'
 
   resources :customers, only: [:index, :new, :create]
 

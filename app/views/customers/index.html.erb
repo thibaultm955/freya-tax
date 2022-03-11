@@ -1,5 +1,8 @@
 <h2> Your Customers </h2>
-<a class="btn btn-primary" href="/customers/new"> Create Customer </a>  
+<!-- Cannot create customer if you don't have accesses -->
+<% if !@user_accesses.empty?%>
+  <a class="btn btn-primary" href="/customers/new"> Create Customer </a>  
+<%end%>
 
 <%i=1%>
 
