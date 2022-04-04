@@ -17,6 +17,12 @@ Rails.application.routes.draw do
 
   resources :invoices, only: [:index,:show]
   get "/invoices/:invoice_id/add_transaction", to: 'invoices#add_transaction'
+  get '/invoices/:invoice_id/get_item/:item_id', to: "invoices#render_get_item"
+  # Add transaction to invoice
+  get '/invoices/:invoice_id/add_transaction', to: "invoices#add_transaction"
+  get '/invoices/:invoice_id/add_photo', to: "invoices#add_photo"
+  get '/invoices/:invoice_id/save_transaction', to: "invoices#save_transaction"
+  get '/invoices/:invoice_id/save_photo', to: "invoices#save_photo"
 
   resources :customers, only: [:index, :new, :create]
 

@@ -142,9 +142,10 @@ class InvoicesController < ApplicationController
     end
 
     def save_transaction
-        @company = Company.find(params[:company_id])
- 
         @invoice = Invoice.find(params[:invoice_id]) 
+
+        @company = @invoice.entity.company
+ 
 
         @item = Item.find(params[:item])
         @rate = @item.tax_code_operation_rate
