@@ -14,10 +14,22 @@ class InvoicesController < ApplicationController
     end
 
     def show
-        # test = @invoice.author("Invoice Test updated", @invoice)
+        @user = current_user
+        @user_accesses = UserAccessCompany.where(user_id: @user.id)
+        @entity_ids = []
+        @user_accesses.each do |user_access|
+
+            @entity_ids += user_access.company.entity_ids
+        end
+
         @invoice = Invoice.find(params[:id])
-        @transactions = @invoice.transactions
-        @cloudinary_photos = @invoice.cloudinary_photos
+        # Need to make sure you have access to the invoice
+        if @entity_ids.include? @invoice.entity.id
+            @transactions = @invoice.transactions
+            @cloudinary_photos = @invoice.cloudinary_photos
+        else
+            redirect_to '/invoices'
+        end
     end
 
     def new
@@ -59,7 +71,7 @@ class InvoicesController < ApplicationController
         if @invoice.save!  
         # A transaction is linked to an invoice, so need to first create the invoice
 
-            redirect_to invoices_path
+            redirect_to "/invoices/" + @invoice.id.to_s
         else
             render :new
         end
@@ -113,7 +125,7 @@ class InvoicesController < ApplicationController
     def add_transaction
         @invoice = Invoice.find(params[:invoice_id])
         @transactions = @invoice.transactions
-        @company = Company.find(params[:company_id])
+        @company = @invoice.entity.company
         @entity = @invoice.entity
         @entity_tax_codes = EntityTaxCode.where(entity_id: @entity.id)
         @items = @entity.items
@@ -130,9 +142,10 @@ class InvoicesController < ApplicationController
     end
 
     def save_transaction
-        @company = Company.find(params[:company_id])
- 
         @invoice = Invoice.find(params[:invoice_id]) 
+
+        @company = @invoice.entity.company
+ 
 
         @item = Item.find(params[:item])
         @rate = @item.tax_code_operation_rate

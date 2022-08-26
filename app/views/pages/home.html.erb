@@ -16,7 +16,7 @@
 
 
 
-<%= column_chart Invoice.group_by_day(:payment_date).count, title: "Facture par Date de Paiement" %> 
+<%= column_chart Invoice.where(:entity_id => @entities.ids, is_paid: [false, nil]).group_by_day(:payment_date).count, title: "Facture par Date de Paiement" %> 
 
 </br></br>
 

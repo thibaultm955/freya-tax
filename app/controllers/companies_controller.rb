@@ -26,7 +26,7 @@ class CompaniesController < ApplicationController
         if @company.save 
             @user_access = UserAccessCompany.new(user_id: current_user.id, company_id: @company.id, access_id: @access.id)    
             @user_access.save
-            redirect_to companies_path
+            redirect_to "/companies/" + @company.id.to_s
         else
             render :new
         end
@@ -34,7 +34,20 @@ class CompaniesController < ApplicationController
 
     def show
         @company = Company.find(params[:id])
-        @entities = @company.entities.order('name ASC')
+        @user = current_user
+        @user_accesses = UserAccessCompany.where(user_id: @user.id)
+        @company_ids = []
+        @user_accesses.each do |user_access|
+
+            @company_ids << user_access.company.id
+        end
+
+        if @company_ids.include? @company.id
+            @entities = @company.entities.order('name ASC')
+
+        else
+            redirect_to '/companies'
+        end
     end
 
     def edit

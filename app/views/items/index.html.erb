@@ -1,6 +1,10 @@
 
 <h2> Your Items </h2>
-<a class="btn btn-primary" href="./items/new"> Create Item </a>  
+<!-- Cannot create customer if you don't have accesses -->
+<% if !@user_accesses.empty?%>
+  <a class="btn btn-primary" href="./items/new"> Create Item </a>  
+<%end%>
+
 
 <%i=1%>
 
