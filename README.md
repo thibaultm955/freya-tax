@@ -25,7 +25,7 @@ Assuming you're using Bundler:
 `rails db:create db:migrate
 
 5. **Start the Server**:
-`rails s
+`rails s 
 
 
 Visit `http://localhost:3000` in your browser to access Freya Tax.
