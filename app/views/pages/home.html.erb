@@ -14,6 +14,43 @@
 
 </br></br>
 
+<div class="container">
+    <header>
+        <div style="float: left;">LOGO</div>
+        <div style="float: right;">LOGIN BUTTON</div>
+        <div style="clear: both;"></div>
+    </header>
+
+    <section class="bg-overlay" style="background: url('path_to_background_image.jpg') no-repeat center; background-size: cover;">
+        <h1>Simplify Your VAT Management</h1>
+        <p>Join thousands of businesses using VATSoft</p>
+        <button>START FREE TRIAL</button>
+    </section>
+
+    <!-- Features -->
+    <section class="feature">
+        <span class="feature-icon">🖥️</span>
+        <h3>Streamlined Dashboard</h3>
+        <p>Easily oversee all your VAT-related tasks in one intuitive dashboard.</p>
+    </section>
+    <!-- Repeat similar blocks for other features... -->
+
+    <!-- Testimonials -->
+    <section>
+        <h2>What our users say</h2>
+        <!-- Add testimonial avatars, quotes, etc. -->
+    </section>
+
+    <!-- Pricing -->
+    <section>
+        <!-- Add pricing details... -->
+    </section>
+
+    <footer>
+        <!-- Add footer details, social icons, etc. -->
+    </footer>
+</div>
+
 
 
 <%= column_chart Invoice.where(:entity_id => @entities.ids, is_paid: [false, nil]).group_by_day(:payment_date).count, title: "Facture par Date de Paiement" %> 

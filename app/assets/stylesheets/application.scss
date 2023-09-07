@@ -13,3 +13,34 @@
 @import "pages/index";
 @import "flatpickr/dist/flatpickr";
 // @import "components/image_hover";
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+header, section {
+    padding: 20px 0;
+}
+button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.bg-overlay {
+    background: rgba(0,0,0,0.3);
+    padding: 100px 0;
+    color: white;
+    text-align: center;
+}
+.feature {
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+}
+.feature-icon {
+    font-size: 40px;
+}
